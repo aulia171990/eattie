@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import type { Profile } from '@/types'
-import type { TablesInsert } from '@/types/database'
 
 export async function login(
   _prev: { error: string } | null,
@@ -46,14 +45,18 @@ export async function signUp(
   })
   if (error) return { error: error.message }
 
+  // Use any-cast to bypass Supabase generic inference on upsert.
+  // The trigger handle_new_user() already creates the profile automatically;
+  // this upsert is just a safety fallback.
   if (data.user) {
-    const profilePayload: TablesInsert<'profiles'> = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    await db.from('profiles').upsert({
       id: data.user.id,
       full_name,
       role,
       is_active: true,
-    }
-    await supabase.from('profiles').upsert(profilePayload)
+    })
   }
 
   revalidatePath('/', 'layout')
@@ -69,7 +72,9 @@ export async function logout(): Promise<void> {
 
 export async function getUser(): Promise<Profile | null> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return null
 
   const { data } = await supabase
