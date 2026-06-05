@@ -1,6 +1,7 @@
 'use server'
-
 import { createClient } from '@/lib/supabase/server'
+const supabase = await createClient()
+const { error } = await supabase.from('production').insert(payload)
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { format } from 'date-fns'
