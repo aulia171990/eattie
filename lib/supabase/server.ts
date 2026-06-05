@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
-import type { Database } from '@/types/database'
+// 1. Ubah tulisan 'database' menjadi 'supabase' di bawah ini:
+import type { Database } from '@/types/supabase'
 
 export async function createClient() {
   const cookieStore = await cookies()
