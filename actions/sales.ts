@@ -103,7 +103,7 @@ export async function getSales(filters?: SaleFilters): Promise<SaleWithRelations
   if (filters?.dateFrom) query = query.gte('created_at', `${filters.dateFrom}T00:00:00`)
   if (filters?.dateTo) query = query.lte('created_at', `${filters.dateTo}T23:59:59`)
   if (filters?.status && filters.status !== 'all') {
-    query = query.eq('status', filters.status as TablesInsert<'sales'>['status'])
+    query = query.eq('status', filters.status as NonNullable<TablesInsert<'sales'>['status']>)
   }
 
   const { data, error } = await query
