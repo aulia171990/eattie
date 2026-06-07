@@ -23,8 +23,8 @@ export function StockAdjustmentModal({ ingredientId, ingredientName, unit }: Pro
     formData.set('ingredient_id', ingredientId)
 
     startTransition(async () => {
-      const result = await adjustStock(formData)
-      if (result.error) {
+      const result = await adjustStock(null, formData)
+      if (result && 'error' in result) {
         setError(result.error)
       } else {
         setOpen(false)
