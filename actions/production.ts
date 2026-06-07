@@ -24,7 +24,7 @@ export async function getProductionBatches(filters?: {
   if (filters?.status && filters.status !== 'all') {
     query = query.eq(
       'status',
-      filters.status as TablesInsert<'production_batches'>['status']
+      filters.status as NonNullable<TablesInsert<'production_batches'>['status']>
     )
   }
   if (filters?.dateFrom) query = query.gte('scheduled_date', filters.dateFrom)
