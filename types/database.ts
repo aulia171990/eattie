@@ -38,6 +38,7 @@ export type Database = {
           is_active?: boolean
           updated_at?: string
         }
+        Relationships: []
       }
       ingredient_categories: {
         Row: {
@@ -59,6 +60,7 @@ export type Database = {
           name_en?: string | null
           description?: string | null
         }
+        Relationships: []
       }
       suppliers: {
         Row: {
@@ -95,6 +97,7 @@ export type Database = {
           is_active?: boolean
           updated_at?: string
         }
+        Relationships: []
       }
       ingredients: {
         Row: {
@@ -164,6 +167,20 @@ export type Database = {
           is_active?: boolean
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'ingredients_category_id_fkey'
+            columns: ['category_id']
+            referencedRelation: 'ingredient_categories'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'ingredients_preferred_supplier_id_fkey'
+            columns: ['preferred_supplier_id']
+            referencedRelation: 'suppliers'
+            referencedColumns: ['id']
+          },
+        ]
       }
       stock_purchases: {
         Row: {
@@ -217,6 +234,20 @@ export type Database = {
           status?: 'draft' | 'ordered' | 'received' | 'cancelled'
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'stock_purchases_supplier_id_fkey'
+            columns: ['supplier_id']
+            referencedRelation: 'suppliers'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stock_purchases_created_by_fkey'
+            columns: ['created_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       stock_purchase_items: {
         Row: {
@@ -252,6 +283,20 @@ export type Database = {
           expiry_date?: string | null
           batch_code?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'stock_purchase_items_purchase_id_fkey'
+            columns: ['purchase_id']
+            referencedRelation: 'stock_purchases'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stock_purchase_items_ingredient_id_fkey'
+            columns: ['ingredient_id']
+            referencedRelation: 'ingredients'
+            referencedColumns: ['id']
+          },
+        ]
       }
       stock_movements: {
         Row: {
@@ -292,6 +337,20 @@ export type Database = {
           reason?: string | null
           notes?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'stock_movements_ingredient_id_fkey'
+            columns: ['ingredient_id']
+            referencedRelation: 'ingredients'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stock_movements_created_by_fkey'
+            columns: ['created_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       stock_opnames: {
         Row: {
@@ -322,6 +381,20 @@ export type Database = {
           completed_at?: string | null
           approved_by?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'stock_opnames_created_by_fkey'
+            columns: ['created_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stock_opnames_approved_by_fkey'
+            columns: ['approved_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       stock_opname_items: {
         Row: {
@@ -351,6 +424,20 @@ export type Database = {
           difference?: number | null
           reason?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'stock_opname_items_opname_id_fkey'
+            columns: ['opname_id']
+            referencedRelation: 'stock_opnames'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'stock_opname_items_ingredient_id_fkey'
+            columns: ['ingredient_id']
+            referencedRelation: 'ingredients'
+            referencedColumns: ['id']
+          },
+        ]
       }
       products: {
         Row: {
@@ -390,6 +477,7 @@ export type Database = {
           is_active?: boolean
           updated_at?: string
         }
+        Relationships: []
       }
       recipes: {
         Row: {
@@ -423,6 +511,14 @@ export type Database = {
           bake_temperature?: number | null
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'recipes_product_id_fkey'
+            columns: ['product_id']
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          },
+        ]
       }
       recipe_ingredients: {
         Row: {
@@ -446,6 +542,20 @@ export type Database = {
           unit?: string
           notes?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'recipe_ingredients_recipe_id_fkey'
+            columns: ['recipe_id']
+            referencedRelation: 'recipes'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'recipe_ingredients_ingredient_id_fkey'
+            columns: ['ingredient_id']
+            referencedRelation: 'ingredients'
+            referencedColumns: ['id']
+          },
+        ]
       }
       production_batches: {
         Row: {
@@ -491,6 +601,26 @@ export type Database = {
           notes?: string | null
           updated_at?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: 'production_batches_product_id_fkey'
+            columns: ['product_id']
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'production_batches_recipe_id_fkey'
+            columns: ['recipe_id']
+            referencedRelation: 'recipes'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'production_batches_created_by_fkey'
+            columns: ['created_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       product_inventory: {
         Row: {
@@ -513,6 +643,20 @@ export type Database = {
           quantity?: number
           expiry_date?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'product_inventory_product_id_fkey'
+            columns: ['product_id']
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'product_inventory_batch_id_fkey'
+            columns: ['batch_id']
+            referencedRelation: 'production_batches'
+            referencedColumns: ['id']
+          },
+        ]
       }
       sales: {
         Row: {
@@ -553,6 +697,14 @@ export type Database = {
           status?: 'pending' | 'completed' | 'cancelled' | 'refunded'
           notes?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'sales_cashier_id_fkey'
+            columns: ['cashier_id']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
       sale_items: {
         Row: {
@@ -582,6 +734,26 @@ export type Database = {
           unit_price?: number
           subtotal?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: 'sale_items_sale_id_fkey'
+            columns: ['sale_id']
+            referencedRelation: 'sales'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'sale_items_product_id_fkey'
+            columns: ['product_id']
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'sale_items_batch_id_fkey'
+            columns: ['batch_id']
+            referencedRelation: 'production_batches'
+            referencedColumns: ['id']
+          },
+        ]
       }
       expenses: {
         Row: {
@@ -611,6 +783,14 @@ export type Database = {
           expense_date?: string
           receipt_url?: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: 'expenses_created_by_fkey'
+            columns: ['created_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },
+        ]
       }
     }
     Views: {
@@ -621,6 +801,7 @@ export type Database = {
           total_revenue: number | null
           total_discounts: number | null
         }
+        Relationships: []
       }
     }
     Functions: Record<string, never>
