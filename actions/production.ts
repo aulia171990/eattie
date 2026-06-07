@@ -1,7 +1,5 @@
 'use server'
 import { createClient } from '@/lib/supabase/server'
-const supabase = await createClient()
-const { error } = await supabase.from('production').insert(payload)
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { format } from 'date-fns'
@@ -25,7 +23,7 @@ export async function getProductionBatches(filters?: {
   if (filters?.status && filters.status !== 'all') {
     query = query.eq(
       'status',
-      filters.status as TablesInsert<'production_batches'>['status']
+      filters.status as NonNullable<TablesInsert<'production_batches'>['status']>
     )
   }
   if (filters?.dateFrom) query = query.gte('scheduled_date', filters.dateFrom)
