@@ -90,6 +90,10 @@ interface SubmitActual {
   reason?: string
 }
 
+/**
+ * REFACTORED: submitOpname saves actual counts, then delegates
+ * all stock adjustments + movements to process_stock_opname() RPC.
+ */
 export async function submitOpname(
   id: string,
   _prev: ActionState,
@@ -106,6 +110,7 @@ export async function submitOpname(
     return { error: 'Data tidak valid' }
   }
 
+  // Step 1: Save actual counts to opname_items (data entry, not stock manipulation)
   for (const a of actuals) {
     const { data: item } = await supabase
       .from('stock_opname_items')
@@ -114,45 +119,33 @@ export async function submitOpname(
       .single()
     if (!item) continue
 
-    const diff = a.actual_stock - item.system_stock
-
     const itemUpdate: TablesUpdate<'stock_opname_items'> = {
       actual_stock: a.actual_stock,
-      difference: diff,
+      difference: a.actual_stock - item.system_stock,
       reason: a.reason ?? null,
     }
     await supabase.from('stock_opname_items').update(itemUpdate).eq('id', a.item_id)
-
-    if (diff !== 0) {
-      const movType: TablesInsert<'stock_movements'>['movement_type'] =
-        diff > 0 ? 'adjustment_in' : 'adjustment_out'
-      const movPayload: TablesInsert<'stock_movements'> = {
-        ingredient_id: a.ingredient_id,
-        movement_type: movType,
-        quantity: diff,
-        unit: item.unit,
-        stock_before: item.system_stock,
-        stock_after: a.actual_stock,
-        reference_type: 'opname',
-        reference_id: id,
-        reason: a.reason ?? 'Stock opname adjustment',
-        created_by: user.id,
-      }
-      await supabase.from('stock_movements').insert(movPayload)
-      await supabase
-        .from('ingredients')
-        .update({ current_stock: a.actual_stock, updated_at: new Date().toISOString() })
-        .eq('id', a.ingredient_id)
-    }
   }
 
-  const opnameUpdate: TablesUpdate<'stock_opnames'> = {
-    status: 'completed',
-    completed_at: new Date().toISOString(),
-    approved_by: user.id,
+  // Step 2: Update approved_by before calling RPC
+  await supabase
+    .from('stock_opnames')
+    .update({ approved_by: user.id })
+    .eq('id', id)
+
+  // Step 3: Call RPC — atomically adjusts all stock + inserts movements
+  const { data: rpcData, error: rpcErr } = await supabase.rpc('process_stock_opname', {
+    p_opname_id: id,
+  })
+
+  if (rpcErr) return { error: `Gagal menyelesaikan opname: ${rpcErr.message}` }
+
+  const result = rpcData as unknown as { success?: boolean; error?: string }
+  if (!result?.success) {
+    return { error: result?.error ?? 'Gagal menyelesaikan opname' }
   }
-  await supabase.from('stock_opnames').update(opnameUpdate).eq('id', id)
 
   revalidatePath('/dashboard/inventory/opname')
+  revalidatePath('/dashboard/inventory')
   redirect('/dashboard/inventory/opname')
 }

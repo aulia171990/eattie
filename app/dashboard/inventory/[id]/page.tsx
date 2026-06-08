@@ -214,3 +214,4 @@ export default async function IngredientDetailPage({
     </div>
   )
 }
+

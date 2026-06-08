@@ -127,6 +127,11 @@ interface ReceivedItemInput {
   expiry_date?: string
 }
 
+/**
+ * REFACTORED: receivePurchase now uses the process_purchase() RPC.
+ * All stock manipulation happens atomically inside PostgreSQL.
+ * Next.js only handles: updating item quantities, then calling the RPC.
+ */
 export async function receivePurchase(
   purchaseId: string,
   _prev: ActionState,
@@ -143,57 +148,27 @@ export async function receivePurchase(
     return { error: 'Data tidak valid' }
   }
 
+  // Step 1: Update quantity_received on each item (non-stock data, safe from Next.js)
   for (const item of receivedItems) {
-    // update item qty
-    await supabase
+    const { error } = await supabase
       .from('stock_purchase_items')
       .update({ quantity_received: item.quantity_received })
       .eq('id', item.item_id)
-
-    if (item.quantity_received <= 0) continue
-
-    // get current stock
-    const { data: ing } = await supabase
-      .from('ingredients')
-      .select('current_stock, base_unit')
-      .eq('id', item.ingredient_id)
-      .single()
-    if (!ing) continue
-
-    const stockBefore = ing.current_stock
-    const stockAfter = stockBefore + item.quantity_received
-
-    // record movement
-    const movPayload: TablesInsert<'stock_movements'> = {
-      ingredient_id: item.ingredient_id,
-      movement_type: 'purchase_in',
-      quantity: item.quantity_received,
-      unit: item.unit,
-      stock_before: stockBefore,
-      stock_after: stockAfter,
-      reference_type: 'purchase',
-      reference_id: purchaseId,
-      expiry_date: item.expiry_date || null,
-      created_by: user.id,
-    }
-    await supabase.from('stock_movements').insert(movPayload)
-
-    // update stock + last purchase price
-    const ingUpdate: TablesUpdate<'ingredients'> = {
-      current_stock: stockAfter,
-      last_purchase_price: item.unit_price,
-      updated_at: new Date().toISOString(),
-    }
-    await supabase.from('ingredients').update(ingUpdate).eq('id', item.ingredient_id)
+    if (error) return { error: `Gagal update item: ${error.message}` }
   }
 
-  const poUpdate: TablesUpdate<'stock_purchases'> = {
-    status: 'received',
-    received_date: new Date().toISOString().split('T')[0],
-    updated_at: new Date().toISOString(),
+  // Step 2: Call RPC — handles stock update, avg cost, movements atomically
+  const { data, error: rpcErr } = await supabase
+    .rpc('process_purchase', { p_purchase_id: purchaseId })
+
+  if (rpcErr) return { error: `Gagal memproses penerimaan: ${rpcErr.message}` }
+
+  const result = data as unknown as { success?: boolean; error?: string }
+  if (!result?.success) {
+    return { error: result?.error ?? 'Gagal memproses penerimaan barang' }
   }
-  await supabase.from('stock_purchases').update(poUpdate).eq('id', purchaseId)
 
   revalidatePath('/dashboard/inventory/purchases')
+  revalidatePath('/dashboard/inventory')
   redirect('/dashboard/inventory/purchases')
 }

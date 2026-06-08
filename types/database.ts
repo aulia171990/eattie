@@ -448,6 +448,8 @@ export type Database = {
           category: string | null
           selling_price: number
           cost_price: number
+          current_stock: number
+          min_stock: number
           image_url: string | null
           is_active: boolean
           created_at: string
@@ -461,6 +463,8 @@ export type Database = {
           category?: string | null
           selling_price: number
           cost_price?: number
+          current_stock?: number
+          min_stock?: number
           image_url?: string | null
           is_active?: boolean
           created_at?: string
@@ -473,6 +477,8 @@ export type Database = {
           category?: string | null
           selling_price?: number
           cost_price?: number
+          current_stock?: number
+          min_stock?: number
           image_url?: string | null
           is_active?: boolean
           updated_at?: string
@@ -574,6 +580,9 @@ export type Database = {
           created_by: string | null
           created_at: string
           updated_at: string
+          cost_per_unit: number | null
+          total_cost: number | null
+          stock_consumed: boolean
         }
         Insert: {
           id?: string
@@ -591,6 +600,9 @@ export type Database = {
           created_by?: string | null
           created_at?: string
           updated_at?: string
+          cost_per_unit?: number | null
+          total_cost?: number | null
+          stock_consumed?: boolean
         }
         Update: {
           quantity_produced?: number
@@ -600,6 +612,9 @@ export type Database = {
           completed_at?: string | null
           notes?: string | null
           updated_at?: string
+          cost_per_unit?: number | null
+          total_cost?: number | null
+          stock_consumed?: boolean
         }
         Relationships: [
           {
@@ -675,6 +690,9 @@ export type Database = {
           status: 'pending' | 'completed' | 'cancelled' | 'refunded'
           cashier_id: string | null
           created_at: string
+          cogs: number | null
+          gross_profit: number | null
+          stock_deducted: boolean
         }
         Insert: {
           id?: string
@@ -692,10 +710,16 @@ export type Database = {
           status?: 'pending' | 'completed' | 'cancelled' | 'refunded'
           cashier_id?: string | null
           created_at?: string
+          cogs?: number | null
+          gross_profit?: number | null
+          stock_deducted?: boolean
         }
         Update: {
           status?: 'pending' | 'completed' | 'cancelled' | 'refunded'
           notes?: string | null
+          cogs?: number | null
+          gross_profit?: number | null
+          stock_deducted?: boolean
         }
         Relationships: [
           {
@@ -804,7 +828,28 @@ export type Database = {
         Relationships: []
       }
     }
-    Functions: Record<string, never>
+    Functions: {
+      process_purchase: {
+        Args: { p_purchase_id: string }
+        Returns: Json
+      }
+      complete_production_batch: {
+        Args: {
+          p_batch_id: string
+          p_quantity_produced: number
+          p_quantity_defect?: number
+        }
+        Returns: Json
+      }
+      process_sale: {
+        Args: { p_sale_id: string }
+        Returns: Json
+      }
+      process_stock_opname: {
+        Args: { p_opname_id: string }
+        Returns: Json
+      }
+    }
     Enums: Record<string, never>
   }
 }
