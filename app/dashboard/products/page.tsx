@@ -30,11 +30,12 @@ export default async function ProductsPage() {
         }
       />
 
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total Produk', value: products.length },
           { label: 'Aktif', value: active.length },
           { label: 'Nonaktif', value: products.length - active.length },
+          { label: 'Stok Habis', value: active.filter(p => p.current_stock <= 0).length },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
             <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
@@ -71,7 +72,7 @@ export default async function ProductsPage() {
   )
 }
 
-function ProductCard({ product }: { product: { id: string; name: string; name_en?: string | null; selling_price: number; cost_price: number; is_active: boolean; category?: string | null } }) {
+function ProductCard({ product }: { product: { id: string; name: string; name_en?: string | null; selling_price: number; cost_price: number; current_stock: number; min_stock: number; is_active: boolean; category?: string | null } }) {
   const margin = product.cost_price > 0 ? ((product.selling_price - product.cost_price) / product.selling_price * 100) : null
   return (
     <div className="bg-white rounded-xl border p-4 hover:shadow-sm transition-all" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
@@ -90,6 +91,18 @@ function ProductCard({ product }: { product: { id: string; name: string; name_en
         <div className="flex items-center justify-between mt-0.5">
           <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>HPP: {formatCurrency(product.cost_price)}</p>
           {margin !== null && <span className="text-xs font-medium" style={{ color: 'hsl(142, 60%, 35%)' }}>~{margin.toFixed(0)}%</span>}
+        </div>
+        <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+          <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Stok</p>
+          <span
+            className="text-xs font-bold px-2 py-0.5 rounded-full"
+            style={{
+              background: product.current_stock <= 0 ? 'hsl(0, 80%, 95%)' : product.current_stock <= product.min_stock ? 'hsl(36, 80%, 90%)' : 'hsl(142, 50%, 90%)',
+              color: product.current_stock <= 0 ? 'hsl(0, 70%, 40%)' : product.current_stock <= product.min_stock ? 'hsl(32, 95%, 38%)' : 'hsl(142, 60%, 28%)',
+            }}
+          >
+            {product.current_stock <= 0 ? 'Habis' : `${product.current_stock} pcs`}
+          </span>
         </div>
       </div>
     </div>

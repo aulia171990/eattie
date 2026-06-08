@@ -2,7 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
-import type { ActionState } from '@/types'
+
+type ActionState = { error?: string; success?: boolean } | null
 
 export async function updatePaymentStatus(
   purchaseId: string,
@@ -32,4 +33,3 @@ export async function updatePaymentStatus(
   revalidatePath('/dashboard/inventory/purchases')
   return { success: true }
 }
-
