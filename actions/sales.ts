@@ -29,12 +29,28 @@ export interface CreateSaleInput {
   notes?: string
 }
 
+/**
+ * REFACTORED: createSale now uses process_sale() RPC.
+ * Flow:
+ * 1. Insert sale record (status: 'pending', stock_deducted: false)
+ * 2. Insert sale_items
+ * 3. Call process_sale() RPC → validates stock, deducts stock, computes COGS, marks completed
+ *
+ * This prevents:
+ * - Selling without stock (validated inside DB transaction)
+ * - Double-submit (stock_deducted flag prevents re-processing)
+ * - Race conditions (FOR UPDATE locks inside RPC)
+ */
 export async function createSale(
   input: CreateSaleInput
 ): Promise<{ error?: string; success?: boolean; invoiceNumber?: string }> {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Tidak terautentikasi' }
+
+  if (!input.items || input.items.length === 0) {
+    return { error: 'Keranjang kosong' }
+  }
 
   const today = format(new Date(), 'yyyyMMdd')
   const { count } = await supabase
@@ -44,6 +60,7 @@ export async function createSale(
 
   const invoiceNumber = `INV-${today}-${String((count ?? 0) + 1).padStart(3, '0')}`
 
+  // Step 1: Insert sale as 'pending' — RPC will mark it 'completed'
   const salePayload: TablesInsert<'sales'> = {
     invoice_number: invoiceNumber,
     subtotal: input.subtotal,
@@ -56,7 +73,7 @@ export async function createSale(
     change_amount: input.change_amount,
     customer_name: input.customer_name || null,
     notes: input.notes || null,
-    status: 'completed',
+    status: 'pending',    // RPC will set to 'completed'
     cashier_id: user.id,
   }
 
@@ -67,6 +84,7 @@ export async function createSale(
     .single()
   if (saleErr) return { error: saleErr.message }
 
+  // Step 2: Insert sale items
   const itemRows: TablesInsert<'sale_items'>[] = input.items.map((item) => ({
     sale_id: sale.id,
     product_id: item.product_id,
@@ -78,9 +96,31 @@ export async function createSale(
   }))
 
   const { error: itemErr } = await supabase.from('sale_items').insert(itemRows)
-  if (itemErr) return { error: itemErr.message }
+  if (itemErr) {
+    // Rollback: cancel the sale if items insert fails
+    await supabase.from('sales').update({ status: 'cancelled' }).eq('id', sale.id)
+    return { error: itemErr.message }
+  }
+
+  // Step 3: Call process_sale() RPC — validates + deducts stock atomically
+  const { data: rpcData, error: rpcErr } = await supabase.rpc('process_sale', {
+    p_sale_id: sale.id,
+  })
+
+  if (rpcErr) {
+    // Rollback: cancel the sale so stock is not double-deducted on retry
+    await supabase.from('sales').update({ status: 'cancelled' }).eq('id', sale.id)
+    return { error: `Stok tidak mencukupi atau gagal diproses: ${rpcErr.message}` }
+  }
+
+  const result = rpcData as unknown as { success?: boolean; error?: string }
+  if (!result?.success) {
+    await supabase.from('sales').update({ status: 'cancelled' }).eq('id', sale.id)
+    return { error: result?.error ?? 'Gagal memproses penjualan' }
+  }
 
   revalidatePath('/dashboard/sales')
+  revalidatePath('/dashboard')
   return { success: true, invoiceNumber }
 }
 
@@ -90,7 +130,7 @@ export async function getSales(filters?: SaleFilters): Promise<SaleWithRelations
   let query = supabase
     .from('sales')
     .select(
-      'id,invoice_number,subtotal,discount_amount,discount_percent,tax_amount,total,payment_method,payment_amount,change_amount,customer_name,notes,status,cashier_id,created_at,profiles:cashier_id(full_name),sale_items(id,sale_id,product_id,batch_id,product_name,quantity,unit_price,subtotal,created_at,products:product_id(name,category))'
+      'id,invoice_number,subtotal,discount_amount,discount_percent,tax_amount,total,payment_method,payment_amount,change_amount,customer_name,notes,status,cashier_id,created_at,cogs,gross_profit,profiles:cashier_id(full_name),sale_items(id,sale_id,product_id,batch_id,product_name,quantity,unit_price,subtotal,created_at,products:product_id(name,category))'
     )
     .order('created_at', { ascending: false })
     .limit(100)
@@ -116,7 +156,7 @@ export async function getSale(id: string): Promise<SaleWithRelations> {
   const { data, error } = await supabase
     .from('sales')
     .select(
-      'id,invoice_number,subtotal,discount_amount,discount_percent,tax_amount,total,payment_method,payment_amount,change_amount,customer_name,notes,status,cashier_id,created_at,profiles:cashier_id(full_name),sale_items(id,sale_id,product_id,batch_id,product_name,quantity,unit_price,subtotal,created_at,products:product_id(name,category))'
+      'id,invoice_number,subtotal,discount_amount,discount_percent,tax_amount,total,payment_method,payment_amount,change_amount,customer_name,notes,status,cashier_id,created_at,cogs,gross_profit,profiles:cashier_id(full_name),sale_items(id,sale_id,product_id,batch_id,product_name,quantity,unit_price,subtotal,created_at,products:product_id(name,category))'
     )
     .eq('id', id)
     .single()
@@ -126,6 +166,8 @@ export async function getSale(id: string): Promise<SaleWithRelations> {
 
 export async function voidSale(id: string): Promise<void> {
   const supabase = await createClient()
+  // Note: stock reversal on void is a business decision.
+  // Current: mark cancelled only. Add reversal logic here if needed.
   const upd: TablesUpdate<'sales'> = { status: 'cancelled' }
   await supabase.from('sales').update(upd).eq('id', id)
   revalidatePath('/dashboard/sales')

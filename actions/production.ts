@@ -17,15 +17,12 @@ export async function getProductionBatches(filters?: {
   let query = supabase
     .from('production_batches')
     .select(
-      'id,batch_number,product_id,recipe_id,quantity_planned,quantity_produced,quantity_defect,status,scheduled_date,started_at,completed_at,notes,created_by,created_at,updated_at,products:product_id(name,category,selling_price),profiles:created_by(full_name)'
+      'id,batch_number,product_id,recipe_id,quantity_planned,quantity_produced,quantity_defect,status,scheduled_date,started_at,completed_at,notes,created_by,created_at,updated_at,cost_per_unit,total_cost,products:product_id(name,category,selling_price),profiles:created_by(full_name)'
     )
     .order('scheduled_date', { ascending: false })
 
   if (filters?.status && filters.status !== 'all') {
-    query = query.eq(
-      'status',
-      filters.status as NonNullable<TablesInsert<'production_batches'>['status']>
-    )
+    query = query.eq('status', filters.status as NonNullable<TablesInsert<'production_batches'>['status']>)
   }
   if (filters?.dateFrom) query = query.gte('scheduled_date', filters.dateFrom)
   if (filters?.dateTo) query = query.lte('scheduled_date', filters.dateTo)
@@ -40,7 +37,7 @@ export async function getProductionBatch(id: string): Promise<ProductionBatchWit
   const { data, error } = await supabase
     .from('production_batches')
     .select(
-      'id,batch_number,product_id,recipe_id,quantity_planned,quantity_produced,quantity_defect,status,scheduled_date,started_at,completed_at,notes,created_by,created_at,updated_at,products:product_id(name,category,selling_price),profiles:created_by(full_name)'
+      'id,batch_number,product_id,recipe_id,quantity_planned,quantity_produced,quantity_defect,status,scheduled_date,started_at,completed_at,notes,created_by,created_at,updated_at,cost_per_unit,total_cost,products:product_id(name,category,selling_price),profiles:created_by(full_name)'
     )
     .eq('id', id)
     .single()
@@ -64,6 +61,15 @@ export async function createProductionBatch(
   if (!product_id) return { error: 'Pilih produk' }
   if (!quantity_planned || quantity_planned < 1) return { error: 'Jumlah harus > 0' }
 
+  // Get the recipe for the product
+  const { data: recipe } = await supabase
+    .from('recipes')
+    .select('id')
+    .eq('product_id', product_id)
+    .single()
+
+  if (!recipe) return { error: 'Produk ini belum memiliki resep. Tambahkan resep terlebih dahulu.' }
+
   const today = format(new Date(), 'yyyyMMdd')
   const { count } = await supabase
     .from('production_batches')
@@ -75,6 +81,7 @@ export async function createProductionBatch(
   const payload: TablesInsert<'production_batches'> = {
     batch_number: batchNumber,
     product_id,
+    recipe_id: recipe.id,
     quantity_planned,
     scheduled_date,
     notes,
@@ -89,6 +96,15 @@ export async function createProductionBatch(
   redirect('/dashboard/production')
 }
 
+/**
+ * REFACTORED: updateBatchStatus uses complete_production_batch() RPC
+ * when transitioning to 'completed'. This ensures:
+ * - Ingredient stock is atomically deducted
+ * - Product stock is atomically added
+ * - Inventory movements are recorded
+ * - Cost accounting is computed
+ * - Race conditions are prevented via FOR UPDATE locks
+ */
 export async function updateBatchStatus(
   id: string,
   _prev: ActionState,
@@ -96,27 +112,60 @@ export async function updateBatchStatus(
 ): Promise<ActionState> {
   const supabase = await createClient()
 
-  const status = formData.get('status') as TablesUpdate<'production_batches'>['status']
+  const status = formData.get('status') as string
   const notes = (formData.get('notes') as string) || null
+  const quantityProduced = formData.get('quantity_produced')
+    ? parseInt(formData.get('quantity_produced') as string, 10)
+    : null
+  const quantityDefect = formData.get('quantity_defect')
+    ? parseInt(formData.get('quantity_defect') as string, 10)
+    : 0
 
-  const payload: TablesUpdate<'production_batches'> = {
-    status,
+  // If completing: delegate everything to the RPC
+  if (status === 'completed') {
+    if (!quantityProduced || quantityProduced < 0) {
+      return { error: 'Masukkan jumlah produksi yang valid' }
+    }
+
+    const { data, error: rpcErr } = await supabase.rpc('complete_production_batch', {
+      p_batch_id: id,
+      p_quantity_produced: quantityProduced,
+      p_quantity_defect: quantityDefect ?? 0,
+    })
+
+    if (rpcErr) return { error: `Gagal menyelesaikan produksi: ${rpcErr.message}` }
+
+    const result = data as unknown as { success?: boolean; error?: string }
+    if (!result?.success) {
+      return { error: result?.error ?? 'Gagal menyelesaikan produksi' }
+    }
+
+    // Update notes if provided
+    if (notes) {
+      await supabase
+        .from('production_batches')
+        .update({ notes, updated_at: new Date().toISOString() })
+        .eq('id', id)
+    }
+
+    revalidatePath('/dashboard/production')
+    revalidatePath(`/dashboard/production/${id}`)
+    revalidatePath('/dashboard/inventory')
+    return { success: true }
+  }
+
+  // For non-completed status transitions (planned -> in_progress, cancel, etc.)
+  type BatchUpdate = TablesUpdate<'production_batches'>
+  const updatePayload: BatchUpdate = {
+    status: status as BatchUpdate['status'],
     notes,
     updated_at: new Date().toISOString(),
+    ...(status === 'in_progress' ? { started_at: new Date().toISOString() } : {}),
   }
-
-  if (formData.get('quantity_produced')) {
-    payload.quantity_produced = parseInt(formData.get('quantity_produced') as string, 10)
-  }
-  if (formData.get('quantity_defect')) {
-    payload.quantity_defect = parseInt(formData.get('quantity_defect') as string, 10)
-  }
-  if (status === 'in_progress') payload.started_at = new Date().toISOString()
-  if (status === 'completed') payload.completed_at = new Date().toISOString()
 
   const { error } = await supabase
     .from('production_batches')
-    .update(payload)
+    .update(updatePayload)
     .eq('id', id)
   if (error) return { error: error.message }
 
