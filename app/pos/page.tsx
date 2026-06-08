@@ -11,7 +11,7 @@ export default async function PosPage() {
   const [{ data: products }, { data: profile }] = await Promise.all([
     supabase
       .from('products')
-      .select('id,name,name_en,description,category,selling_price,cost_price,image_url,is_active,created_at,updated_at')
+      .select('id,name,name_en,description,category,selling_price,cost_price,current_stock,min_stock,image_url,is_active,created_at,updated_at')
       .eq('is_active', true)
       .order('name'),
     supabase
