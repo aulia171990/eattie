@@ -7,6 +7,8 @@ import { formatCurrency } from '@/lib/utils'
 import { ReceiptTemplate } from './receipt-template'
 import { X, Banknote, CreditCard, Smartphone, Building2 } from 'lucide-react'
 
+const QRIS_IMAGE_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? ''
+
 const PAYMENT_METHODS = [
   { id: 'cash', label: 'Tunai', icon: <Banknote size={20} />, color: 'hsl(142, 60%, 40%)' },
   { id: 'qris', label: 'QRIS', icon: <Smartphone size={20} />, color: 'hsl(210, 70%, 45%)' },
@@ -189,6 +191,57 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
               ))}
             </div>
           </div>
+
+          {method === 'qris' && (
+            <div className="flex flex-col items-center gap-3">
+              {QRIS_IMAGE_URL ? (
+                <>
+                  <div
+                    className="rounded-2xl p-3 border-2"
+                    style={{ borderColor: 'hsl(210, 70%, 75%)', background: 'hsl(210, 60%, 97%)' }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={QRIS_IMAGE_URL}
+                      alt="QRIS BCA"
+                      className="w-52 h-52 object-contain"
+                    />
+                  </div>
+                  <div className="text-center space-y-1">
+                    <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                      Scan QRIS untuk membayar
+                    </p>
+                    <p className="text-2xl font-bold" style={{ color: 'hsl(210, 70%, 45%)' }}>
+                      {formatCurrency(total)}
+                    </p>
+                    <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                      Bisa dibayar via GoPay, OVO, Dana, ShopeePay, semua m-banking
+                    </p>
+                  </div>
+                  <div
+                    className="w-full flex items-start gap-2 p-3 rounded-xl text-xs"
+                    style={{ background: 'hsl(210, 60%, 95%)', color: 'hsl(210, 50%, 35%)' }}
+                  >
+                    <span className="text-base leading-none">ℹ️</span>
+                    <span>Setelah customer scan dan bayar, klik <strong>Konfirmasi</strong> untuk menyelesaikan transaksi.</span>
+                  </div>
+                </>
+              ) : (
+                <div
+                  className="w-full p-5 rounded-2xl border-2 border-dashed text-center space-y-2"
+                  style={{ borderColor: 'hsl(210, 40%, 75%)', background: 'hsl(210, 30%, 97%)' }}
+                >
+                  <p className="text-3xl">📷</p>
+                  <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 25%)' }}>
+                    QR belum dikonfigurasi
+                  </p>
+                  <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                    Tambahkan <code className="bg-gray-100 px-1 rounded">NEXT_PUBLIC_QRIS_IMAGE_URL</code> di environment variable Vercel
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
 
           {method === 'cash' && (
             <div>
