@@ -45,6 +45,8 @@ export default async function SaleDetailPage({
       category: item.products?.category ?? null,
       selling_price: item.unit_price,
       cost_price: 0,
+      current_stock: 0,
+      min_stock: 0,
       image_url: null,
       is_active: true,
       created_at: item.created_at,
@@ -182,3 +184,4 @@ export default async function SaleDetailPage({
     </div>
   )
 }
+
