@@ -1,6 +1,8 @@
 import { getPurchase } from '@/actions/stock-purchases'
+import { updatePaymentStatus } from '@/actions/update-payment-status'
 import { PageHeader } from '@/components/shared/page-header'
 import { StatusBadge } from '@/components/shared/status-badge'
+import { PaymentStatusForm } from '@/components/forms/payment-status-form'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -17,6 +19,8 @@ export default async function PurchaseDetailPage({
   } catch {
     notFound()
   }
+
+  const boundUpdatePayment = updatePaymentStatus.bind(null, id)
 
   return (
     <div className="p-6 max-w-3xl">
@@ -71,6 +75,11 @@ export default async function PurchaseDetailPage({
           </p>
         )}
       </div>
+
+      <PaymentStatusForm
+        action={boundUpdatePayment}
+        currentStatus={po.payment_status ?? 'unpaid'}
+      />
 
       <div
         className="bg-white rounded-xl border overflow-hidden"
