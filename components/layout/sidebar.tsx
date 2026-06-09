@@ -4,9 +4,15 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Profile } from '@/types'
-import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle, X } from 'lucide-react'
 
-type NavItem = { title: string; href: string; icon: React.ReactNode; roles: Array<'owner' | 'cashier' | 'baker'>; children?: { title: string; href: string }[] }
+type NavItem = {
+  title: string
+  href: string
+  icon: React.ReactNode
+  roles: Array<'owner' | 'cashier' | 'baker'>
+  children?: { title: string; href: string }[]
+}
 
 const navItems: NavItem[] = [
   { title: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={18} />, roles: ['owner', 'cashier', 'baker'] },
@@ -32,12 +38,16 @@ const navItems: NavItem[] = [
     ]},
 ]
 
-interface SidebarProps { user: Profile; lowStockCount?: number }
+interface SidebarProps {
+  user: Profile
+  lowStockCount?: number
+  open?: boolean
+  onClose?: () => void
+}
 
-export function Sidebar({ user, lowStockCount = 0 }: SidebarProps) {
+function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
   const pathname = usePathname()
   const filtered = navItems.filter(item => item.roles.includes(user.role))
-
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
@@ -45,16 +55,23 @@ export function Sidebar({ user, lowStockCount = 0 }: SidebarProps) {
 
   return (
     <aside className="sidebar flex flex-col h-full w-64 shrink-0">
-      <div className="flex items-center gap-3 px-5 py-5 border-b" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: 'hsl(32, 95%, 44%)' }}>🍞</div>
-        <div className="min-w-0">
-          <div className="text-white font-semibold text-sm truncate">Bakery Manager</div>
-          <div className="text-xs truncate" style={{ color: 'hsl(36, 20%, 50%)' }}>Manajemen Toko Roti</div>
+      <div className="flex items-center justify-between px-5 py-5 border-b" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: 'hsl(32, 95%, 44%)' }}>🍞</div>
+          <div className="min-w-0">
+            <div className="text-white font-semibold text-sm truncate">Bakery Manager</div>
+            <div className="text-xs truncate" style={{ color: 'hsl(36, 20%, 50%)' }}>Manajemen Toko Roti</div>
+          </div>
         </div>
+        {onClose && (
+          <button onClick={onClose} className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 transition-colors">
+            <X size={18} className="text-white" />
+          </button>
+        )}
       </div>
 
       {lowStockCount > 0 && user.role === 'owner' && (
-        <Link href="/dashboard/inventory?filter=low_stock"
+        <Link href="/dashboard/inventory?filter=low_stock" onClick={onClose}
           className="flex items-center gap-2 mx-3 mt-3 px-3 py-2 rounded-lg text-xs"
           style={{ background: 'hsl(32, 80%, 25%)', color: 'hsl(32, 95%, 70%)' }}>
           <AlertTriangle size={14} />
@@ -68,14 +85,14 @@ export function Sidebar({ user, lowStockCount = 0 }: SidebarProps) {
           const active = isActive(item.href)
           return (
             <div key={item.href}>
-              <Link href={item.href} className={cn('sidebar-item', active && 'active')}>
+              <Link href={item.href} onClick={onClose} className={cn('sidebar-item', active && 'active')}>
                 <span className="shrink-0">{item.icon}</span>
                 <span className="flex-1 truncate">{item.title}</span>
               </Link>
               {item.children && active && (
                 <div className="ml-7 mt-0.5 mb-1 space-y-0.5">
                   {item.children.map(child => (
-                    <Link key={child.href} href={child.href}
+                    <Link key={child.href} href={child.href} onClick={onClose}
                       className="block px-3 py-1.5 rounded-md text-xs transition-all"
                       style={{
                         color: pathname === child.href ? 'white' : 'hsl(36, 15%, 55%)',
@@ -93,7 +110,7 @@ export function Sidebar({ user, lowStockCount = 0 }: SidebarProps) {
 
       {(user.role === 'owner' || user.role === 'cashier') && (
         <div className="px-3 py-2 border-t" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
-          <Link href="/pos"
+          <Link href="/pos" onClick={onClose}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white transition-all hover:opacity-90"
             style={{ background: 'hsl(32, 95%, 44%)' }}>
             <ShoppingCart size={18} />
@@ -117,5 +134,26 @@ export function Sidebar({ user, lowStockCount = 0 }: SidebarProps) {
         </div>
       </div>
     </aside>
+  )
+}
+
+export function Sidebar({ user, lowStockCount = 0, open = false, onClose }: SidebarProps) {
+  return (
+    <>
+      {/* Desktop: always visible */}
+      <div className="hidden lg:flex">
+        <SidebarContent user={user} lowStockCount={lowStockCount} />
+      </div>
+
+      {/* Mobile: drawer overlay */}
+      {open && (
+        <div className="lg:hidden fixed inset-0 z-50 flex">
+          <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+          <div className="relative z-10 flex">
+            <SidebarContent user={user} lowStockCount={lowStockCount} onClose={onClose} />
+          </div>
+        </div>
+      )}
+    </>
   )
 }

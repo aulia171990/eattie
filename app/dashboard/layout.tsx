@@ -23,7 +23,6 @@ export default async function DashboardLayout({
 
   const typedProfile = profile as Profile
 
-  // Low stock count for owners
   let lowStockCount = 0
   if (typedProfile.role === 'owner') {
     const { data: ingredients } = await supabase
@@ -37,10 +36,9 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      <div className="hidden lg:flex">
-        <Sidebar user={typedProfile} lowStockCount={lowStockCount} />
-      </div>
-      <div className="flex flex-col flex-1 overflow-hidden">
+      {/* Sidebar: desktop only via CSS, mobile via Header toggle */}
+      <Sidebar user={typedProfile} lowStockCount={lowStockCount} />
+      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
         <Header user={typedProfile} />
         <main className="flex-1 overflow-y-auto">
           {children}
