@@ -30,6 +30,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
   const [customerName, setCustomerName] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  // Reset submitting guard when dialog remounts
   const [completedSale, setCompletedSale] = useState<{
     invoiceNumber: string
     total: number
@@ -39,6 +40,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
   } | null>(null)
 
   const receiptRef = useRef<HTMLDivElement>(null)
+  const submittingRef = useRef(false) // sync guard against double-submit
 
   const handlePrint = () => {
     if (!receiptRef.current) return
@@ -60,6 +62,8 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
   const canPay = method !== 'cash' || paymentAmount >= total
 
   const handleConfirm = async () => {
+    if (submittingRef.current) return  // block double-submit
+    submittingRef.current = true
     setLoading(true)
     setError('')
     try {
@@ -95,6 +99,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
       setError('Terjadi kesalahan. Coba lagi.')
     } finally {
       setLoading(false)
+      submittingRef.current = false
     }
   }
 
