@@ -853,6 +853,10 @@ export type Database = {
         Args: Record<string, never>
         Returns: string
       }
+      get_recipe_id_for_product: {
+        Args: { p_product_id: string }
+        Returns: string
+      }
     }
     Enums: Record<string, never>
   }
