@@ -1,10 +1,12 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getProducts } from '@/actions/products'
 import { PageHeader } from '@/components/shared/page-header'
 import { EmptyState } from '@/components/shared/empty-state'
 import { formatCurrency } from '@/lib/utils'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { Plus } from 'lucide-react'
+import type { Product } from '@/types'
 
 export default async function ProductsPage() {
   const products = await getProducts()
@@ -35,7 +37,7 @@ export default async function ProductsPage() {
           { label: 'Total Produk', value: products.length },
           { label: 'Aktif', value: active.length },
           { label: 'Nonaktif', value: products.length - active.length },
-          { label: 'Stok Habis', value: active.filter(p => p.current_stock <= 0).length },
+          { label: 'Stok Habis', value: active.filter(p => (p as Product & { current_stock: number }).current_stock <= 0).length },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
             <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
@@ -72,37 +74,61 @@ export default async function ProductsPage() {
   )
 }
 
-function ProductCard({ product }: { product: { id: string; name: string; name_en?: string | null; selling_price: number; cost_price: number; current_stock: number; min_stock: number; is_active: boolean; category?: string | null } }) {
-  const margin = product.cost_price > 0 ? ((product.selling_price - product.cost_price) / product.selling_price * 100) : null
+type ProductCardType = Product & { current_stock?: number; min_stock?: number }
+
+function ProductCard({ product }: { product: ProductCardType }) {
+  const p = product as ProductCardType & { current_stock: number; min_stock: number }
+  const margin = p.cost_price > 0 ? ((p.selling_price - p.cost_price) / p.selling_price * 100) : null
+  const emoji = PRODUCT_CATEGORIES.find(c => c.value === p.category)?.emoji ?? '🧁'
+
   return (
-    <div className="bg-white rounded-xl border p-4 hover:shadow-sm transition-all" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: 'hsl(36, 80%, 93%)' }}>
-          {PRODUCT_CATEGORIES.find(c => c.value === product.category)?.emoji ?? '🧁'}
-        </div>
-        <Link href={`/dashboard/products/${product.id}/edit`}
-          className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
-          style={{ color: 'hsl(32, 95%, 44%)' }}>Edit</Link>
+    <div className="bg-white rounded-xl border overflow-hidden hover:shadow-sm transition-all" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+      {/* Gambar produk */}
+      <div className="relative w-full h-36" style={{ background: 'hsl(36, 50%, 96%)' }}>
+        {p.image_url ? (
+          <Image
+            src={p.image_url}
+            alt={p.name}
+            fill
+            className="object-cover"
+            unoptimized
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-4xl">
+            {emoji}
+          </div>
+        )}
+        {/* Edit button overlay */}
+        <Link
+          href={`/dashboard/products/${p.id}/edit`}
+          className="absolute top-2 right-2 text-xs px-2 py-1 rounded-md font-medium backdrop-blur-sm"
+          style={{ background: 'rgba(255,255,255,0.9)', color: 'hsl(32, 95%, 44%)' }}
+        >
+          Edit
+        </Link>
       </div>
-      <h3 className="font-semibold text-sm leading-tight" style={{ color: 'hsl(25, 30%, 15%)' }}>{product.name}</h3>
-      {product.name_en && <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>{product.name_en}</p>}
-      <div className="mt-3 pt-3 border-t" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-        <p className="text-base font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(product.selling_price)}</p>
-        <div className="flex items-center justify-between mt-0.5">
-          <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>HPP: {formatCurrency(product.cost_price)}</p>
-          {margin !== null && <span className="text-xs font-medium" style={{ color: 'hsl(142, 60%, 35%)' }}>~{margin.toFixed(0)}%</span>}
-        </div>
-        <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-          <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Stok</p>
-          <span
-            className="text-xs font-bold px-2 py-0.5 rounded-full"
-            style={{
-              background: product.current_stock <= 0 ? 'hsl(0, 80%, 95%)' : product.current_stock <= product.min_stock ? 'hsl(36, 80%, 90%)' : 'hsl(142, 50%, 90%)',
-              color: product.current_stock <= 0 ? 'hsl(0, 70%, 40%)' : product.current_stock <= product.min_stock ? 'hsl(32, 95%, 38%)' : 'hsl(142, 60%, 28%)',
-            }}
-          >
-            {product.current_stock <= 0 ? 'Habis' : `${product.current_stock} pcs`}
-          </span>
+
+      <div className="p-3">
+        <h3 className="font-semibold text-sm leading-tight" style={{ color: 'hsl(25, 30%, 15%)' }}>{p.name}</h3>
+        {p.name_en && <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>{p.name_en}</p>}
+        <div className="mt-2 pt-2 border-t" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
+          <p className="text-base font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(p.selling_price)}</p>
+          <div className="flex items-center justify-between mt-0.5">
+            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>HPP: {formatCurrency(p.cost_price)}</p>
+            {margin !== null && <span className="text-xs font-medium" style={{ color: 'hsl(142, 60%, 35%)' }}>~{margin.toFixed(0)}%</span>}
+          </div>
+          <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Stok</p>
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{
+                background: p.current_stock <= 0 ? 'hsl(0, 80%, 95%)' : p.current_stock <= p.min_stock ? 'hsl(36, 80%, 90%)' : 'hsl(142, 50%, 90%)',
+                color: p.current_stock <= 0 ? 'hsl(0, 70%, 40%)' : p.current_stock <= p.min_stock ? 'hsl(32, 95%, 38%)' : 'hsl(142, 60%, 28%)',
+              }}
+            >
+              {p.current_stock <= 0 ? 'Habis' : `${p.current_stock} pcs`}
+            </span>
+          </div>
         </div>
       </div>
     </div>

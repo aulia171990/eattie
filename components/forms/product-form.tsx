@@ -1,11 +1,13 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import type { Product } from '@/types'
 import type { ServerAction } from '@/types/forms'
 import { getError } from '@/types/forms'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
+import { ImagePlus, X, Upload } from 'lucide-react'
 
 interface ProductFormProps {
   action: ServerAction
@@ -17,6 +19,48 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
   const [state, formAction, isPending] = useActionState(action, null)
   const error = getError(state)
 
+  const [preview, setPreview] = useState<string | null>(product?.image_url ?? null)
+  const [uploading, setUploading] = useState(false)
+  const [imageUrl, setImageUrl] = useState<string>(product?.image_url ?? '')
+  const fileRef = useRef<HTMLInputElement>(null)
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Preview lokal langsung
+    setPreview(URL.createObjectURL(file))
+    setUploading(true)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const res = await fetch('/api/upload-product-image', {
+        method: 'POST',
+        body: formData,
+      })
+      const json = await res.json()
+      if (json.url) {
+        setImageUrl(json.url)
+      } else {
+        alert('Gagal upload gambar: ' + (json.error ?? 'Unknown error'))
+        setPreview(product?.image_url ?? null)
+      }
+    } catch {
+      alert('Gagal upload gambar')
+      setPreview(product?.image_url ?? null)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  function clearImage() {
+    setPreview(null)
+    setImageUrl('')
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
   return (
     <form action={formAction} className="max-w-xl space-y-6">
       {error && (
@@ -24,6 +68,70 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
           {error}
         </div>
       )}
+
+      {/* Hidden field untuk image_url hasil upload */}
+      <input type="hidden" name="image_url" value={imageUrl} />
+
+      {/* Image Upload */}
+      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Foto Produk</h2>
+
+        <div className="flex items-start gap-4">
+          {/* Preview area */}
+          <div
+            className="relative w-28 h-28 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden shrink-0 cursor-pointer"
+            style={{ borderColor: preview ? 'transparent' : 'hsl(36, 30%, 78%)', background: preview ? 'transparent' : 'hsl(36, 50%, 97%)' }}
+            onClick={() => !uploading && fileRef.current?.click()}
+          >
+            {preview ? (
+              <>
+                <Image src={preview} alt="Preview" fill className="object-cover rounded-xl" unoptimized />
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); clearImage() }}
+                  className="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center z-10 hover:bg-red-600"
+                >
+                  <X size={10} />
+                </button>
+              </>
+            ) : (
+              <div className="flex flex-col items-center gap-1">
+                <ImagePlus size={22} style={{ color: 'hsl(32, 60%, 55%)' }} />
+                <span className="text-xs text-center" style={{ color: 'hsl(25, 15%, 55%)' }}>Klik upload</span>
+              </div>
+            )}
+            {uploading && (
+              <div className="absolute inset-0 bg-white/80 flex items-center justify-center rounded-xl">
+                <div className="w-5 h-5 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'hsl(32, 95%, 44%)' }} />
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 space-y-2">
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              disabled={uploading}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-all hover:bg-gray-50 disabled:opacity-50"
+              style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+            >
+              <Upload size={14} />
+              {uploading ? 'Mengupload...' : 'Pilih Foto'}
+            </button>
+            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+              JPG, PNG, WEBP. Maks 2MB.<br />
+              Foto akan tampil di POS dan katalog pelanggan.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
         <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Informasi Produk</h2>
@@ -92,7 +200,7 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
       </div>
 
       <div className="flex gap-3">
-        <button type="submit" disabled={isPending}
+        <button type="submit" disabled={isPending || uploading}
           className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
           style={{ background: 'hsl(32, 95%, 44%)' }}>
           {isPending ? 'Menyimpan...' : product ? 'Simpan Perubahan' : 'Tambah Produk'}
