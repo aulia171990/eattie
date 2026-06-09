@@ -61,27 +61,33 @@ export async function createProductionBatch(
   if (!product_id) return { error: 'Pilih produk' }
   if (!quantity_planned || quantity_planned < 1) return { error: 'Jumlah harus > 0' }
 
-  // Get the recipe for the product
-  const { data: recipe } = await supabase
-    .from('recipes')
-    .select('id')
-    .eq('product_id', product_id)
-    .single()
+  // Lookup recipe via RPC (SECURITY DEFINER) — baker tidak boleh akses recipes langsung
+  const { data: recipeData } = await supabase
+    .rpc('get_recipe_id_for_product', { p_product_id: product_id })
 
-  if (!recipe) return { error: 'Produk ini belum memiliki resep. Tambahkan resep terlebih dahulu.' }
+  if (!recipeData) return { error: 'Produk ini belum memiliki resep. Hubungi owner untuk menambahkan resep.' }
 
   const today = format(new Date(), 'yyyyMMdd')
-  const { count } = await supabase
+  const { data: lastBatchnumber } = await supabase
     .from('production_batches')
-    .select('id', { count: 'exact', head: true })
+    .select('batch_number')
     .like('batch_number', `PRD-${today}%`)
+    .order('batch_number', { ascending: false })
+    .limit(1)
+    .maybeSingle()
 
-  const batchNumber = `PRD-${today}-${String((count ?? 0) + 1).padStart(3, '0')}`
+  let nextSeqPRD = 1
+  if (lastBatchnumber?.['batch_number']) {
+    const parts = lastBatchnumber['batch_number'].split('-')
+    const lastSeq = parseInt(parts[parts.length - 1], 10)
+    if (!isNaN(lastSeq)) nextSeqPRD = lastSeq + 1
+  }
+  const batchNumber = `PRD-${today}-${String(nextSeqPRD).padStart(3, '0')}`
 
   const payload: TablesInsert<'production_batches'> = {
     batch_number: batchNumber,
     product_id,
-    recipe_id: recipe.id,
+    recipe_id: recipeData as string,
     quantity_planned,
     scheduled_date,
     notes,
