@@ -52,13 +52,11 @@ export async function createSale(
     return { error: 'Keranjang kosong' }
   }
 
-  const today = format(new Date(), 'yyyyMMdd')
-  const { count } = await supabase
-    .from('sales')
-    .select('id', { count: 'exact', head: true })
-    .like('invoice_number', `INV-${today}%`)
-
-  const invoiceNumber = `INV-${today}-${String((count ?? 0) + 1).padStart(3, '0')}`
+  // Generate invoice number via DB function — race-condition safe
+  const { data: invData, error: invErr } = await supabase
+    .rpc('generate_invoice_number')
+  if (invErr || !invData) return { error: 'Gagal membuat nomor invoice' }
+  const invoiceNumber = invData as string
 
   // Step 1: Insert sale as 'pending' — RPC will mark it 'completed'
   const salePayload: TablesInsert<'sales'> = {
