@@ -38,7 +38,7 @@ const navItems: NavItem[] = [
     ]},
 ]
 
-interface SidebarProps {
+export interface SidebarProps {
   user: Profile
   lowStockCount?: number
   open?: boolean
