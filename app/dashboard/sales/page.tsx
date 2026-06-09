@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getSales } from '@/actions/sales'
+import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shared/page-header'
 import { EmptyState } from '@/components/shared/empty-state'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
@@ -35,6 +36,16 @@ export default async function SalesPage({
   const sp = await searchParams
   const today = format(new Date(), 'yyyy-MM-dd')
 
+  // Get current user role
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user!.id)
+    .single()
+  const isOwner = profile?.role === 'owner'
+
   const sales = await getSales({
     search: sp.search,
     dateFrom: sp.dateFrom ?? today,
@@ -66,11 +77,11 @@ export default async function SalesPage({
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total Transaksi',  value: completed.length,          icon: <Receipt size={18} />,     bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)' },
-          { label: 'Total Pendapatan', value: formatCurrency(totalRevenue), icon: <TrendingUp size={18} />,  bg: 'hsl(36,80%,93%)',  ic: 'hsl(32,95%,44%)' },
-          { label: 'Rata-rata Order',  value: formatCurrency(avgOrder),    icon: <ShoppingCart size={18} />, bg: 'hsl(142,50%,92%)', ic: 'hsl(142,60%,35%)' },
-          { label: 'Dibatalkan',       value: sales.filter((s) => s.status === 'cancelled').length, icon: <Ban size={18} />, bg: 'hsl(0,80%,95%)', ic: 'hsl(0,70%,48%)' },
-        ].map((s) => (
+          { label: 'Total Transaksi',  value: completed.length,          icon: <Receipt size={18} />,     bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)', ownerOnly: false },
+          { label: 'Total Pendapatan', value: formatCurrency(totalRevenue), icon: <TrendingUp size={18} />,  bg: 'hsl(36,80%,93%)',  ic: 'hsl(32,95%,44%)',  ownerOnly: true },
+          { label: 'Rata-rata Order',  value: formatCurrency(avgOrder),    icon: <ShoppingCart size={18} />, bg: 'hsl(142,50%,92%)', ic: 'hsl(142,60%,35%)', ownerOnly: true },
+          { label: 'Dibatalkan',       value: sales.filter((s) => s.status === 'cancelled').length, icon: <Ban size={18} />, bg: 'hsl(0,80%,95%)', ic: 'hsl(0,70%,48%)', ownerOnly: false },
+        ].filter(s => !s.ownerOnly || isOwner).map((s) => (
           <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs font-medium" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
@@ -131,7 +142,7 @@ export default async function SalesPage({
             <table className="w-full">
               <thead>
                 <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
-                  {['Invoice', 'Waktu', 'Pelanggan', 'Kasir', 'Total', 'Pembayaran', 'Status', 'Aksi'].map((h) => (
+                  {(['Invoice', 'Waktu', 'Pelanggan', 'Kasir', ...(isOwner ? ['Total'] : []), 'Pembayaran', 'Status', 'Aksi'] as string[]).map((h) => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-semibold"
                       style={{ color: 'hsl(25, 15%, 45%)' }}>{h}</th>
                   ))}
@@ -157,8 +168,10 @@ export default async function SalesPage({
                       <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
                         {sale.profiles?.full_name ?? '—'}
                       </td>
-                      <td className="px-4 py-3 text-sm font-semibold"
-                        style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(sale.total)}</td>
+                      {isOwner && (
+                        <td className="px-4 py-3 text-sm font-semibold"
+                          style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(sale.total)}</td>
+                      )}
                       <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
                         {paymentLabels[sale.payment_method ?? ''] ?? sale.payment_method ?? '—'}
                       </td>
@@ -184,9 +197,11 @@ export default async function SalesPage({
           <div className="px-4 py-3 border-t text-xs flex justify-between"
             style={{ borderColor: 'hsl(36, 20%, 92%)', color: 'hsl(25, 15%, 55%)' }}>
             <span>{sales.length} transaksi ditampilkan</span>
-            <span className="font-medium" style={{ color: 'hsl(32, 95%, 44%)' }}>
-              Total: {formatCurrency(totalRevenue)}
-            </span>
+            {isOwner && (
+              <span className="font-medium" style={{ color: 'hsl(32, 95%, 44%)' }}>
+                Total: {formatCurrency(totalRevenue)}
+              </span>
+            )}
           </div>
         </div>
       )}
