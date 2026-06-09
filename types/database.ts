@@ -849,6 +849,10 @@ export type Database = {
         Args: { p_opname_id: string }
         Returns: Json
       }
+      generate_invoice_number: {
+        Args: Record<string, never>
+        Returns: string
+      }
     }
     Enums: Record<string, never>
   }
