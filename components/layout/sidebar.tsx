@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Profile } from '@/types'
-import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle, X } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle, X, ClipboardList } from 'lucide-react'
 
 type NavItem = {
   title: string
@@ -28,6 +28,7 @@ const navItems: NavItem[] = [
   { title: 'Resep', href: '/dashboard/recipes', icon: <BookOpen size={18} />, roles: ['owner'] },
   { title: 'Produksi', href: '/dashboard/production', icon: <Factory size={18} />, roles: ['owner', 'baker'] },
   { title: 'Penjualan', href: '/dashboard/sales', icon: <Receipt size={18} />, roles: ['owner', 'cashier'] },
+  { title: 'Pesanan Online', href: '/dashboard/orders', icon: <ClipboardList size={18} />, roles: ['owner'] },
   { title: 'Laporan', href: '/dashboard/reports', icon: <BarChart3 size={18} />, roles: ['owner'] },
   { title: 'Pengeluaran', href: '/dashboard/expenses', icon: <Briefcase size={18} />, roles: ['owner'] },
   { title: 'Pengaturan', href: '/dashboard/settings', icon: <Settings size={18} />, roles: ['owner', 'cashier', 'baker'],
@@ -38,7 +39,7 @@ const navItems: NavItem[] = [
     ]},
 ]
 
-export interface SidebarProps {
+interface SidebarProps {
   user: Profile
   lowStockCount?: number
   open?: boolean
@@ -137,23 +138,6 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
   )
 }
 
-export function Sidebar({ user, lowStockCount = 0, open = false, onClose }: SidebarProps) {
-  return (
-    <>
-      {/* Desktop: always visible */}
-      <div className="hidden lg:flex">
-        <SidebarContent user={user} lowStockCount={lowStockCount} />
-      </div>
-
-      {/* Mobile: drawer overlay */}
-      {open && (
-        <div className="lg:hidden fixed inset-0 z-50 flex">
-          <div className="fixed inset-0 bg-black/50" onClick={onClose} />
-          <div className="relative z-10 flex">
-            <SidebarContent user={user} lowStockCount={lowStockCount} onClose={onClose} />
-          </div>
-        </div>
-      )}
-    </>
-  )
+export function Sidebar({ user, lowStockCount = 0, onClose }: SidebarProps) {
+  return <SidebarContent user={user} lowStockCount={lowStockCount} onClose={onClose} />
 }

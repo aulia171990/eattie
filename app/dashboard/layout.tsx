@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { Sidebar } from '@/components/layout/sidebar'
-import { Header } from '@/components/layout/header'
+import { DashboardShell } from '@/components/layout/dashboard-shell'
 import type { Profile } from '@/types'
 
 export default async function DashboardLayout({
@@ -35,15 +34,8 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar: desktop only via CSS, mobile via Header toggle */}
-      <Sidebar user={typedProfile} lowStockCount={lowStockCount} />
-      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
-        <Header user={typedProfile} />
-        <main className="flex-1 overflow-y-auto">
-          {children}
-        </main>
-      </div>
-    </div>
+    <DashboardShell user={typedProfile} lowStockCount={lowStockCount}>
+      {children}
+    </DashboardShell>
   )
 }

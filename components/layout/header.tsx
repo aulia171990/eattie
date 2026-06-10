@@ -8,11 +8,10 @@ import { Bell, Globe, LogOut, User, ChevronDown, Menu } from 'lucide-react'
 
 interface HeaderProps {
   user: Profile
-  pageTitle?: string
-  onMenuClick?: () => void
+  onMenuToggle?: () => void
 }
 
-export function Header({ user, pageTitle, onMenuClick }: HeaderProps) {
+export function Header({ user, onMenuToggle }: HeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [lang, setLang] = useState<'id' | 'en'>('id')
 
@@ -21,22 +20,15 @@ export function Header({ user, pageTitle, onMenuClick }: HeaderProps) {
       className="h-14 border-b bg-white flex items-center justify-between px-4 lg:px-6 shrink-0"
       style={{ borderColor: 'hsl(36, 20%, 88%)' }}
     >
-      {/* Left: hamburger (mobile only) + page title */}
+      {/* Left: hamburger (mobile only) */}
       <div className="flex items-center gap-3">
         <button
-          onClick={onMenuClick}
+          onClick={onMenuToggle}
           className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
           aria-label="Buka menu"
         >
           <Menu size={22} style={{ color: 'hsl(25, 30%, 30%)' }} />
         </button>
-
-        {pageTitle && (
-          <h1 className="text-sm font-semibold hidden sm:block"
-            style={{ color: 'hsl(25, 30%, 20%)' }}>
-            {pageTitle}
-          </h1>
-        )}
       </div>
 
       {/* Right: lang + notif + user */}
