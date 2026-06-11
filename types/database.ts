@@ -452,6 +452,9 @@ export type Database = {
           min_stock: number
           image_url: string | null
           is_active: boolean
+          is_available_online: boolean
+          online_description: string | null
+          online_sort_order: number
           created_at: string
           updated_at: string
         }
@@ -467,6 +470,9 @@ export type Database = {
           min_stock?: number
           image_url?: string | null
           is_active?: boolean
+          is_available_online?: boolean
+          online_description?: string | null
+          online_sort_order?: number
           created_at?: string
           updated_at?: string
         }
@@ -481,6 +487,9 @@ export type Database = {
           min_stock?: number
           image_url?: string | null
           is_active?: boolean
+          is_available_online?: boolean
+          online_description?: string | null
+          online_sort_order?: number
           updated_at?: string
         }
         Relationships: []
@@ -779,6 +788,126 @@ export type Database = {
           },
         ]
       }
+      orders: {
+        Row: {
+          id: string
+          order_number: string
+          customer_name: string
+          customer_phone: string
+          customer_email: string | null
+          customer_address: string | null
+          order_type: 'pickup' | 'delivery'
+          pickup_date: string | null
+          pickup_time: string | null
+          delivery_address: string | null
+          notes: string | null
+          subtotal: number
+          discount_amount: number
+          total_amount: number
+          status: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
+          payment_status: 'unpaid' | 'paid' | 'refunded'
+          payment_proof_url: string | null
+          payment_confirmed_at: string | null
+          payment_confirmed_by: string | null
+          sale_id: string | null
+          source: string | null
+          created_at: string
+          updated_at: string
+          confirmed_at: string | null
+          confirmed_by: string | null
+        }
+        Insert: {
+          id?: string
+          order_number: string
+          customer_name: string
+          customer_phone: string
+          customer_email?: string | null
+          customer_address?: string | null
+          order_type?: 'pickup' | 'delivery'
+          pickup_date?: string | null
+          pickup_time?: string | null
+          delivery_address?: string | null
+          notes?: string | null
+          subtotal?: number
+          discount_amount?: number
+          total_amount?: number
+          status?: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
+          payment_status?: 'unpaid' | 'paid' | 'refunded'
+          payment_proof_url?: string | null
+          payment_confirmed_at?: string | null
+          payment_confirmed_by?: string | null
+          sale_id?: string | null
+          source?: string | null
+          created_at?: string
+          updated_at?: string
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+        }
+        Update: {
+          status?: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
+          payment_status?: 'unpaid' | 'paid' | 'refunded'
+          payment_proof_url?: string | null
+          payment_confirmed_at?: string | null
+          payment_confirmed_by?: string | null
+          sale_id?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          updated_at?: string
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'orders_confirmed_by_fkey'
+            columns: ['confirmed_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
+      order_items: {
+        Row: {
+          id: string
+          order_id: string
+          product_id: string
+          product_name: string
+          quantity: number
+          unit_price: number
+          subtotal: number
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          order_id: string
+          product_id: string
+          product_name: string
+          quantity: number
+          unit_price: number
+          subtotal: number
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          quantity?: number
+          unit_price?: number
+          subtotal?: number
+          notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'order_items_order_id_fkey'
+            columns: ['order_id']
+            referencedRelation: 'orders'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'order_items_product_id_fkey'
+            columns: ['product_id']
+            referencedRelation: 'products'
+            referencedColumns: ['id']
+          }
+        ]
+      }
       expenses: {
         Row: {
           id: string
@@ -856,6 +985,14 @@ export type Database = {
       get_recipe_id_for_product: {
         Args: { p_product_id: string }
         Returns: string
+      }
+      generate_order_number: {
+        Args: Record<string, never>
+        Returns: string
+      }
+      confirm_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
       }
     }
     Enums: Record<string, never>

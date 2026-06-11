@@ -49,6 +49,9 @@ export default async function SaleDetailPage({
       min_stock: 0,
       image_url: null,
       is_active: true,
+      is_available_online: false,
+      online_description: null,
+      online_sort_order: 0,
       created_at: item.created_at,
       updated_at: item.created_at,
     },
@@ -184,4 +187,3 @@ export default async function SaleDetailPage({
     </div>
   )
 }
-
