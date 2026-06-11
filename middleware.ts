@@ -37,6 +37,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/login') ||
     pathname.startsWith('/sign-up') ||
     pathname.startsWith('/auth') ||
+    pathname.startsWith('/store') ||
     pathname === '/'
 
   // Not logged in → redirect to login
