@@ -796,7 +796,7 @@ export type Database = {
           customer_phone: string
           customer_email: string | null
           customer_address: string | null
-          order_type: 'pickup' | 'delivery'
+          order_type: 'PICKUP' | 'DELIVERY' | 'CUSTOM_CAKE' | 'PREORDER' | string
           pickup_date: string | null
           pickup_time: string | null
           delivery_address: string | null
@@ -804,8 +804,8 @@ export type Database = {
           subtotal: number
           discount_amount: number
           total_amount: number
-          status: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
-          payment_status: 'unpaid' | 'paid' | 'refunded'
+          status: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled' | string
+          payment_status: string
           payment_proof_url: string | null
           payment_confirmed_at: string | null
           payment_confirmed_by: string | null
@@ -823,7 +823,7 @@ export type Database = {
           customer_phone: string
           customer_email?: string | null
           customer_address?: string | null
-          order_type?: 'pickup' | 'delivery'
+          order_type?: string
           pickup_date?: string | null
           pickup_time?: string | null
           delivery_address?: string | null
@@ -832,7 +832,7 @@ export type Database = {
           discount_amount?: number
           total_amount?: number
           status?: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
-          payment_status?: 'unpaid' | 'paid' | 'refunded'
+          payment_status?: string
           payment_proof_url?: string | null
           payment_confirmed_at?: string | null
           payment_confirmed_by?: string | null
@@ -845,7 +845,7 @@ export type Database = {
         }
         Update: {
           status?: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
-          payment_status?: 'unpaid' | 'paid' | 'refunded'
+          payment_status?: string
           payment_proof_url?: string | null
           payment_confirmed_at?: string | null
           payment_confirmed_by?: string | null

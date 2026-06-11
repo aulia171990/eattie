@@ -27,7 +27,7 @@ export interface CheckoutInput {
   customer_name: string
   customer_phone: string
   customer_email?: string
-  order_type: 'pickup' | 'delivery'
+  order_type: 'pickup' | 'delivery' | 'PICKUP' | 'DELIVERY'
   pickup_date?: string
   pickup_time?: string
   delivery_address?: string
@@ -102,7 +102,7 @@ export async function submitOrder(
       customer_name:    input.customer_name,
       customer_phone:   input.customer_phone,
       customer_email:   input.customer_email ?? null,
-      order_type:       input.order_type,
+      order_type:       input.order_type.toUpperCase() as 'PICKUP' | 'DELIVERY',
       pickup_date:      input.pickup_date ?? null,
       pickup_time:      input.pickup_time ?? null,
       delivery_address: input.delivery_address ?? null,
@@ -111,7 +111,7 @@ export async function submitOrder(
       discount_amount:  0,
       total_amount:     input.total_amount,
       status:           'pending',
-      payment_status:   input.payment_proof_url ? 'unpaid' : 'unpaid',
+      payment_status:   'UNPAID',
       payment_proof_url: input.payment_proof_url ?? null,
       source:           'portal',
     })

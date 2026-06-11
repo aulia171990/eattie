@@ -13,6 +13,13 @@ const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }
   delivered:     { label: 'Dikirim',      bg: 'hsl(210,60%,90%)',   color: 'hsl(210,60%,30%)' },
   completed:     { label: 'Selesai',      bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
   cancelled:     { label: 'Dibatalkan',   bg: 'hsl(0,80%,95%)',     color: 'hsl(0,70%,40%)' },
+  PENDING:       { label: 'Menunggu',     bg: 'hsl(36,80%,90%)',    color: 'hsl(32,95%,35%)' },
+  CONFIRMED:     { label: 'Dikonfirmasi', bg: 'hsl(210,70%,93%)',   color: 'hsl(210,70%,35%)' },
+  IN_PRODUCTION: { label: 'Produksi',     bg: 'hsl(270,50%,93%)',   color: 'hsl(270,50%,35%)' },
+  READY:         { label: 'Siap Ambil',   bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
+  DELIVERED:     { label: 'Dikirim',      bg: 'hsl(210,60%,90%)',   color: 'hsl(210,60%,30%)' },
+  COMPLETED:     { label: 'Selesai',      bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
+  CANCELLED:     { label: 'Dibatalkan',   bg: 'hsl(0,80%,95%)',     color: 'hsl(0,70%,40%)' },
 }
 
 export default async function OrderDetailPage({
@@ -59,7 +66,7 @@ export default async function OrderDetailPage({
             { label: 'Nama',     value: order.customer_name },
             { label: 'HP / WA', value: order.customer_phone },
             { label: 'Tipe',    value: order.order_type === 'pickup' ? '🏪 Ambil di Toko' : '🛵 Dikirim' },
-            { label: 'Pembayaran', value: order.payment_status === 'paid' ? '✓ Lunas' : 'Belum Lunas' },
+            { label: 'Pembayaran', value: order.payment_status === 'PAID' || order.payment_status === 'paid' ? '✓ Lunas' : 'Belum Lunas' },
             ...(order.pickup_date ? [{ label: 'Tanggal Ambil', value: formatDate(order.pickup_date) }] : []),
             ...(order.pickup_time ? [{ label: 'Jam Ambil', value: order.pickup_time }] : []),
             ...(order.delivery_address ? [{ label: 'Alamat Kirim', value: order.delivery_address }] : []),
@@ -133,7 +140,7 @@ export default async function OrderDetailPage({
       )}
 
       {/* Action buttons */}
-      {order.status !== 'cancelled' && order.status !== 'completed' && (
+      {order.status !== 'cancelled' && order.status !== 'completed' && order.status !== 'CANCELLED' && order.status !== 'COMPLETED' && (
         <OrderActionButtons
           order={order}
           confirmAction={boundConfirm}
