@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/types'
 
-export type OrderStatus = 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
+export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'IN_PRODUCTION' | 'READY' | 'DELIVERED' | 'COMPLETED' | 'CANCELLED' | string
 
 export interface OrderWithItems {
   id: string
@@ -22,7 +22,7 @@ export interface OrderWithItems {
   discount_amount: number
   total_amount: number
   status: OrderStatus
-  payment_status: 'unpaid' | 'paid' | 'refunded'
+  payment_status: 'UNPAID' | 'PAID' | 'REFUNDED' | string
   payment_proof_url: string | null
   payment_confirmed_at: string | null
   sale_id: string | null
@@ -51,12 +51,12 @@ export async function getOrders(filters?: {
 
   let query = supabase
     .from('orders')
-    .select('*,order_items(*)')
+    .select('*,order_items!order_items_order_id_fkey(*)')
     .order('created_at', { ascending: false })
     .limit(100)
 
   if (filters?.status && filters.status !== 'all') {
-    query = query.eq('status', filters.status as 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled')
+    query = query.eq('status', filters.status as string)
   }
   if (filters?.dateFrom) query = query.gte('created_at', `${filters.dateFrom}T00:00:00`)
   if (filters?.dateTo)   query = query.lte('created_at', `${filters.dateTo}T23:59:59`)
@@ -75,7 +75,7 @@ export async function getOrder(id: string): Promise<OrderWithItems> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('orders')
-    .select('*,order_items(*)')
+    .select('*,order_items!order_items_order_id_fkey(*)')
     .eq('id', id)
     .single()
   if (error) throw new Error(error.message)
@@ -86,7 +86,7 @@ export async function getOrderByNumber(orderNumber: string): Promise<OrderWithIt
   const supabase = await createClient()
   const { data } = await supabase
     .from('orders')
-    .select('*,order_items(*)')
+    .select('*,order_items!order_items_order_id_fkey(*)')
     .eq('order_number', orderNumber)
     .maybeSingle()
   return data as unknown as OrderWithItems | null
@@ -141,7 +141,7 @@ export async function cancelOrder(
   const supabase = await createClient()
   const { error } = await supabase
     .from('orders')
-    .update({ status: 'cancelled', updated_at: new Date().toISOString() })
+    .update({ status: 'CANCELLED', updated_at: new Date().toISOString() })
     .eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/dashboard/orders')
