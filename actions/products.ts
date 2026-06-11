@@ -42,6 +42,8 @@ export async function createProduct(
     cost_price: parseFloat(raw.cost_price as string) || 0,
     image_url: (raw.image_url as string) || null,
     is_active: raw.is_active !== 'false',
+    is_available_online: raw.is_available_online === 'on' || raw.is_available_online === 'true',
+    online_description: (raw.online_description as string) || null,
   }
 
   if (!payload.name) return { error: 'Nama produk wajib diisi' }
@@ -61,6 +63,19 @@ export async function updateProduct(
   const supabase = await createClient()
   const raw = Object.fromEntries(formData.entries())
 
+  // Fetch existing values to preserve image_url and is_active if not sent by form
+  const { data: existing } = await supabase
+    .from('products')
+    .select('image_url, is_active')
+    .eq('id', id)
+    .single()
+
+  // is_active: form sends hidden value="false" always, plus checkbox value="true" if checked
+  // When checked: formData has both "false" and "true" -> last value wins -> "true"
+  // When unchecked: formData only has "false"
+  // Object.fromEntries picks LAST value for duplicate keys
+  const isActive = raw.is_active === 'true'
+
   const payload: TablesUpdate<'products'> = {
     name: raw.name as string,
     name_en: (raw.name_en as string) || null,
@@ -68,8 +83,11 @@ export async function updateProduct(
     category: (raw.category as string) || null,
     selling_price: parseFloat(raw.selling_price as string) || 0,
     cost_price: parseFloat(raw.cost_price as string) || 0,
-    image_url: (raw.image_url as string) || null,
-    is_active: raw.is_active !== 'false',
+    // Keep existing image if form doesn't provide a new one
+    image_url: (raw.image_url as string) || existing?.image_url || null,
+    is_active: isActive,
+    is_available_online: raw.is_available_online === 'on' || raw.is_available_online === 'true',
+    online_description: (raw.online_description as string) || null,
     updated_at: new Date().toISOString(),
   }
 
