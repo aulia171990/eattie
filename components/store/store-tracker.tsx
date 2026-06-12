@@ -6,12 +6,12 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { Search, Package, CheckCircle, Clock, Truck, Store } from 'lucide-react'
 
 const STATUS_STEPS = [
-  { key: 'pending',       label: 'Menunggu Konfirmasi', icon: Clock },
-  { key: 'confirmed',     label: 'Dikonfirmasi',        icon: CheckCircle },
-  { key: 'in_production', label: 'Sedang Dibuat',       icon: Package },
-  { key: 'ready',         label: 'Siap Diambil',        icon: Store },
-  { key: 'delivered',     label: 'Dikirim',             icon: Truck },
-  { key: 'completed',     label: 'Selesai',             icon: CheckCircle },
+  { key: 'NEW',              label: 'Pesanan Diterima',   icon: Clock },
+  { key: 'PAID',             label: 'Pembayaran Verified',icon: CheckCircle },
+  { key: 'IN_PRODUCTION',    label: 'Sedang Dibuat',      icon: Package },
+  { key: 'READY_FOR_PICKUP', label: 'Siap Diambil',       icon: Store },
+  { key: 'DELIVERED',        label: 'Dikirim',            icon: Truck },
+  { key: 'COMPLETED',        label: 'Selesai',            icon: CheckCircle },
 ]
 
 interface StoreTrackerProps {

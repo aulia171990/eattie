@@ -1,4 +1,4 @@
-import { StoreCheckout } from '@/components/store/store-checkout'
+import StoreCheckout from '@/components/store/store-checkout'
 import { Suspense } from 'react'
 
 export default function CheckoutPage() {

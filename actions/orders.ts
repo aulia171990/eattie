@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/types'
 
-export type OrderStatus = 'PENDING' | 'CONFIRMED' | 'IN_PRODUCTION' | 'READY' | 'DELIVERED' | 'COMPLETED' | 'CANCELLED' | string
+export type OrderStatus = 'NEW' | 'PAID' | 'IN_PRODUCTION' | 'READY_FOR_PICKUP' | 'DELIVERED' | 'COMPLETED' | 'CANCELLED'
 
 export interface OrderWithItems {
   id: string
@@ -13,7 +13,7 @@ export interface OrderWithItems {
   customer_phone: string
   customer_email: string | null
   customer_address: string | null
-  order_type: 'pickup' | 'delivery'
+  order_type: string
   pickup_date: string | null
   pickup_time: string | null
   delivery_address: string | null
@@ -141,7 +141,7 @@ export async function cancelOrder(
   const supabase = await createClient()
   const { error } = await supabase
     .from('orders')
-    .update({ status: 'CANCELLED', updated_at: new Date().toISOString() })
+    .update({ status: 'CANCELLED' as OrderStatus, updated_at: new Date().toISOString() })
     .eq('id', id)
   if (error) return { error: error.message }
   revalidatePath('/dashboard/orders')

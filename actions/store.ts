@@ -110,7 +110,7 @@ export async function submitOrder(
       subtotal:         input.subtotal,
       discount_amount:  0,
       total_amount:     input.total_amount,
-      status:           'pending',
+      status:           'NEW',
       payment_status:   'UNPAID',
       payment_proof_url: input.payment_proof_url ?? null,
       source:           'portal',

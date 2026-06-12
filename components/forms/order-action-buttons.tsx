@@ -12,10 +12,10 @@ interface OrderActionButtonsProps {
 }
 
 const NEXT_STATUS: Record<string, { value: string; label: string; color: string }> = {
-  pending:       { value: 'confirmed',     label: 'Konfirmasi Order',     color: 'hsl(210,70%,45%)' },
-  confirmed:     { value: 'in_production', label: 'Mulai Produksi',       color: 'hsl(270,50%,45%)' },
-  in_production: { value: 'ready',         label: 'Tandai Siap Diambil',  color: 'hsl(142,60%,40%)' },
-  ready:         { value: 'completed',     label: 'Selesai / Terambil',   color: 'hsl(142,60%,35%)' },
+  NEW:             { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(270,50%,45%)' },
+  PAID:            { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(270,50%,45%)' },
+  IN_PRODUCTION:   { value: 'READY_FOR_PICKUP',label: 'Tandai Siap Diambil', color: 'hsl(142,60%,40%)' },
+  READY_FOR_PICKUP:{ value: 'COMPLETED',       label: 'Selesai / Terambil',  color: 'hsl(142,60%,35%)' },
 }
 
 export function OrderActionButtons({
@@ -42,7 +42,7 @@ export function OrderActionButtons({
 
       <div className="flex flex-col gap-2">
         {/* Confirm payment + convert to sale */}
-        {order.payment_status !== 'paid' && order.status !== 'cancelled' && (
+        {!['PAID','paid'].includes(order.payment_status) && !['CANCELLED','cancelled'].includes(order.status) && (
           <form action={confirmDispatch}>
             <button
               type="submit"
