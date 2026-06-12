@@ -49,6 +49,11 @@ export function OrderActionButtons({
               disabled={anyPending}
               className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60"
               style={{ background: 'hsl(142, 60%, 40%)' }}
+              onClick={e => {
+                if (!confirm('Konfirmasi pembayaran order ini?\nOrder akan masuk ke Penjualan dan tidak bisa dibatalkan.')) {
+                  e.preventDefault()
+                }
+              }}
             >
               {confirmPending ? 'Memproses...' : '✓ Konfirmasi Pembayaran & Buat Sale'}
             </button>
@@ -64,6 +69,11 @@ export function OrderActionButtons({
               disabled={anyPending}
               className="w-full py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-60"
               style={{ background: next.color }}
+              onClick={e => {
+                if (!confirm(`${next.label}?\nStatus order akan diubah.`)) {
+                  e.preventDefault()
+                }
+              }}
             >
               {updatePending ? 'Menyimpan...' : next.label}
             </button>
@@ -78,7 +88,7 @@ export function OrderActionButtons({
             className="w-full py-2.5 rounded-xl text-sm font-medium border disabled:opacity-60"
             style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(0, 70%, 45%)' }}
             onClick={e => {
-              if (!confirm('Batalkan pesanan ini?')) e.preventDefault()
+              if (!confirm('Batalkan pesanan ini?\nTindakan ini tidak dapat dibatalkan.')) e.preventDefault()
             }}
           >
             Batalkan Order
