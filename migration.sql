@@ -1,0 +1,899 @@
+-- TABLES --
+CREATE TABLE IF NOT EXISTS public.custom_cakes (
+    id uuid PRIMARY KEY NOT NULL,
+    size character varying NOT NULL,
+    shape character varying NOT NULL,
+    flavor character varying NOT NULL,
+    filling character varying NOT NULL,
+    frosting character varying NOT NULL,
+    fondant_color character varying,
+    message character varying,
+    special_request text,
+    reference_image_url text,
+    price numeric,
+    created_at timestamp with time zone
+);
+
+CREATE TABLE IF NOT EXISTS public.customer_order_items (
+    id uuid PRIMARY KEY NOT NULL,
+    customer_order_id uuid NOT NULL,
+    product_id uuid NOT NULL,
+    quantity integer NOT NULL,
+    unit_price numeric NOT NULL,
+    subtotal numeric NOT NULL,
+    created_at timestamp with time zone NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.customer_orders (
+    id uuid PRIMARY KEY NOT NULL,
+    order_number text NOT NULL,
+    customer_name text NOT NULL,
+    customer_phone text,
+    table_number text,
+    notes text,
+    status text NOT NULL,
+    total_amount numeric NOT NULL,
+    created_at timestamp with time zone NOT NULL,
+    updated_at timestamp with time zone NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public.customers (
+    id uuid PRIMARY KEY NOT NULL,
+    user_id uuid,
+    customer_code character varying NOT NULL,
+    name character varying NOT NULL,
+    phone character varying NOT NULL,
+    email character varying,
+    birth_date date,
+    gender character varying,
+    address text,
+    notes text,
+    tier USER-DEFINED,
+    points integer,
+    is_active boolean,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
+);
+
+CREATE TABLE IF NOT EXISTS public.daily_profitability (
+    sale_date date,
+    total_transactions bigint,
+    revenue numeric,
+    total_discount numeric,
+    cogs numeric,
+    gross_profit numeric,
+    gross_margin_pct numeric
+);
+
+CREATE TABLE IF NOT EXISTS public.daily_sales_summary (
+    sale_date date,
+    total_transactions bigint,
+    total_revenue numeric,
+    total_discounts numeric
+);
+
+CREATE TABLE IF NOT EXISTS public.dashboard_owner_stats (
+    today_revenue numeric,
+    today_cogs numeric,
+    today_gross_profit numeric,
+    today_transactions bigint,
+    month_revenue numeric,
+    month_gross_profit numeric
+);
+
+CREATE TABLE IF NOT EXISTS public.expenses (
+    id uuid PRIMARY KEY NOT NULL,
+    category text NOT NULL,
+    description text NOT NULL,
+    amount numeric NOT NULL,
+    expense_date date NOT NULL,
+    receipt_url text,
+    created_by uuid,
+    created_at timestamp with time zone
+);
+
+CREATE TABLE IF NOT EXISTS public.ingredient_categories (
+    id uuid PRIMARY KEY NOT NULL,
+    name text NOT NULL,
+    name_en text,
+    description text,
+    created_at timestamp with time zone
+);
+
+CREATE TABLE IF NOT EXISTS public.ingredients (
+    id uuid PRIMARY KEY NOT NULL,
+    code text,
+    name text NOT NULL,
+    name_en text,
+    category_id uuid,
+    base_unit text NOT NULL,
+    purchase_unit text,
+    conversion_rate numeric,
+    current_stock numeric,
+    min_stock numeric,
+    max_stock numeric,
+    reorder_point numeric,
+    price_per_unit numeric,
+    last_purchase_price numeric,
+    average_price numeric,
+    shelf_life_days integer,
+    storage_location text,
+    preferred_supplier_id uuid,
+    is_active boolean,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    average_cost numeric
+);
+
+CREATE TABLE IF NOT EXISTS public.inventory_movements (
+    id uuid PRIMARY KEY NOT NULL,
+    item_type text NOT NULL,
+    item_id uuid NOT NULL,
+    movement_type text NOT NULL
+);
+
+-- FUNCTIONS --
+CREATE OR REPLACE FUNCTION public.get_user_role()
+ RETURNS text
+ LANGUAGE sql
+ STABLE SECURITY DEFINER
+AS $function$
+  SELECT role FROM profiles WHERE id = auth.uid();
+$function$
+
+
+CREATE OR REPLACE FUNCTION public.generate_order_number()
+ RETURNS text
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_today TEXT;
+    v_last  TEXT;
+      v_seq   INTEGER;
+      BEGIN
+        v_today := TO_CHAR(NOW() AT TIME ZONE 'Asia/Jakarta', 'YYYYMMDD');
+
+          SELECT order_number INTO v_last
+            FROM orders
+              WHERE order_number LIKE 'ORD-' || v_today || '%'
+                ORDER BY order_number DESC
+                  LIMIT 1;
+
+                    IF v_last IS NULL THEN
+                        v_seq := 1;
+                          ELSE
+                              v_seq := CAST(SPLIT_PART(v_last, '-', 3) AS INTEGER) + 1;
+                                END IF;
+
+                                  RETURN 'ORD-' || v_today || '-' || LPAD(v_seq::TEXT, 3, '0');
+                                  END;
+                                  $function$
+
+
+CREATE OR REPLACE FUNCTION public.generate_invoice_number()
+ RETURNS text
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_today TEXT;
+    v_last  TEXT;
+      v_seq   INTEGER;
+      BEGIN
+        v_today := TO_CHAR(NOW() AT TIME ZONE 'Asia/Jakarta', 'YYYYMMDD');
+          
+            SELECT invoice_number INTO v_last
+              FROM sales
+                WHERE invoice_number LIKE 'INV-' || v_today || '%'
+                  ORDER BY invoice_number DESC
+                    LIMIT 1;
+                      
+                        IF v_last IS NULL THEN
+                            v_seq := 1;
+                              ELSE
+                                  v_seq := CAST(SPLIT_PART(v_last, '-', 3) AS INTEGER) + 1;
+                                    END IF;
+                                      
+                                        RETURN 'INV-' || v_today || '-' || LPAD(v_seq::TEXT, 3, '0');
+                                        END;
+                                        $function$
+
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, role)
+  VALUES (
+    new.id,
+    COALESCE(new.raw_user_meta_data->>'full_name', 'User'),
+    COALESCE(new.raw_user_meta_data->>'role', 'cashier')
+  )
+  ON CONFLICT (id) DO NOTHING;
+  RETURN new;
+END;
+$function$
+
+
+CREATE OR REPLACE FUNCTION public.get_recipe_id_for_product(p_product_id uuid)
+ RETURNS uuid
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_recipe_id UUID;
+  BEGIN
+    SELECT id INTO v_recipe_id
+      FROM recipes
+        WHERE product_id = p_product_id
+          LIMIT 1;
+            
+              RETURN v_recipe_id;
+              END;
+              $function$
+
+
+CREATE OR REPLACE FUNCTION public.process_purchase(p_purchase_id uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_purchase      RECORD;
+  v_item          RECORD;
+  v_ing           RECORD;
+  v_stock_before  NUMERIC;
+  v_stock_after   NUMERIC;
+  v_new_avg_cost  NUMERIC;
+  v_processed     INTEGER := 0;
+BEGIN
+  -- Lock purchase row
+  SELECT * INTO v_purchase
+  FROM stock_purchases
+  WHERE id = p_purchase_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Purchase % not found', p_purchase_id;
+  END IF;
+
+  IF v_purchase.status = 'received' THEN
+    RAISE EXCEPTION 'Purchase % already received', p_purchase_id;
+  END IF;
+
+  IF v_purchase.status = 'cancelled' THEN
+    RAISE EXCEPTION 'Purchase % is cancelled', p_purchase_id;
+  END IF;
+
+  -- Process each item
+  FOR v_item IN
+    SELECT * FROM stock_purchase_items WHERE purchase_id = p_purchase_id
+  LOOP
+    CONTINUE WHEN v_item.quantity_received <= 0;
+
+    -- Lock ingredient
+    SELECT * INTO v_ing
+    FROM ingredients
+    WHERE id = v_item.ingredient_id
+    FOR UPDATE;
+
+    IF NOT FOUND THEN CONTINUE; END IF;
+
+    v_stock_before := v_ing.current_stock;
+    v_stock_after  := v_stock_before + v_item.quantity_received;
+
+    -- Weighted average cost
+    IF v_stock_before + v_item.quantity_received > 0 THEN
+      v_new_avg_cost := (
+        (v_stock_before * COALESCE(v_ing.average_cost, v_ing.price_per_unit, 0))
+        + (v_item.quantity_received * v_item.unit_price)
+      ) / (v_stock_before + v_item.quantity_received);
+    ELSE
+      v_new_avg_cost := v_item.unit_price;
+    END IF;
+
+    -- Update ingredient stock + average cost
+    UPDATE ingredients SET
+      current_stock       = v_stock_after,
+      average_cost        = v_new_avg_cost,
+      last_purchase_price = v_item.unit_price,
+      price_per_unit      = v_item.unit_price,
+      updated_at          = now()
+    WHERE id = v_item.ingredient_id;
+
+    -- Insert into unified inventory_movements
+    INSERT INTO inventory_movements (
+      item_type, item_id, movement_type, quantity, unit,
+      stock_before, stock_after, unit_cost, total_cost,
+      reference_type, reference_id,
+      batch_code, expiry_date, created_by
+    ) VALUES (
+      'ingredient', v_item.ingredient_id, 'purchase_in',
+      v_item.quantity_received, v_item.unit,
+      v_stock_before, v_stock_after,
+      v_item.unit_price, v_item.quantity_received * v_item.unit_price,
+      'purchase', p_purchase_id,
+      v_item.batch_code, v_item.expiry_date,
+      v_purchase.created_by
+    );
+
+    -- Also insert into legacy stock_movements for backward compat
+    INSERT INTO stock_movements (
+      ingredient_id, movement_type, quantity, unit,
+      stock_before, stock_after,
+      reference_type, reference_id,
+      batch_code, expiry_date, created_by
+    ) VALUES (
+      v_item.ingredient_id, 'purchase_in',
+      v_item.quantity_received, v_item.unit,
+      v_stock_before, v_stock_after,
+      'purchase', p_purchase_id,
+      v_item.batch_code, v_item.expiry_date,
+      v_purchase.created_by
+    );
+
+    v_processed := v_processed + 1;
+  END LOOP;
+
+  -- Mark purchase received
+  UPDATE stock_purchases SET
+    status        = 'received',
+    received_date = CURRENT_DATE,
+    updated_at    = now()
+  WHERE id = p_purchase_id;
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'items_processed', v_processed,
+    'purchase_id', p_purchase_id
+  );
+
+EXCEPTION WHEN OTHERS THEN
+  RAISE; -- triggers automatic rollback
+END;
+$function$
+
+
+CREATE OR REPLACE FUNCTION public.complete_production_batch(p_batch_id uuid, p_quantity_produced numeric, p_quantity_defect numeric DEFAULT 0)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_batch         RECORD;
+  v_recipe        RECORD;
+  v_ri            RECORD;
+  v_ing           RECORD;
+  v_needed        NUMERIC;
+  v_stock_before  NUMERIC;
+  v_stock_after   NUMERIC;
+  v_scale_factor  NUMERIC;
+  v_total_cost    NUMERIC := 0;
+  v_cost_per_unit NUMERIC := 0;
+  v_prod_before   NUMERIC;
+  v_prod_after    NUMERIC;
+  v_errors        TEXT[]  := '{}';
+BEGIN
+  -- Validate inputs
+  IF p_quantity_produced < 0 THEN
+    RAISE EXCEPTION 'quantity_produced cannot be negative';
+  END IF;
+  IF p_quantity_defect < 0 THEN
+    RAISE EXCEPTION 'quantity_defect cannot be negative';
+  END IF;
+
+  -- Lock batch
+  SELECT * INTO v_batch
+  FROM production_batches
+  WHERE id = p_batch_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Production batch % not found', p_batch_id;
+  END IF;
+
+  IF v_batch.status = 'completed' THEN
+    RAISE EXCEPTION 'Batch % already completed', p_batch_id;
+  END IF;
+
+  IF v_batch.status = 'cancelled' THEN
+    RAISE EXCEPTION 'Batch % is cancelled', p_batch_id;
+  END IF;
+
+  IF v_batch.stock_consumed THEN
+    RAISE EXCEPTION 'Batch % stock already consumed', p_batch_id;
+  END IF;
+
+  -- Get recipe
+  SELECT * INTO v_recipe
+  FROM recipes
+  WHERE id = v_batch.recipe_id;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'No recipe found for batch %', p_batch_id;
+  END IF;
+
+  -- Scale factor: how many recipe batches we're producing
+  v_scale_factor := p_quantity_produced::NUMERIC / NULLIF(v_recipe.yield_quantity, 0);
+
+  -- ---- VALIDATION PASS: check all ingredients have enough stock ----
+  FOR v_ri IN
+    SELECT ri.*, i.name AS ing_name, i.current_stock, i.base_unit
+    FROM recipe_ingredients ri
+    JOIN ingredients i ON i.id = ri.ingredient_id
+    WHERE ri.recipe_id = v_recipe.id
+  LOOP
+    v_needed := v_ri.quantity * v_scale_factor;
+    IF v_ri.current_stock < v_needed THEN
+      v_errors := array_append(v_errors,
+        format('Stok %s tidak cukup: butuh %.3f %s, tersisa %.3f %s',
+          v_ri.ing_name, v_needed, v_ri.unit, v_ri.current_stock, v_ri.base_unit));
+    END IF;
+  END LOOP;
+
+  IF array_length(v_errors, 1) > 0 THEN
+    RAISE EXCEPTION 'Stok tidak mencukupi: %', array_to_string(v_errors, '; ');
+  END IF;
+
+  -- ---- CONSUME PASS: deduct ingredients ----
+  FOR v_ri IN
+    SELECT ri.*, i.current_stock, i.average_cost, i.price_per_unit
+    FROM recipe_ingredients ri
+    JOIN ingredients i ON i.id = ri.ingredient_id
+    WHERE ri.recipe_id = v_recipe.id
+    FOR UPDATE OF i  -- lock ingredient rows
+  LOOP
+    v_needed       := v_ri.quantity * v_scale_factor;
+    v_stock_before := v_ri.current_stock;
+    v_stock_after  := v_stock_before - v_needed;
+
+    -- Update ingredient stock
+    UPDATE ingredients SET
+      current_stock = v_stock_after,
+      updated_at    = now()
+    WHERE id = v_ri.ingredient_id;
+
+    -- Record ingredient movement (unified)
+    INSERT INTO inventory_movements (
+      item_type, item_id, movement_type, quantity, unit,
+      stock_before, stock_after,
+      unit_cost, total_cost,
+      reference_type, reference_id
+    ) VALUES (
+      'ingredient', v_ri.ingredient_id, 'production_out',
+      v_needed, v_ri.unit,
+      v_stock_before, v_stock_after,
+      COALESCE(v_ri.average_cost, v_ri.price_per_unit, 0),
+      v_needed * COALESCE(v_ri.average_cost, v_ri.price_per_unit, 0),
+      'production', p_batch_id
+    );
+
+    -- Legacy stock_movements
+    INSERT INTO stock_movements (
+      ingredient_id, movement_type, quantity, unit,
+      stock_before, stock_after,
+      reference_type, reference_id
+    ) VALUES (
+      v_ri.ingredient_id, 'production_out',
+      v_needed, v_ri.unit,
+      v_stock_before, v_stock_after,
+      'production', p_batch_id
+    );
+
+    -- Accumulate cost
+    v_total_cost := v_total_cost + (v_needed * COALESCE(v_ri.average_cost, v_ri.price_per_unit, 0));
+  END LOOP;
+
+  -- ---- ADD FINISHED GOODS to product stock ----
+  v_cost_per_unit := CASE WHEN p_quantity_produced > 0
+    THEN v_total_cost / p_quantity_produced
+    ELSE 0
+  END;
+
+  SELECT current_stock INTO v_prod_before
+  FROM products WHERE id = v_batch.product_id
+  FOR UPDATE;
+
+  v_prod_after := COALESCE(v_prod_before, 0) + p_quantity_produced;
+
+  UPDATE products SET
+    current_stock = v_prod_after,
+    cost_price    = v_cost_per_unit,  -- update latest cost
+    updated_at    = now()
+  WHERE id = v_batch.product_id;
+
+  -- Record product movement
+  INSERT INTO inventory_movements (
+    item_type, item_id, movement_type, quantity, unit,
+    stock_before, stock_after,
+    unit_cost, total_cost,
+    reference_type, reference_id
+  ) VALUES (
+    'product', v_batch.product_id, 'production_in',
+    p_quantity_produced, 'pcs',
+    COALESCE(v_prod_before, 0), v_prod_after,
+    v_cost_per_unit, v_total_cost,
+    'production', p_batch_id
+  );
+
+  -- ---- UPDATE BATCH ----
+  UPDATE production_batches SET
+    status            = 'completed',
+    quantity_produced = p_quantity_produced,
+    quantity_defect   = p_quantity_defect,
+    cost_per_unit     = v_cost_per_unit,
+    total_cost        = v_total_cost,
+    stock_consumed    = true,
+    completed_at      = now(),
+    updated_at        = now()
+  WHERE id = p_batch_id;
+
+  -- Also insert into product_inventory for batch tracking
+  INSERT INTO product_inventory (product_id, batch_id, quantity)
+  VALUES (v_batch.product_id, p_batch_id, p_quantity_produced);
+
+  RETURN jsonb_build_object(
+    'success',          true,
+    'batch_id',         p_batch_id,
+    'quantity_produced',p_quantity_produced,
+    'quantity_defect',  p_quantity_defect,
+    'total_cost',       v_total_cost,
+    'cost_per_unit',    v_cost_per_unit
+  );
+
+EXCEPTION WHEN OTHERS THEN
+  RAISE;
+END;
+$function$
+
+
+CREATE OR REPLACE FUNCTION public.process_sale(p_sale_id uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_sale          RECORD;
+  v_item          RECORD;
+  v_product       RECORD;
+  v_stock_before  NUMERIC;
+  v_stock_after   NUMERIC;
+  v_total_cogs    NUMERIC := 0;
+  v_errors        TEXT[]  := '{}';
+BEGIN
+  -- Lock sale
+  SELECT * INTO v_sale
+  FROM sales
+  WHERE id = p_sale_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Sale % not found', p_sale_id;
+  END IF;
+
+  IF v_sale.stock_deducted THEN
+    RAISE EXCEPTION 'Sale % already processed (anti double-submit)', p_sale_id;
+  END IF;
+
+  IF v_sale.status = 'cancelled' THEN
+    RAISE EXCEPTION 'Sale % is cancelled', p_sale_id;
+  END IF;
+
+  -- ---- VALIDATION PASS ----
+  FOR v_item IN
+    SELECT si.*, p.name AS prod_name, p.current_stock, p.cost_price
+    FROM sale_items si
+    JOIN products p ON p.id = si.product_id
+    WHERE si.sale_id = p_sale_id
+  LOOP
+    IF v_item.current_stock < v_item.quantity THEN
+      v_errors := array_append(v_errors,
+        format('Stok %s tidak cukup: butuh %s, tersisa %.0f',
+          v_item.prod_name, v_item.quantity, v_item.current_stock));
+    END IF;
+  END LOOP;
+
+  IF array_length(v_errors, 1) > 0 THEN
+    RAISE EXCEPTION 'Stok tidak mencukupi: %', array_to_string(v_errors, '; ');
+  END IF;
+
+  -- ---- DEDUCT PRODUCT STOCK ----
+  FOR v_item IN
+    SELECT si.*, p.current_stock, p.cost_price
+    FROM sale_items si
+    JOIN products p ON p.id = si.product_id
+    WHERE si.sale_id = p_sale_id
+    FOR UPDATE OF p
+  LOOP
+    v_stock_before := v_item.current_stock;
+    v_stock_after  := v_stock_before - v_item.quantity;
+
+    UPDATE products SET
+      current_stock = v_stock_after,
+      updated_at    = now()
+    WHERE id = v_item.product_id;
+
+    -- Record product movement
+    INSERT INTO inventory_movements (
+      item_type, item_id, movement_type, quantity, unit,
+      stock_before, stock_after,
+      unit_cost, total_cost,
+      reference_type, reference_id
+    ) VALUES (
+      'product', v_item.product_id, 'sale_out',
+      v_item.quantity, 'pcs',
+      v_stock_before, v_stock_after,
+      COALESCE(v_item.cost_price, 0),
+      v_item.quantity * COALESCE(v_item.cost_price, 0),
+      'sale', p_sale_id
+    );
+
+    v_total_cogs := v_total_cogs + (v_item.quantity * COALESCE(v_item.cost_price, 0));
+  END LOOP;
+
+  -- ---- UPDATE SALE with COGS + GROSS PROFIT ----
+  UPDATE sales SET
+    cogs           = v_total_cogs,
+    gross_profit   = total - v_total_cogs,
+    stock_deducted = true,
+    status         = 'completed'
+  WHERE id = p_sale_id;
+
+  RETURN jsonb_build_object(
+    'success',      true,
+    'sale_id',      p_sale_id,
+    'total_cogs',   v_total_cogs,
+    'gross_profit', v_sale.total - v_total_cogs
+  );
+
+EXCEPTION WHEN OTHERS THEN
+  RAISE;
+END;
+$function$
+
+
+CREATE OR REPLACE FUNCTION public.process_stock_opname(p_opname_id uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_opname    RECORD;
+  v_item      RECORD;
+  v_diff      NUMERIC;
+  v_movtype   TEXT;
+  v_adjusted  INTEGER := 0;
+BEGIN
+  SELECT * INTO v_opname
+  FROM stock_opnames
+  WHERE id = p_opname_id
+  FOR UPDATE;
+
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'Opname % not found', p_opname_id;
+  END IF;
+
+  IF v_opname.status = 'completed' THEN
+    RAISE EXCEPTION 'Opname % already completed', p_opname_id;
+  END IF;
+
+  FOR v_item IN
+    SELECT soi.*, i.current_stock AS live_stock
+    FROM stock_opname_items soi
+    JOIN ingredients i ON i.id = soi.ingredient_id
+    WHERE soi.opname_id = p_opname_id
+      AND soi.actual_stock IS NOT NULL
+    FOR UPDATE OF i
+  LOOP
+    v_diff := v_item.actual_stock - v_item.system_stock;
+
+    -- Update opname item diff
+    UPDATE stock_opname_items SET
+      difference = v_diff
+    WHERE id = v_item.id;
+
+    IF v_diff = 0 THEN CONTINUE; END IF;
+
+    v_movtype := CASE WHEN v_diff > 0 THEN 'adjustment_in' ELSE 'adjustment_out' END;
+
+    -- Update ingredient stock
+    UPDATE ingredients SET
+      current_stock = v_item.actual_stock,
+      updated_at    = now()
+    WHERE id = v_item.ingredient_id;
+
+    -- Unified movement
+    INSERT INTO inventory_movements (
+      item_type, item_id, movement_type, quantity, unit,
+      stock_before, stock_after,
+      reference_type, reference_id, reason
+    ) VALUES (
+      'ingredient', v_item.ingredient_id, 'opname_adjustment',
+      ABS(v_diff), v_item.unit,
+      v_item.system_stock, v_item.actual_stock,
+      'opname', p_opname_id,
+      COALESCE(v_item.reason, 'Stock opname adjustment')
+    );
+
+    -- Legacy
+    INSERT INTO stock_movements (
+      ingredient_id, movement_type, quantity, unit,
+      stock_before, stock_after,
+      reference_type, reference_id, reason
+    ) VALUES (
+      v_item.ingredient_id, v_movtype::TEXT,
+      ABS(v_diff), v_item.unit,
+      v_item.system_stock, v_item.actual_stock,
+      'opname', p_opname_id,
+      COALESCE(v_item.reason, 'Stock opname adjustment')
+    );
+
+    v_adjusted := v_adjusted + 1;
+  END LOOP;
+
+  UPDATE stock_opnames SET
+    status       = 'completed',
+    completed_at = now()
+  WHERE id = p_opname_id;
+
+  RETURN jsonb_build_object(
+    'success',          true,
+    'opname_id',        p_opname_id,
+    'items_adjusted',   v_adjusted
+  );
+
+EXCEPTION WHEN OTHERS THEN
+  RAISE;
+END;
+$function$
+
+
+CREATE OR REPLACE FUNCTION public.confirm_order(p_order_id uuid, p_user_id uuid)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+AS $function$
+DECLARE
+  v_order      RECORD;
+    v_item       RECORD;
+      v_sale_id    UUID;
+        v_inv_num    TEXT;
+        BEGIN
+          -- Lock order
+            SELECT * INTO v_order FROM orders WHERE id = p_order_id FOR UPDATE;
+              IF NOT FOUND THEN RAISE EXCEPTION 'Order not found'; END IF;
+                IF v_order.sale_id IS NOT NULL THEN
+                    RAISE EXCEPTION 'Order already converted to sale';
+                      END IF;
+
+                        -- Generate invoice number
+                          v_inv_num := generate_invoice_number();
+
+                            -- Create sale
+                              INSERT INTO sales (
+                                  invoice_number, subtotal, discount_amount, discount_percent,
+                                      tax_amount, total, payment_method, payment_amount, change_amount,
+                                          customer_name, notes, status, cashier_id, stock_deducted
+                                            ) VALUES (
+                                                v_inv_num,
+                                                    COALESCE(v_order.subtotal, 0),
+                                                        COALESCE(v_order.discount, 0),
+                                                            0, 0,
+                                                                COALESCE(v_order.total_amount, v_order.total, 0),
+                                                                    'transfer',
+                                                                        COALESCE(v_order.total_amount, v_order.total, 0),
+                                                                            0,
+                                                                                v_order.customer_name,
+                                                                                    v_order.notes,
+                                                                                        'completed',
+                                                                                            p_user_id,
+                                                                                                false
+                                                                                                  ) RETURNING id INTO v_sale_id;
+
+                                                                                                    -- Create sale items
+                                                                                                      FOR v_item IN SELECT * FROM order_items WHERE order_id = p_order_id LOOP
+                                                                                                          INSERT INTO sale_items (sale_id, product_id, product_name, quantity, unit_price, subtotal)
+                                                                                                              VALUES (
+                                                                                                                    v_sale_id,
+                                                                                                                          v_item.product_id,
+                                                                                                                                COALESCE(v_item.product_name, 'Produk'),
+                                                                                                                                      v_item.quantity,
+                                                                                                                                            COALESCE(v_item.unit_price, v_item.price, 0),
+                                                                                                                                                  COALESCE(v_item.subtotal, v_item.total, 0)
+                                                                                                                                                      );
+                                                                                                                                                        END LOOP;
+
+                                                                                                                                                          -- Update order
+                                                                                                                                                            UPDATE orders SET
+                                                                                                                                                                status = 'COMPLETED',
+                                                                                                                                                                    sale_id = v_sale_id,
+                                                                                                                                                                        confirmed_at = now(),
+                                                                                                                                                                            confirmed_by = p_user_id,
+                                                                                                                                                                                payment_status = 'PAID',
+                                                                                                                                                                                    payment_confirmed_at = now(),
+                                                                                                                                                                                        payment_confirmed_by = p_user_id,
+                                                                                                                                                                                            updated_at = now()
+                                                                                                                                                                                              WHERE id = p_order_id;
+
+                                                                                                                                                                                                RETURN jsonb_build_object(
+                                                                                                                                                                                                    'success', true,
+                                                                                                                                                                                                        'sale_id', v_sale_id,
+                                                                                                                                                                                                            'invoice_number', v_inv_num
+                                                                                                                                                                                                              );
+                                                                                                                                                                                                              EXCEPTION WHEN OTHERS THEN
+                                                                                                                                                                                                                RAISE;
+                                                                                                                                                                                                                END;
+                                                                                                                                                                                                                $function$
+
+
+-- ROW LEVEL SECURITY & POLICIES --
+ALTER TABLE public.production_batches ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ingredients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.product_inventory ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.customer_orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.customer_order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.ingredient_categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.suppliers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_purchases ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_purchase_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_movements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_opnames ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_opname_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.recipes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.recipe_ingredients ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sales ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sale_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.expenses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.inventory_movements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "production_insert" ON public.production_batches FOR INSERT TO authenticated WITH CHECK ((get_user_role() = ANY (ARRAY['owner'::text, 'baker'::text])));
+CREATE POLICY "ingredients_update" ON public.ingredients FOR UPDATE TO authenticated USING ((get_user_role() = ANY (ARRAY['owner'::text, 'baker'::text])));
+CREATE POLICY "products_update" ON public.products FOR UPDATE TO authenticated USING ((get_user_role() = ANY (ARRAY['owner'::text, 'baker'::text, 'cashier'::text])));
+CREATE POLICY "product_inventory_insert" ON public.product_inventory FOR INSERT TO authenticated WITH CHECK ((get_user_role() = ANY (ARRAY['owner'::text, 'baker'::text])));
+CREATE POLICY "order_items_all" ON public.order_items FOR ALL TO anon,authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Anyone can place order" ON public.customer_orders FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Staff can view orders" ON public.customer_orders FOR SELECT TO authenticated USING (true);
+CREATE POLICY "Staff can update order status" ON public.customer_orders FOR UPDATE TO authenticated USING (true);
+CREATE POLICY "Anyone can insert order items" ON public.customer_order_items FOR INSERT TO public WITH CHECK (true);
+CREATE POLICY "Staff can view order items" ON public.customer_order_items FOR SELECT TO authenticated USING (true);
+CREATE POLICY "profiles_select" ON public.profiles FOR SELECT TO authenticated USING (true);
+CREATE POLICY "profiles_update" ON public.profiles FOR UPDATE TO authenticated USING ((id = auth.uid()));
+CREATE POLICY "ingredients_select" ON public.ingredients FOR SELECT TO authenticated USING (true);
+CREATE POLICY "ingredients_write" ON public.ingredients FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "categories_select" ON public.ingredient_categories FOR SELECT TO authenticated USING (true);
+CREATE POLICY "categories_write" ON public.ingredient_categories FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "suppliers_select" ON public.suppliers FOR SELECT TO authenticated USING ((get_user_role() = 'owner'::text));
+CREATE POLICY "suppliers_write" ON public.suppliers FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "stock_purchases_all" ON public.stock_purchases FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "stock_items_all" ON public.stock_purchase_items FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "stock_movements_all" ON public.stock_movements FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "stock_opnames_all" ON public.stock_opnames FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "stock_opname_items_all" ON public.stock_opname_items FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "products_select" ON public.products FOR SELECT TO authenticated USING (true);
+CREATE POLICY "products_write" ON public.products FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "recipes_select" ON public.recipes FOR SELECT TO authenticated USING ((get_user_role() = 'owner'::text));
+CREATE POLICY "recipes_write" ON public.recipes FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "recipe_ingredients_select" ON public.recipe_ingredients FOR SELECT TO authenticated USING ((get_user_role() = 'owner'::text));
+CREATE POLICY "recipe_ingredients_write" ON public.recipe_ingredients FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "production_select" ON public.production_batches FOR SELECT TO authenticated USING (true);
+CREATE POLICY "production_update" ON public.production_batches FOR UPDATE TO authenticated USING ((get_user_role() = ANY (ARRAY['owner'::text, 'baker'::text])));
+CREATE POLICY "product_inventory_all" ON public.product_inventory FOR ALL TO authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "sales_select_owner" ON public.sales FOR SELECT TO authenticated USING (((get_user_role() = 'owner'::text) OR (cashier_id = auth.uid())));
+CREATE POLICY "sales_insert" ON public.sales FOR INSERT TO authenticated WITH CHECK ((get_user_role() = ANY (ARRAY['owner'::text, 'cashier'::text])));
+CREATE POLICY "orders_anon_insert" ON public.orders FOR INSERT TO anon WITH CHECK (true);
+CREATE POLICY "sale_items_select" ON public.sale_items FOR SELECT TO authenticated USING (true);
+CREATE POLICY "sale_items_insert" ON public.sale_items FOR INSERT TO authenticated WITH CHECK ((get_user_role() = ANY (ARRAY['owner'::text, 'cashier'::text])));
+CREATE POLICY "expenses_all" ON public.expenses FOR ALL TO authenticated USING ((get_user_role() = 'owner'::text)) WITH CHECK ((get_user_role() = 'owner'::text));
+CREATE POLICY "orders_anon_select" ON public.orders FOR SELECT TO anon USING (true);
+CREATE POLICY "orders_authenticated_insert" ON public.orders FOR INSERT TO authenticated WITH CHECK (true);
+CREATE POLICY "sales_update" ON public.sales FOR UPDATE TO authenticated USING (((get_user_role() = 'owner'::text) OR ((get_user_role() = 'cashier'::text) AND (cashier_id = auth.uid())))) WITH CHECK (((get_user_role() = 'owner'::text) OR ((get_user_role() = 'cashier'::text) AND (cashier_id = auth.uid()))));
+CREATE POLICY "inv_movements_insert" ON public.inventory_movements FOR INSERT TO authenticated WITH CHECK ((get_user_role() = ANY (ARRAY['owner'::text, 'baker'::text, 'cashier'::text])));
+CREATE POLICY "inv_movements_select" ON public.inventory_movements FOR SELECT TO authenticated USING (true);
+CREATE POLICY "orders_authenticated_select" ON public.orders FOR SELECT TO authenticated USING (true);
+CREATE POLICY "products_anon_select" ON public.products FOR SELECT TO anon USING (((is_available_online = true) AND (is_active = true)));
