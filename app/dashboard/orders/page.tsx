@@ -2,23 +2,16 @@ import { getOrders } from '@/actions/orders'
 import { PageHeader } from '@/components/shared/page-header'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import Link from 'next/link'
-import { ShoppingBag, Clock, CheckCircle, XCircle, Package } from 'lucide-react'
+import { ShoppingBag, Clock, CheckCircle, Package } from 'lucide-react'
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  pending:       { label: 'Menunggu',    bg: 'hsl(36,80%,90%)',    color: 'hsl(32,95%,35%)' },
-  confirmed:     { label: 'Dikonfirmasi',bg: 'hsl(210,70%,93%)',   color: 'hsl(210,70%,35%)' },
-  in_production: { label: 'Produksi',    bg: 'hsl(270,50%,93%)',   color: 'hsl(270,50%,35%)' },
-  ready:         { label: 'Siap Ambil',  bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
-  delivered:     { label: 'Dikirim',     bg: 'hsl(210,60%,90%)',   color: 'hsl(210,60%,30%)' },
-  completed:     { label: 'Selesai',     bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
-  cancelled:     { label: 'Dibatalkan',  bg: 'hsl(0,80%,95%)',     color: 'hsl(0,70%,40%)' },
-  PENDING:       { label: 'Menunggu',    bg: 'hsl(36,80%,90%)',    color: 'hsl(32,95%,35%)' },
-  CONFIRMED:     { label: 'Dikonfirmasi',bg: 'hsl(210,70%,93%)',   color: 'hsl(210,70%,35%)' },
-  IN_PRODUCTION: { label: 'Produksi',    bg: 'hsl(270,50%,93%)',   color: 'hsl(270,50%,35%)' },
-  READY:         { label: 'Siap Ambil',  bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
-  DELIVERED:     { label: 'Dikirim',     bg: 'hsl(210,60%,90%)',   color: 'hsl(210,60%,30%)' },
-  COMPLETED:     { label: 'Selesai',     bg: 'hsl(142,50%,90%)',   color: 'hsl(142,60%,28%)' },
-  CANCELLED:     { label: 'Dibatalkan',  bg: 'hsl(0,80%,95%)',     color: 'hsl(0,70%,40%)' },
+  NEW:             { label: 'Menunggu',    bg: 'hsl(36,80%,90%)',  color: 'hsl(32,95%,35%)' },
+  PAID:            { label: 'Sudah Bayar', bg: 'hsl(210,70%,93%)', color: 'hsl(210,70%,35%)' },
+  IN_PRODUCTION:   { label: 'Produksi',   bg: 'hsl(270,50%,93%)', color: 'hsl(270,50%,35%)' },
+  READY_FOR_PICKUP:{ label: 'Siap Ambil', bg: 'hsl(142,50%,90%)', color: 'hsl(142,60%,28%)' },
+  DELIVERED:       { label: 'Dikirim',    bg: 'hsl(210,60%,90%)', color: 'hsl(210,60%,30%)' },
+  COMPLETED:       { label: 'Selesai',    bg: 'hsl(142,50%,90%)', color: 'hsl(142,60%,28%)' },
+  CANCELLED:       { label: 'Dibatalkan', bg: 'hsl(0,80%,95%)',   color: 'hsl(0,70%,40%)' },
 }
 
 export default async function OrdersPage({
@@ -29,9 +22,9 @@ export default async function OrdersPage({
   const sp = await searchParams
   const orders = await getOrders({ status: sp.status, search: sp.search })
 
-  const pending   = orders.filter(o => o.status === 'pending').length
-  const confirmed = orders.filter(o => o.status === 'confirmed').length
-  const ready     = orders.filter(o => o.status === 'ready').length
+  const pending   = orders.filter(o => o.status === 'NEW').length
+  const confirmed = orders.filter(o => o.status === 'PAID').length
+  const ready     = orders.filter(o => o.status === 'READY_FOR_PICKUP').length
 
   return (
     <div className="p-4 lg:p-6 space-y-5">
@@ -43,12 +36,9 @@ export default async function OrdersPage({
           { label: 'Pesanan Online' },
         ]}
         action={
-          <Link
-            href="/store"
-            target="_blank"
+          <Link href="/store" target="_blank"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-gray-50"
-            style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 35%)' }}
-          >
+            style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 35%)' }}>
             <ShoppingBag size={14} />
             Buka Portal
           </Link>
@@ -59,7 +49,7 @@ export default async function OrdersPage({
       <div className="grid grid-cols-3 gap-3">
         {[
           { label: 'Menunggu',     value: pending,   icon: <Clock size={16} />,        bg: 'hsl(36,80%,90%)',  ic: 'hsl(32,95%,40%)' },
-          { label: 'Dikonfirmasi', value: confirmed, icon: <CheckCircle size={16} />,  bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)' },
+          { label: 'Sudah Bayar',  value: confirmed, icon: <CheckCircle size={16} />,  bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)' },
           { label: 'Siap Ambil',   value: ready,     icon: <Package size={16} />,      bg: 'hsl(142,50%,90%)', ic: 'hsl(142,60%,35%)' },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-xl border p-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
@@ -76,12 +66,12 @@ export default async function OrdersPage({
       {/* Filter tabs */}
       <div className="flex gap-2 overflow-x-auto pb-1">
         {[
-          { key: undefined, label: 'Semua' },
-          { key: 'pending', label: 'Menunggu' },
-          { key: 'confirmed', label: 'Dikonfirmasi' },
-          { key: 'in_production', label: 'Produksi' },
-          { key: 'ready', label: 'Siap Ambil' },
-          { key: 'completed', label: 'Selesai' },
+          { key: undefined,          label: 'Semua' },
+          { key: 'NEW',              label: 'Menunggu' },
+          { key: 'PAID',             label: 'Sudah Bayar' },
+          { key: 'IN_PRODUCTION',    label: 'Produksi' },
+          { key: 'READY_FOR_PICKUP', label: 'Siap Ambil' },
+          { key: 'COMPLETED',        label: 'Selesai' },
         ].map(({ key, label }) => (
           <Link
             key={label}
@@ -109,7 +99,7 @@ export default async function OrdersPage({
       ) : (
         <div className="space-y-2">
           {orders.map(order => {
-            const cfg = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.pending
+            const cfg = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.NEW
             return (
               <Link
                 key={order.id}
@@ -123,13 +113,11 @@ export default async function OrdersPage({
                       <p className="text-sm font-bold font-mono" style={{ color: 'hsl(32, 95%, 40%)' }}>
                         {order.order_number}
                       </p>
-                      <span
-                        className="px-2 py-0.5 rounded-full text-xs font-semibold"
-                        style={{ background: cfg.bg, color: cfg.color }}
-                      >
+                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold"
+                        style={{ background: cfg.bg, color: cfg.color }}>
                         {cfg.label}
                       </span>
-                      {order.payment_status === 'paid' && (
+                      {['PAID','paid'].includes(order.payment_status) && (
                         <span className="px-2 py-0.5 rounded-full text-xs font-semibold"
                           style={{ background: 'hsl(142, 50%, 90%)', color: 'hsl(142, 60%, 28%)' }}>
                           ✓ Lunas
@@ -141,7 +129,7 @@ export default async function OrdersPage({
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>
                       {order.customer_phone} · {order.order_items.length} produk ·{' '}
-                      {order.order_type === 'pickup' ? '🏪 Ambil' : '🛵 Kirim'}
+                      {order.order_type === 'PICKUP' || order.order_type === 'pickup' ? '🏪 Ambil' : '🛵 Kirim'}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
