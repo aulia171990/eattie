@@ -12,7 +12,7 @@ const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? ''
 
 type Step = 'cart' | 'form' | 'payment' | 'success'
 
-export function StoreCheckout() {
+export default function StoreCheckout() {
   const { items, total, clearCart, itemCount } = useStoreCart()
   const [step, setStep] = useState<Step>('cart')
   const [loading, setLoading] = useState(false)

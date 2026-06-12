@@ -831,7 +831,7 @@ export type Database = {
           subtotal?: number
           discount_amount?: number
           total_amount?: number
-          status?: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
+          status?: string
           payment_status?: string
           payment_proof_url?: string | null
           payment_confirmed_at?: string | null
@@ -844,7 +844,7 @@ export type Database = {
           confirmed_by?: string | null
         }
         Update: {
-          status?: 'pending' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'completed' | 'cancelled'
+          status?: string
           payment_status?: string
           payment_proof_url?: string | null
           payment_confirmed_at?: string | null
