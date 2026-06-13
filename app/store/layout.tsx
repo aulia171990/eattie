@@ -3,20 +3,24 @@ import { StoreNav } from '@/components/store/store-nav'
 import { CartProvider } from '@/contexts/store-cart-context'
 
 export const metadata: Metadata = {
-  title: 'Eattie Bakery — Toko Online',
-  description: 'Pesan roti dan kue segar langsung dari toko kami.',
+  title: 'Eattie — Premium Artisanal Cakes & Pastries',
+  description: 'Pesan kue & pastry premium buatan tangan. Diantar ke seluruh Townsite.',
 }
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
+      {/* Load Playfair Display for serif headings */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet"
+      />
       <div className="min-h-screen" style={{ background: 'hsl(36, 33%, 97%)' }}>
         <StoreNav />
-        <main className="max-w-5xl mx-auto px-4 pb-24">
+        <main>
           {children}
         </main>
-        {/* Spacer for mobile bottom bar */}
-        <div className="h-20 lg:h-0" />
+        <div className="h-24 lg:h-0" />
       </div>
     </CartProvider>
   )
