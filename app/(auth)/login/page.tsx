@@ -111,12 +111,14 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* SIGNUP LINK DISABLED — uncomment to re-enable
           <p className="mt-6 text-center text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
             Belum punya akun?{' '}
             <Link href="/sign-up" className="font-medium hover:underline" style={{ color: 'hsl(32, 95%, 44%)' }}>
               Daftar Sekarang
             </Link>
           </p>
+          */}
         </div>
       </div>
     </div>
