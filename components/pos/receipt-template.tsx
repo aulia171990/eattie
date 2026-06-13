@@ -27,8 +27,8 @@ export const ReceiptTemplate = forwardRef<HTMLDivElement, ReceiptTemplateProps>(
       <div ref={ref} style={{
         fontFamily: 'monospace',
         fontSize: '12px',
-        width: '280px',
-        padding: '12px',
+        width: '72mm', 
+        padding: '4mm',
         color: '#000',
         background: '#fff',
       }}>
