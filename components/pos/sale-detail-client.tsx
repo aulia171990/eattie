@@ -34,7 +34,12 @@ export function SaleDetailClient({ saleId, saleStatus, sale }: SaleDetailClientP
     if (!win) return
     win.document.write(`
       <html><head><title>Struk ${sale.invoiceNumber}</title>
-      <style>body{font-family:monospace;font-size:12px;margin:12px}@media print{button{display:none}}</style>
+      <style>
+        @page { size: 80mm auto; margin: 0; }
+        * { box-sizing: border-box; }
+        body { font-family: monospace; font-size: 12px; margin: 0; padding: 8px; width: 80mm; }
+        @media print { button { display: none; } body { padding: 4px; } }
+      </style>
       </head><body>${content}<br/><button onclick="window.print()">Print</button></body></html>
     `)
     win.document.close()
