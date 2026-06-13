@@ -24,7 +24,12 @@ export async function login(
   redirect('/dashboard')
 }
 
-export async function signUp(
+export async function signUp() {
+  return {
+    error: 'Registrasi dinonaktifkan. Hubungi administrator.'
+  }
+}
+/*export async function signUp(
   _prev: { error: string } | null,
   formData: FormData
 ): Promise<{ error: string } | null> {
@@ -60,7 +65,7 @@ export async function signUp(
 
   revalidatePath('/', 'layout')
   redirect('/dashboard')
-}
+} */
 
 export async function logout(): Promise<void> {
   const supabase = await createClient()
