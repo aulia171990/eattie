@@ -366,15 +366,15 @@ export function StoreLanding({ bestsellers, allProducts }: StoreLandingProps) {
             </div>
             <div className="space-y-2">
               <p className="font-semibold uppercase tracking-wider text-white text-[10px]">Bantuan</p>
-              <span className="block">JABODETABEK delivery</span>
-              <span className="block">Sugar-free & Vegan</span>
+              <span className="block">Pangkalan Kerinci delivery</span>
+              <span className="block">Diet Size</span>
               <span className="block">Hampers & Korporat</span>
             </div>
           </div>
         </div>
         <div className="mt-10 border-t pt-6 text-center text-[10px]"
           style={{ borderColor: 'hsl(25, 20%, 18%)', color: 'hsl(36, 10%, 45%)' }}>
-          © {new Date().getFullYear()} Eattie — PT EXQUISE BOGA MULIA. Hak Cipta Dilindungi.
+          © {new Date().getFullYear()} Eattie — By ANA. Hak Cipta Dilindungi.
         </div>
       </footer>
 
