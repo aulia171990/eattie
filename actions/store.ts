@@ -1,6 +1,5 @@
 'use server'
 
-import { createClient as createAnonClient } from '@/lib/supabase/client'
 import { createClient } from '@/lib/supabase/server'
 
 export interface StoreProduct {
@@ -54,25 +53,35 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
 
 export async function getBestsellerProducts(limit = 6): Promise<StoreProduct[]> {
   const supabase = await createClient()
-  // Get top products by qty sold, filtered to online-available ones
-  const { data: topItems } = await supabase
-    .from('sale_items')
-    .select('product_id, quantity')
-    .order('quantity', { ascending: false })
-    .limit(50)
 
-  if (!topItems || topItems.length === 0) return getStoreProducts()
+  // Cutoff: 7 days ago
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
-  // Aggregate
+  // Fetch order_items joined to orders, filtered to last 7 days & non-cancelled
+  const { data: recentItems } = await supabase
+    .from('order_items')
+    .select('product_id, quantity, orders!order_items_order_id_fkey(created_at, status)')
+    .gte('orders.created_at', since)
+    .neq('orders.status', 'cancelled')
+    .limit(500)
+
+  // Aggregate total quantity per product_id
   const totals: Record<string, number> = {}
-  for (const item of topItems) {
+  for (const item of recentItems ?? []) {
     if (!item.product_id) continue
+    // Rows outside the date range will have orders = null after the .gte filter
+    const order = Array.isArray(item.orders) ? item.orders[0] : item.orders
+    if (!order) continue
     totals[item.product_id] = (totals[item.product_id] ?? 0) + item.quantity
   }
+
   const topIds = Object.entries(totals)
     .sort((a, b) => b[1] - a[1])
     .slice(0, limit * 2)
     .map(([id]) => id)
+
+  // Fallback: no sales in last 7 days — show active online products instead
+  if (topIds.length === 0) return getStoreProducts()
 
   const { data } = await supabase
     .from('products')
@@ -82,7 +91,11 @@ export async function getBestsellerProducts(limit = 6): Promise<StoreProduct[]> 
     .in('id', topIds)
     .limit(limit)
 
-  return (data ?? []) as StoreProduct[]
+  if (!data || data.length === 0) return getStoreProducts()
+
+  // Re-sort by sales rank (.in() doesn't preserve order)
+  const ranked = [...data].sort((a, b) => (totals[b.id] ?? 0) - (totals[a.id] ?? 0))
+  return ranked as StoreProduct[]
 }
 
 export async function submitOrder(
