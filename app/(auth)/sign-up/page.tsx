@@ -1,4 +1,13 @@
 'use client'
+// SIGNUP DISABLED — remove this redirect and restore the original export below to re-enable
+import { redirect } from 'next/navigation'
+export default function SignUpPage() {
+  redirect('/login')
+}
+
+
+/* ORIGINAL SIGNUP PAGE — uncomment to re-enable
+'use client'
 
 import { useActionState } from 'react'
 import { signUp } from '@/actions/auth'
@@ -75,3 +84,4 @@ export default function SignUpPage() {
     </div>
   )
 }
+*/
