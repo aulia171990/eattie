@@ -94,12 +94,12 @@ const FEATURES = [
   {
     icon: Cookie,
     title: 'Bahan Premium',
-    desc: 'Susu segar, cokelat premium, tanpa pengawet buatan.',
+    desc: 'Mentega Prancis, cokelat Belgia, tanpa pengawet buatan.',
   },
   {
     icon: Leaf,
-    title: 'Ada Varian Minimalis',
-    desc: 'Sekali "HAP", memang mantap',
+    title: 'Ada Varian Sehat',
+    desc: 'Sugar-free & vegan, aman untuk diet dan diabetes.',
   },
 ]
 
@@ -176,33 +176,48 @@ export function StoreLanding({ bestsellers, allProducts }: StoreLandingProps) {
             </div>
           </div>
 
-          {/* Right: decorative card */}
-          <div className="flex-1 w-full max-w-sm lg:max-w-none relative">
-            <div className="absolute -inset-3 rounded-3xl opacity-20 blur-2xl"
-              style={{ background: 'linear-gradient(135deg, hsl(36,70%,70%), hsl(32,90%,55%))' }} />
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]"
-              style={{ background: 'hsl(36, 30%, 88%)' }}>
-              <div className="w-full h-full flex items-center justify-center text-8xl select-none">
-                🎂
-              </div>
-              {/* Card overlay */}
-              <div className="absolute bottom-4 left-4 right-4 rounded-2xl p-3 shadow-lg"
-                style={{ background: 'rgba(255,255,255,0.97)' }}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-[9px] uppercase font-bold tracking-widest block mb-0.5"
-                      style={{ color: 'hsl(32, 90%, 44%)' }}>Best Seller</span>
-                    <p className="text-sm font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
-                      Signature Opera Cake
-                    </p>
-                  </div>
-                  <div className="flex text-xs gap-0.5" style={{ color: 'hsl(32, 90%, 50%)' }}>
-                    {[...Array(5)].map((_, i) => <Star key={i} size={11} fill="currentColor" />)}
+          {/* Right: hero card — shows #1 bestseller or first product */}
+          {(() => {
+            const hero = bestsellers[0] ?? allProducts[0]
+            if (!hero) return null
+            const emoji = categoryEmoji[hero.category ?? ''] ?? '🧁'
+            return (
+              <div className="flex-1 w-full max-w-sm lg:max-w-none relative">
+                <div className="absolute -inset-3 rounded-3xl opacity-20 blur-2xl"
+                  style={{ background: 'linear-gradient(135deg, hsl(36,70%,70%), hsl(32,90%,55%))' }} />
+                <div className="relative rounded-3xl overflow-hidden shadow-2xl aspect-[4/3]"
+                  style={{ background: 'hsl(36, 30%, 88%)' }}>
+                  {hero.image_url
+                    // eslint-disable-next-line @next/next/no-img-element
+                    ? <img src={hero.image_url} alt={hero.name} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full flex items-center justify-center text-8xl select-none">{emoji}</div>
+                  }
+                  {/* Overlay card */}
+                  <div className="absolute bottom-4 left-4 right-4 rounded-2xl p-3 shadow-lg"
+                    style={{ background: 'rgba(255,255,255,0.97)' }}>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <span className="text-[9px] uppercase font-bold tracking-widest block mb-0.5"
+                          style={{ color: 'hsl(32, 90%, 44%)' }}>
+                          {bestsellers[0] ? '🔥 Paling Laris' : '⭐ Produk Pilihan'}
+                        </span>
+                        <p className="text-sm font-bold truncate"
+                          style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+                          {hero.name}
+                        </p>
+                        <p className="text-xs font-semibold mt-0.5" style={{ color: 'hsl(32, 90%, 44%)' }}>
+                          {formatCurrency(hero.selling_price)}
+                        </p>
+                      </div>
+                      <div className="flex text-xs gap-0.5 shrink-0" style={{ color: 'hsl(32, 90%, 50%)' }}>
+                        {[...Array(5)].map((_, i) => <Star key={i} size={11} fill="currentColor" />)}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            )
+          })()}
         </div>
       </section>
 
@@ -351,15 +366,15 @@ export function StoreLanding({ bestsellers, allProducts }: StoreLandingProps) {
             </div>
             <div className="space-y-2">
               <p className="font-semibold uppercase tracking-wider text-white text-[10px]">Bantuan</p>
-              <span className="block">Pangkalan Kerinci delivery</span>
-              <span className="block">Varian diet</span>
+              <span className="block">JABODETABEK delivery</span>
+              <span className="block">Sugar-free & Vegan</span>
               <span className="block">Hampers & Korporat</span>
             </div>
           </div>
         </div>
         <div className="mt-10 border-t pt-6 text-center text-[10px]"
           style={{ borderColor: 'hsl(25, 20%, 18%)', color: 'hsl(36, 10%, 45%)' }}>
-          © {new Date().getFullYear()} Eattie — By ANA. Hak Cipta Dilindungi.
+          © {new Date().getFullYear()} Eattie — PT EXQUISE BOGA MULIA. Hak Cipta Dilindungi.
         </div>
       </footer>
 
