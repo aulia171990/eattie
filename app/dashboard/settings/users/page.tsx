@@ -3,8 +3,8 @@ import { redirect } from 'next/navigation'
 import { PageHeader } from '@/components/shared/page-header'
 import { ROLE_LABELS } from '@/lib/constants'
 import type { Profile } from '@/types'
-import { UserRoleForm } from '@/components/forms/user-role-form'
-import { updateUserRole } from '@/actions/users'
+import { UserRoleForm, ToggleActiveForm } from '@/components/forms/user-role-form'
+import { updateUserRole, toggleUserActive } from '@/actions/users'
 
 export default async function UsersPage() {
   const supabase = await createClient()
@@ -47,7 +47,7 @@ export default async function UsersPage() {
         <table className="w-full">
           <thead>
             <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
-              {['Nama', 'Role', 'Status', 'Ubah Role'].map((h) => (
+              {['Nama', 'Role', 'Status', 'Ubah Role', 'Aksi'].map((h) => (
                 <th key={h} className="text-left px-4 py-3 text-xs font-semibold"
                   style={{ color: 'hsl(25, 15%, 45%)' }}>
                   {h}
@@ -96,6 +96,17 @@ export default async function UsersPage() {
                     <span className="text-xs" style={{ color: 'hsl(25, 15%, 60%)' }}>
                       (Anda)
                     </span>
+                  )}
+                </td>
+                <td className="px-4 py-3">
+                  {u.id !== user.id ? (
+                    <ToggleActiveForm
+                      userId={u.id}
+                      isActive={u.is_active}
+                      action={toggleUserActive.bind(null, u.id)}
+                    />
+                  ) : (
+                    <span className="text-xs" style={{ color: 'hsl(25, 15%, 60%)' }}>—</span>
                   )}
                 </td>
               </tr>
