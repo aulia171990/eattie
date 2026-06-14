@@ -46,3 +46,40 @@ export async function updateUserRole(
   revalidatePath('/dashboard/settings/users')
   return { success: true }
 }
+
+export async function toggleUserActive(
+  targetUserId: string,
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Tidak terautentikasi' }
+
+  const { data: caller } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (caller?.role !== 'owner') {
+    return { error: 'Hanya owner yang dapat menonaktifkan pengguna' }
+  }
+
+  if (targetUserId === user.id) {
+    return { error: 'Tidak dapat menonaktifkan akun sendiri' }
+  }
+
+  const isActive = formData.get('is_active') === 'true'
+
+  const { error } = await supabase
+    .from('profiles')
+    .update({ is_active: isActive, updated_at: new Date().toISOString() })
+    .eq('id', targetUserId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard/settings/users')
+  return { success: true }
+}
