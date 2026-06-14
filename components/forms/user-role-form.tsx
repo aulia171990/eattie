@@ -52,3 +52,39 @@ export function UserRoleForm({ currentRole, action }: UserRoleFormProps) {
     </form>
   )
 }
+
+interface ToggleActiveFormProps {
+  userId: string
+  isActive: boolean
+  action: (prev: ActionState, fd: FormData) => Promise<ActionState>
+}
+
+export function ToggleActiveForm({ isActive, action }: ToggleActiveFormProps) {
+  const [state, formAction, isPending] = useActionState(action, null)
+
+  return (
+    <form action={formAction} className="flex items-center gap-2">
+      <input type="hidden" name="is_active" value={String(!isActive)} />
+      <button
+        type="submit"
+        disabled={isPending}
+        className="text-xs px-3 py-1.5 rounded-lg font-medium border disabled:opacity-60 transition-all"
+        style={isActive
+          ? { borderColor: 'hsl(0,70%,80%)', color: 'hsl(0,70%,45%)', background: 'white' }
+          : { borderColor: 'hsl(142,50%,70%)', color: 'hsl(142,60%,35%)', background: 'white' }
+        }
+        onClick={e => {
+          const msg = isActive
+            ? 'Nonaktifkan pengguna ini? Mereka tidak bisa login lagi.'
+            : 'Aktifkan kembali pengguna ini?'
+          if (!confirm(msg)) e.preventDefault()
+        }}
+      >
+        {isPending ? '...' : isActive ? 'Nonaktifkan' : 'Aktifkan'}
+      </button>
+      {state?.error && (
+        <span className="text-xs text-red-600">{state.error}</span>
+      )}
+    </form>
+  )
+}
