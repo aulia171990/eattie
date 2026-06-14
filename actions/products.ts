@@ -70,11 +70,12 @@ export async function updateProduct(
     .eq('id', id)
     .single()
 
-  // is_active: form sends hidden value="false" always, plus checkbox value="true" if checked
-  // When checked: formData has both "false" and "true" -> last value wins -> "true"
-  // When unchecked: formData only has "false"
-  // Object.fromEntries picks LAST value for duplicate keys
-  const isActive = raw.is_active === 'true'
+  // is_active: preserve existing value when the form doesn't send this field.
+  // The product form has no is_active checkbox, so raw.is_active is always undefined
+  // during image/detail updates — without this fix every save deactivates the product.
+  const isActive = raw.is_active !== undefined
+    ? raw.is_active === 'true'
+    : (existing?.is_active ?? true)
 
   const payload: TablesUpdate<'products'> = {
     name: raw.name as string,
