@@ -48,6 +48,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
+  // Check if user account is deactivated by owner
+  if (user && !isPublic) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_active')
+      .eq('id', user.id)
+      .single()
+
+    if (profile && profile.is_active === false) {
+      await supabase.auth.signOut()
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      url.searchParams.set('reason', 'deactivated')
+      return NextResponse.redirect(url)
+    }
+  }
+
   // Logged in → don't show login/signup pages
   if (user && (pathname === '/login' || pathname === '/sign-up')) {
     const url = request.nextUrl.clone()
