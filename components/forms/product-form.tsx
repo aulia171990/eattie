@@ -225,6 +225,30 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
         </div>
       </div>
 
+      {/* Status Produk */}
+      <div className="bg-white rounded-xl border p-6 space-y-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Status Produk</h2>
+        <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'hsl(36, 40%, 97%)' }}>
+          <div>
+            <p className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>Produk Aktif</p>
+            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Nonaktifkan untuk menyembunyikan produk dari POS dan toko online</p>
+          </div>
+          <input
+            type="hidden"
+            name="is_active"
+            value="false"
+          />
+          <input
+            type="checkbox"
+            name="is_active"
+            value="true"
+            defaultChecked={product?.is_active ?? true}
+            className="w-4 h-4"
+            style={{ accentColor: 'hsl(32, 95%, 44%)' }}
+          />
+        </div>
+      </div>
+
       <div className="flex gap-3">
         <button type="submit" disabled={isPending || uploading}
           className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
