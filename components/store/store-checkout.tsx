@@ -116,7 +116,7 @@ export default function StoreCheckout() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Total</span>
-            <span className="font-semibold text-sm">{formatCurrency(total)}</span>
+            <span className="font-semibold text-sm">{formatCurrency(orderTotal)}</span>
           </div>
         </div>
 
