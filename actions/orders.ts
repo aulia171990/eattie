@@ -148,3 +148,28 @@ export async function cancelOrder(
   revalidatePath(`/dashboard/orders/${id}`)
   return { success: true }
 }
+
+export async function markOrderAsPaid(
+  id: string,
+  _prev: ActionState,
+  _formData: FormData
+): Promise<ActionState> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Tidak terautentikasi' }
+
+  const { error } = await supabase
+    .from('orders')
+    .update({
+      payment_status: 'PAID',
+      payment_confirmed_at: new Date().toISOString(),
+      payment_confirmed_by: user.id,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard/orders')
+  revalidatePath(`/dashboard/orders/${id}`)
+  return { success: true }
+}
