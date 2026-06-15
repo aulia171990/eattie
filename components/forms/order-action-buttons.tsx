@@ -98,3 +98,37 @@ export function OrderActionButtons({
     </div>
   )
 }
+
+// ── Mark As Paid Button ──────────────────────────────────────────────
+// Shown for completed orders where payment hasn't been confirmed yet
+// (e.g. order was advanced through production without confirming payment first)
+interface MarkPaidButtonProps {
+  markPaidAction: (prev: ActionState, fd: FormData) => Promise<ActionState>
+}
+
+export function MarkPaidButton({ markPaidAction }: MarkPaidButtonProps) {
+  const [state, dispatch, isPending] = useActionState(markPaidAction, null)
+
+  return (
+    <div className="space-y-2">
+      <form action={dispatch}>
+        <button
+          type="submit"
+          disabled={isPending}
+          className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60"
+          style={{ background: 'hsl(142, 60%, 40%)' }}
+          onClick={e => {
+            if (!confirm('Tandai pesanan ini sebagai sudah dibayar (lunas)?')) {
+              e.preventDefault()
+            }
+          }}
+        >
+          {isPending ? 'Memproses...' : '✓ Tandai Sudah Dibayar / Lunas'}
+        </button>
+      </form>
+      {state?.error && (
+        <p className="text-xs text-red-600 text-center">{state.error}</p>
+      )}
+    </div>
+  )
+}
