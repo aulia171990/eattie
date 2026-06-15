@@ -5,7 +5,7 @@ import { useStoreCart } from '@/contexts/store-cart-context'
 import { submitOrder, uploadPaymentProof } from '@/actions/store'
 import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
-import { ArrowLeft, Upload, Check, ChevronRight, Loader, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Upload, Check, ChevronRight, Loader, ExternalLink, Plus, Minus, Trash2 } from 'lucide-react'
 
 const QRIS_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? ''
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? ''
@@ -13,12 +13,11 @@ const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? ''
 type Step = 'cart' | 'form' | 'payment' | 'success'
 
 export default function StoreCheckout() {
-  const { items, total, clearCart, itemCount } = useStoreCart()
+  const { items, total, clearCart, itemCount, updateQty, removeItem } = useStoreCart()
   const [step, setStep] = useState<Step>('cart')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [orderNumber, setOrderNumber] = useState('')
-  const [orderTotal, setOrderTotal] = useState(0)
   const [proofUrl, setProofUrl] = useState('')
   const [uploadingProof, setUploadingProof] = useState(false)
   const submittingRef = useRef(false)
@@ -82,7 +81,6 @@ export default function StoreCheckout() {
 
       if (result.error) { setError(result.error); return }
       setOrderNumber(result.orderNumber ?? '')
-      setOrderTotal(total)
       clearCart()
       setStep('success')
     } finally {
@@ -92,7 +90,7 @@ export default function StoreCheckout() {
   }
 
   const waMessage = encodeURIComponent(
-    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}\n\nMohon konfirmasinya. Terima kasih! 🍞`
+    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(total)}\n\nMohon konfirmasinya. Terima kasih! 🍞`
   )
   const waLink = STORE_PHONE ? `https://wa.me/${STORE_PHONE}?text=${waMessage}` : null
 
@@ -116,7 +114,7 @@ export default function StoreCheckout() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Total</span>
-            <span className="font-semibold text-sm">{formatCurrency(orderTotal)}</span>
+            <span className="font-semibold text-sm">{formatCurrency(total)}</span>
           </div>
         </div>
 
@@ -146,6 +144,23 @@ export default function StoreCheckout() {
 
   // ── CART REVIEW ──────────────────────────────────────────────────────────
   if (step === 'cart') {
+    if (items.length === 0) {
+      return (
+        <div className="pt-6 max-w-lg mx-auto space-y-4 text-center py-12">
+          <p className="text-4xl">🛒</p>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>Keranjang Kosong</h1>
+          <p className="text-sm" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            Belum ada produk di keranjang Anda.
+          </p>
+          <Link href="/store"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold text-white"
+            style={{ background: 'hsl(32, 95%, 44%)' }}>
+            Lihat Katalog
+          </Link>
+        </div>
+      )
+    }
+
     return (
       <div className="pt-6 max-w-lg mx-auto space-y-4">
         <div className="flex items-center gap-3">
@@ -159,12 +174,49 @@ export default function StoreCheckout() {
           {items.map((item, idx) => (
             <div key={item.product.id} className={`flex items-center gap-3 px-4 py-3 ${idx > 0 ? 'border-t' : ''}`}
               style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
-                style={{ background: 'hsl(36, 40%, 95%)' }}>🧁</div>
+              {/* Product image */}
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 overflow-hidden"
+                style={{ background: 'hsl(36, 40%, 95%)' }}>
+                {item.product.image_url ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={item.product.image_url} alt={item.product.name}
+                    className="w-full h-full object-cover" />
+                ) : '🧁'}
+              </div>
+
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate" style={{ color: 'hsl(25, 30%, 15%)' }}>{item.product.name}</p>
-                <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>{formatCurrency(item.product.selling_price)} × {item.quantity}</p>
+                <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>{formatCurrency(item.product.selling_price)}</p>
+
+                {/* Quantity controls */}
+                <div className="flex items-center gap-2 mt-1.5">
+                  <button
+                    onClick={() => updateQty(item.product.id, item.quantity - 1)}
+                    className="w-6 h-6 rounded-full flex items-center justify-center border"
+                    style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <span className="text-sm font-medium w-6 text-center" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => updateQty(item.product.id, item.quantity + 1)}
+                    className="w-6 h-6 rounded-full flex items-center justify-center"
+                    style={{ background: 'hsl(32, 95%, 44%)', color: 'white' }}
+                  >
+                    <Plus size={12} />
+                  </button>
+                  <button
+                    onClick={() => removeItem(item.product.id)}
+                    className="ml-1 p-1 rounded-lg"
+                    style={{ color: 'hsl(0, 60%, 55%)' }}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
+
               <p className="text-sm font-bold shrink-0" style={{ color: 'hsl(32, 95%, 40%)' }}>
                 {formatCurrency(item.product.selling_price * item.quantity)}
               </p>
