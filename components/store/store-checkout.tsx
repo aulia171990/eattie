@@ -18,6 +18,7 @@ export default function StoreCheckout() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [orderNumber, setOrderNumber] = useState('')
+  const [orderTotal, setOrderTotal] = useState(0)
   const [proofUrl, setProofUrl] = useState('')
   const [uploadingProof, setUploadingProof] = useState(false)
   const submittingRef = useRef(false)
@@ -81,6 +82,7 @@ export default function StoreCheckout() {
 
       if (result.error) { setError(result.error); return }
       setOrderNumber(result.orderNumber ?? '')
+      setOrderTotal(total)
       clearCart()
       setStep('success')
     } finally {
@@ -90,7 +92,7 @@ export default function StoreCheckout() {
   }
 
   const waMessage = encodeURIComponent(
-    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(total)}\n\nMohon konfirmasinya. Terima kasih! 🍞`
+    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}\n\nMohon konfirmasinya. Terima kasih! 🍞`
   )
   const waLink = STORE_PHONE ? `https://wa.me/${STORE_PHONE}?text=${waMessage}` : null
 
@@ -114,7 +116,7 @@ export default function StoreCheckout() {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Total</span>
-            <span className="font-semibold text-sm">{formatCurrency(total)}</span>
+            <span className="font-semibold text-sm">{formatCurrency(orderTotal)}</span>
           </div>
         </div>
 
