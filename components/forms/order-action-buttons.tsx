@@ -126,7 +126,7 @@ export function MarkPaidButton({ markPaidAction }: MarkPaidButtonProps) {
           {isPending ? 'Memproses...' : '✓ Tandai Sudah Dibayar / Lunas'}
         </button>
       </form>
-      {state?.error && (
+      {state && 'error' in state && state.error && (
         <p className="text-xs text-red-600 text-center">{state.error}</p>
       )}
     </div>
