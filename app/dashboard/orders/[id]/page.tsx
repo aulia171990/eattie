@@ -1,9 +1,9 @@
 import { getOrder } from '@/actions/orders'
-import { confirmOrderPayment, cancelOrder, updateOrderStatus } from '@/actions/orders'
+import { confirmOrderPayment, cancelOrder, updateOrderStatus, markOrderAsPaid } from '@/actions/orders'
 import { PageHeader } from '@/components/shared/page-header'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { notFound } from 'next/navigation'
-import { OrderActionButtons } from '@/components/forms/order-action-buttons'
+import { OrderActionButtons, MarkPaidButton } from '@/components/forms/order-action-buttons'
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
   NEW:             { label: 'Menunggu',    bg: 'hsl(36,80%,90%)',  color: 'hsl(32,95%,35%)' },
@@ -32,6 +32,7 @@ export default async function OrderDetailPage({
   const boundConfirm = confirmOrderPayment.bind(null, id)
   const boundCancel  = cancelOrder.bind(null, id)
   const boundUpdate  = updateOrderStatus.bind(null, id)
+  const boundMarkPaid = markOrderAsPaid.bind(null, id)
   const isDone = ['CANCELLED','COMPLETED','cancelled','completed'].includes(order.status)
   const isPaid = ['PAID','paid'].includes(order.payment_status)
 
@@ -136,6 +137,11 @@ export default async function OrderDetailPage({
           cancelAction={boundCancel}
           updateStatusAction={boundUpdate}
         />
+      )}
+
+      {/* Mark as paid - for completed orders with unpaid status */}
+      {isDone && !isPaid && order.status !== 'CANCELLED' && (
+        <MarkPaidButton markPaidAction={boundMarkPaid} />
       )}
     </div>
   )
