@@ -23,7 +23,7 @@ export default async function OrdersPage({
   const orders = await getOrders({ status: sp.status, search: sp.search })
 
   const pending   = orders.filter(o => o.status === 'NEW').length
-  const confirmed = orders.filter(o => o.status === 'PAID').length
+  const confirmed = orders.filter(o => ['PAID','paid'].includes(o.payment_status)).length
   const ready     = orders.filter(o => o.status === 'READY_FOR_PICKUP').length
 
   return (
