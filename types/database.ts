@@ -994,6 +994,38 @@ export type Database = {
         Args: { p_order_id: string; p_user_id: string }
         Returns: Json
       }
+      rpc_confirm_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_cancel_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_start_production: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_ready_for_pickup: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_deliver_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_complete_order: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      rpc_mark_paid: {
+        Args: { p_order_id: string; p_user_id: string }
+        Returns: Json
+      }
+      track_order: {
+        Args: { p_order_number: string; p_phone: string }
+        Returns: Json
+      }
     }
     Enums: Record<string, never>
   }
