@@ -110,24 +110,6 @@ export async function updateOrderStatus(
 
   if (error) return { error: error.message }
 
-  // Auto-create sale when order COMPLETED and no sale_id yet
-  if (status === 'COMPLETED') {
-    const { data: order } = await supabase
-      .from('orders')
-      .select('sale_id')
-      .eq('id', id)
-      .single()
-
-    if (!order?.sale_id) {
-      const { data, error: rpcError } = await supabase
-        .rpc('confirm_order', { p_order_id: id, p_user_id: user.id })
-      if (!rpcError) {
-        const result = data as unknown as { success?: boolean }
-        if (result?.success) revalidatePath('/dashboard/sales')
-      }
-    }
-  }
-
   revalidatePath('/dashboard/orders')
   revalidatePath(`/dashboard/orders/${id}`)
   return { success: true }
