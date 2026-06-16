@@ -6,6 +6,7 @@ import type { StoreProduct } from '@/actions/store'
 import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
 import { ShoppingBag, Star, Search, ChevronRight, Plus, Check, Truck, Cookie, Leaf } from 'lucide-react'
+import { CustomCakeModal } from '@/components/store/custom-cake-modal'
 
 /* ─── Helpers ─────────────────────────────────────────────── */
 const categoryEmoji: Record<string, string> = {
@@ -80,6 +81,8 @@ function ProductCard({ product }: { product: StoreProduct }) {
           </button>
         </div>
       </div>
+      {/* ── Custom Cake Modal ─────────────────────────────── */}
+      <CustomCakeModal open={showCustomCake} onClose={() => setShowCustomCake(false)} />
     </div>
   )
 }
@@ -113,7 +116,8 @@ export function StoreLanding({ bestsellers, allProducts }: StoreLandingProps) {
   const { itemCount, total } = useStoreCart()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('all')
-
+  const [showCustomCake, setShowCustomCake] = useState(false)
+  
   const categories = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))] as string[]
 
   const filtered = allProducts.filter(p => {
@@ -339,6 +343,31 @@ export function StoreLanding({ bestsellers, allProducts }: StoreLandingProps) {
               style={{ background: 'white', color: 'hsl(25, 30%, 12%)' }}>
               Mulai Belanja
             </a>
+          </div>
+        </div>
+      </section>
+     
+      {/* ── Custom Cake CTA Banner ────────────────────────── */}
+      <section className="py-12" style={{ background: 'hsl(36, 40%, 95%)' }}>
+        <div className="max-w-6xl mx-auto px-5">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-3xl border px-8 py-8"
+            style={{ background: 'white', borderColor: 'hsl(36, 25%, 88%)' }}>
+            <div className="space-y-2 text-center md:text-left">
+              <p className="text-xs font-bold uppercase tracking-wider" style={{ color: 'hsl(32, 90%, 44%)' }}>
+                Ingin desain unik?
+              </p>
+              <h3 className="text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+                Pesan Custom Cake Sesuai Keinginan
+              </h3>
+              <p className="text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                Pilih ukuran, rasa, tema warna, dan tambahkan referensi gambar. Tim kami akan menghubungi Anda dengan penawaran harga.
+              </p>
+            </div>
+            <button onClick={() => setShowCustomCake(true)}
+              className="shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5 flex items-center gap-2"
+              style={{ background: 'hsl(32, 90%, 44%)' }}>
+              <Palette size={16} /> Pesan Custom Cake
+            </button>
           </div>
         </div>
       </section>
