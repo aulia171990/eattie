@@ -9,6 +9,44 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      custom_cake_requests: {
+        Row: {
+          id: string
+          req_number: string
+          customer_name: string
+          customer_phone: string
+          size: string
+          flavor: string
+          color_theme: string | null
+          special_notes: string | null
+          reference_image_url: string | null
+          quoted_price: number | null
+          status: string
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          req_number: string
+          customer_name: string
+          customer_phone: string
+          size: string
+          flavor: string
+          color_theme?: string | null
+          special_notes?: string | null
+          reference_image_url?: string | null
+          quoted_price?: number | null
+          status?: string
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          status?: string
+          quoted_price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           id: string
@@ -945,55 +983,6 @@ export type Database = {
           },
         ]
       }
-      custom_cake_requests: {
-        Row: {
-          id: string
-          req_number: string
-          customer_name: string
-          customer_phone: string
-          size: string
-          flavor: string
-          color_theme: string | null
-          special_notes: string | null
-          reference_image_url: string | null
-          quoted_price: number | null
-          status: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id?: string
-          req_number: string
-          customer_name: string
-          customer_phone: string
-          size: string
-          flavor: string
-          color_theme?: string | null
-          special_notes?: string | null
-          reference_image_url?: string | null
-          quoted_price?: number | null
-          status?: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          customer_name?: string
-          customer_phone?: string
-          size?: string
-          flavor?: string
-          color_theme?: string | null
-          special_notes?: string | null
-          reference_image_url?: string | null
-          quoted_price?: number | null
-          status?: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
-          updated_at?: string
-        }
-        Relationships: [{
-            foreignKeyName: 'custom_cake_request_created_by_fkey'
-            columns: ['created_by']
-            referencedRelation: 'profiles'
-            referencedColumns: ['id']
-          },]
     }
     Views: {
       daily_sales_summary: {
