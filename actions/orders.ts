@@ -81,6 +81,16 @@ interface RpcResult {
   idempotent?: boolean
 }
 
+// ── Allowed RPC names ────────────────────────────────────────
+type OrderRpcName =
+  | 'rpc_confirm_order'
+  | 'rpc_cancel_order'
+  | 'rpc_start_production'
+  | 'rpc_ready_for_pickup'
+  | 'rpc_deliver_order'
+  | 'rpc_complete_order'
+  | 'rpc_mark_paid'
+
 // ── Helper ───────────────────────────────────────────────────
 function revalidateOrders(id?: string) {
   revalidatePath('/dashboard/orders')
@@ -89,8 +99,8 @@ function revalidateOrders(id?: string) {
 
 async function callRpc(
   supabase: Awaited<ReturnType<typeof createClient>>,
-  fn: string,
-  params: Record<string, string>
+  fn: OrderRpcName,
+  params: { p_order_id: string; p_user_id: string }
 ): Promise<{ result: RpcResult | null; error: string | null }> {
   const { data, error } = await supabase.rpc(fn, params)
   if (error) return { result: null, error: error.message }
@@ -237,7 +247,7 @@ export async function updateOrderStatus(
   const status = formData.get('status') as OrderStatus
 
   // Map status → RPC function name
-  const rpcMap: Partial<Record<OrderStatus, string>> = {
+  const rpcMap: Partial<Record<OrderStatus, OrderRpcName>> = {
     IN_PRODUCTION:    'rpc_start_production',
     READY_FOR_PICKUP: 'rpc_ready_for_pickup',
     DELIVERED:        'rpc_deliver_order',
