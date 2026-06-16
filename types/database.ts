@@ -945,6 +945,50 @@ export type Database = {
           },
         ]
       }
+      custom_cake_requests: {
+        Row: {
+          id: string
+          req_number: string
+          customer_name: string
+          customer_phone: string
+          size: string
+          flavor: string
+          color_theme: string | null
+          special_notes: string | null
+          reference_image_url: string | null
+          quoted_price: number | null
+          status: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          req_number: string
+          customer_name: string
+          customer_phone: string
+          size: string
+          flavor: string
+          color_theme?: string | null
+          special_notes?: string | null
+          reference_image_url?: string | null
+          quoted_price?: number | null
+          status?: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          customer_name?: string
+          customer_phone?: string
+          size?: string
+          flavor?: string
+          color_theme?: string | null
+          special_notes?: string | null
+          reference_image_url?: string | null
+          quoted_price?: number | null
+          status?: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
+          updated_at?: string
+        }
+        Relationships: []
     }
     Views: {
       daily_sales_summary: {
