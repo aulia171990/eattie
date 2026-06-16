@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import type { Profile } from '@/types'
-import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle, X, ClipboardList } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle, X, ClipboardList, Cake } from 'lucide-react'
 
 type NavItem = {
   title: string
@@ -29,6 +29,7 @@ const navItems: NavItem[] = [
   { title: 'Produksi', href: '/dashboard/production', icon: <Factory size={18} />, roles: ['owner', 'baker'] },
   { title: 'Penjualan', href: '/dashboard/sales', icon: <Receipt size={18} />, roles: ['owner', 'cashier'] },
   { title: 'Pesanan Online', href: '/dashboard/orders', icon: <ClipboardList size={18} />, roles: ['owner'] },
+  { title: 'Custom Cake', href: '/dashboard/custom-cakes', icon: <Cake size={18} />, roles: ['owner'] },
   { title: 'Laporan', href: '/dashboard/reports', icon: <BarChart3 size={18} />, roles: ['owner'] },
   { title: 'Pengeluaran', href: '/dashboard/expenses', icon: <Briefcase size={18} />, roles: ['owner'] },
   { title: 'Pengaturan', href: '/dashboard/settings', icon: <Settings size={18} />, roles: ['owner', 'cashier', 'baker'],
