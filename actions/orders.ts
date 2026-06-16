@@ -98,6 +98,9 @@ export async function updateOrderStatus(
   formData: FormData
 ): Promise<ActionState> {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Tidak terautentikasi' }
+
   const status = formData.get('status') as OrderStatus
 
   const { error } = await supabase
@@ -106,6 +109,29 @@ export async function updateOrderStatus(
     .eq('id', id)
 
   if (error) return { error: error.message }
+
+  // Auto-create sale when order is COMPLETED and no sale_id yet
+  if (status === 'COMPLETED') {
+    const { data: order } = await supabase
+      .from('orders')
+      .select('sale_id')
+      .eq('id', id)
+      .single()
+
+    if (!order?.sale_id) {
+      // Call confirm_order RPC to create the sale automatically
+      const { data, error: rpcError } = await supabase
+        .rpc('confirm_order', { p_order_id: id, p_user_id: user.id })
+
+      if (!rpcError) {
+        const result = data as unknown as { success?: boolean }
+        if (result?.success) {
+          revalidatePath('/dashboard/sales')
+        }
+      }
+    }
+  }
+
   revalidatePath('/dashboard/orders')
   revalidatePath(`/dashboard/orders/${id}`)
   return { success: true }
@@ -143,31 +169,6 @@ export async function cancelOrder(
     .from('orders')
     .update({ status: 'CANCELLED' as OrderStatus, updated_at: new Date().toISOString() })
     .eq('id', id)
-  if (error) return { error: error.message }
-  revalidatePath('/dashboard/orders')
-  revalidatePath(`/dashboard/orders/${id}`)
-  return { success: true }
-}
-
-export async function markOrderAsPaid(
-  id: string,
-  _prev: ActionState,
-  _formData: FormData
-): Promise<ActionState> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { error } = await supabase
-    .from('orders')
-    .update({
-      payment_status: 'PAID',
-      payment_confirmed_at: new Date().toISOString(),
-      payment_confirmed_by: user.id,
-      updated_at: new Date().toISOString(),
-    })
-    .eq('id', id)
-
   if (error) return { error: error.message }
   revalidatePath('/dashboard/orders')
   revalidatePath(`/dashboard/orders/${id}`)
