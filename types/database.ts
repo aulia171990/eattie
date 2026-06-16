@@ -988,7 +988,12 @@ export type Database = {
           status?: 'pending' | 'quoted' | 'confirmed' | 'in_production' | 'ready' | 'delivered' | 'cancelled'
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [{
+            foreignKeyName: 'custom_cake_request_created_by_fkey'
+            columns: ['created_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          },]
     }
     Views: {
       daily_sales_summary: {
