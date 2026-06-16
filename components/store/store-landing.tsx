@@ -5,7 +5,7 @@ import { useStoreCart } from '@/contexts/store-cart-context'
 import type { StoreProduct } from '@/actions/store'
 import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
-import { ShoppingBag, Star, Search, ChevronRight, Plus, Check, Truck, Cookie, Leaf } from 'lucide-react'
+import { ShoppingBag, Star, Search, ChevronRight, Plus, Check, Truck, Cookie, Leaf, Palette } from 'lucide-react'
 import { CustomCakeModal } from '@/components/store/custom-cake-modal'
 
 /* ─── Helpers ─────────────────────────────────────────────── */
