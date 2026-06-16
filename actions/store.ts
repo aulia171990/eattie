@@ -51,59 +51,54 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
   return (data ?? []) as StoreProduct[]
 }
 
-export async function getBestsellerProducts(limit = 10): Promise<StoreProduct[]> {
+export async function getBestsellerProducts(limit = 6): Promise<StoreProduct[]> {
   const supabase = await createClient()
 
-  // Step 1: get order IDs from the last 7 days (non-cancelled)
-  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  // Cutoff: 30 days ago (wider window to capture more data)
+  const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-  const { data: recentOrders } = await supabase
-    .from('orders')
-    .select('id')
-    .gte('created_at', since)
-    .neq('status', 'cancelled')
+  // Fetch order_items joined to recent non-cancelled orders
+  // Note: filter on joined table uses neq with uppercase enum
+  const { data: recentItems } = await supabase
+    .from('order_items')
+    .select('product_id, quantity, orders!order_items_order_id_fkey(created_at, status)')
     .limit(1000)
 
-  // No orders in the last 7 days — return empty so UI can hide the section
-  if (!recentOrders || recentOrders.length === 0) return []
-
-  const orderIds = recentOrders.map(o => o.id)
-
-  // Step 2: get order_items for those orders
-  const { data: items } = await supabase
-    .from('order_items')
-    .select('product_id, quantity')
-    .in('order_id', orderIds)
-    .limit(2000)
-
-  if (!items || items.length === 0) return []
-
-  // Step 3: aggregate quantity per product_id
+  // Aggregate total quantity per product_id (filter in JS for reliability)
   const totals: Record<string, number> = {}
-  for (const item of items) {
+  for (const item of recentItems ?? []) {
     if (!item.product_id) continue
+    const order = Array.isArray(item.orders) ? item.orders[0] : item.orders
+    if (!order) continue
+    // Skip cancelled orders (check both uppercase and lowercase)
+    const status = (order.status ?? '').toUpperCase()
+    if (status === 'CANCELLED') continue
+    // Skip orders older than cutoff
+    if (order.created_at && order.created_at < since) continue
     totals[item.product_id] = (totals[item.product_id] ?? 0) + item.quantity
   }
 
   const topIds = Object.entries(totals)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, limit)
+    .slice(0, limit * 2)
     .map(([id]) => id)
 
-  // Step 4: fetch product details, only online-available ones
-  const { data: products } = await supabase
+  // Fallback: no sales data — show active online products instead
+  if (topIds.length === 0) return getStoreProducts()
+
+  const { data } = await supabase
     .from('products')
     .select('id,name,description,online_description,category,selling_price,image_url,online_sort_order')
     .eq('is_available_online', true)
     .eq('is_active', true)
     .in('id', topIds)
+    .limit(limit)
 
-  if (!products || products.length === 0) return []
+  if (!data || data.length === 0) return getStoreProducts()
 
-  // Restore sales rank order (.in() doesn't preserve order)
-  return [...products].sort(
-    (a, b) => (totals[b.id] ?? 0) - (totals[a.id] ?? 0)
-  ) as StoreProduct[]
+  // Re-sort by sales rank (.in() doesn't preserve order)
+  const ranked = [...data].sort((a, b) => (totals[b.id] ?? 0) - (totals[a.id] ?? 0))
+  return ranked as StoreProduct[]
 }
 
 export async function submitOrder(
