@@ -1,11 +1,11 @@
-import { getOrders } from '@/actions/orders'
+import { getOrdersFlat } from '@/actions/orders'
 import { PageHeader } from '@/components/shared/page-header'
 import Link from 'next/link'
 import { ShoppingBag } from 'lucide-react'
 import { OrdersKanban } from '@/components/orders/orders-kanban'
 
 export default async function OrdersPage() {
-  const orders = await getOrders()
+  const orders = await getOrdersFlat()
 
   return (
     <div className="p-4 lg:p-6 space-y-5">
