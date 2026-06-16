@@ -81,8 +81,6 @@ function ProductCard({ product }: { product: StoreProduct }) {
           </button>
         </div>
       </div>
-      {/* ── Custom Cake Modal ─────────────────────────────── */}
-      <CustomCakeModal open={showCustomCake} onClose={() => setShowCustomCake(false)} />
     </div>
   )
 }
@@ -429,6 +427,9 @@ export function StoreLanding({ bestsellers, allProducts }: StoreLandingProps) {
           </Link>
         </div>
       )}
+
+      {/* ── Custom Cake Modal ─────────────────────────────── */}
+      <CustomCakeModal open={showCustomCake} onClose={() => setShowCustomCake(false)} />
     </div>
   )
 }
