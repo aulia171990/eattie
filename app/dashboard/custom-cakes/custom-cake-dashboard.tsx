@@ -231,11 +231,11 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {(['pending', 'quoted', 'confirmed', 'in_production'] as CustomCakeStatus[]).map(s => (
           <button key={s} onClick={() => setFilterStatus(prev => prev === s ? 'all' : s)}
-            className={`rounded-2xl p-4 text-left border transition-all ${filterStatus === s ? 'ring-2' : ''}`}
+            className="rounded-2xl p-4 text-left border transition-all"
             style={{
               background: 'white',
               borderColor: filterStatus === s ? 'hsl(32, 90%, 44%)' : 'hsl(36, 25%, 88%)',
-              ringColor: 'hsl(32, 90%, 44%)',
+              boxShadow: filterStatus === s ? '0 0 0 2px hsl(32, 90%, 44%)' : 'none',
             }}>
             <p className="text-2xl font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>
               {counts[s] ?? 0}
