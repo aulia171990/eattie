@@ -1,19 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { logout } from '@/actions/auth'
+import { getNewOrderNotifications, type OrderNotification } from '@/actions/notifications'
 import type { Profile } from '@/types'
-import { Bell, Globe, LogOut, User, ChevronDown, Menu } from 'lucide-react'
+import { formatCurrency, formatDateTime } from '@/lib/utils'
+import { Bell, Globe, LogOut, User, ChevronDown, Menu, ShoppingBag } from 'lucide-react'
 
 interface HeaderProps {
   user: Profile
   onMenuToggle?: () => void
 }
 
+const POLL_INTERVAL_MS = 20000 // 20s
+
 export function Header({ user, onMenuToggle }: HeaderProps) {
+  const router = useRouter()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const [lang, setLang] = useState<'id' | 'en'>('id')
+  const [notifCount, setNotifCount] = useState(0)
+  const [notifOrders, setNotifOrders] = useState<OrderNotification[]>([])
+  const seenRef = useRef<Set<string>>(new Set())
+  const isOwner = user.role === 'owner'
+
+  const poll = useCallback(async () => {
+    if (!isOwner) return
+    try {
+      const result = await getNewOrderNotifications()
+      setNotifCount(result.count)
+      setNotifOrders(result.orders)
+    } catch {
+      // silent fail — don't disrupt UI on transient network errors
+    }
+  }, [isOwner])
+
+  useEffect(() => {
+    if (!isOwner) return
+    poll() // initial fetch
+    const interval = setInterval(poll, POLL_INTERVAL_MS)
+    return () => clearInterval(interval)
+  }, [isOwner, poll])
+
+  // Update document title with unread count
+  useEffect(() => {
+    if (!isOwner) return
+    const baseTitle = 'Bakery Manager'
+    document.title = notifCount > 0 ? `(${notifCount}) ${baseTitle}` : baseTitle
+  }, [notifCount, isOwner])
 
   return (
     <header
@@ -42,11 +78,90 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
           {lang.toUpperCase()}
         </button>
 
-        <button className="relative p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-          <Bell size={18} style={{ color: 'hsl(25, 30%, 40%)' }} />
-          <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full"
-            style={{ background: 'hsl(32, 95%, 44%)' }} />
-        </button>
+        {isOwner && (
+          <div className="relative">
+            <button
+              onClick={() => setNotifOpen(o => !o)}
+              className="relative p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Notifikasi"
+            >
+              <Bell size={18} style={{ color: 'hsl(25, 30%, 40%)' }} />
+              {notifCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+                  style={{ background: 'hsl(0, 75%, 55%)' }}>
+                  {notifCount > 9 ? '9+' : notifCount}
+                </span>
+              )}
+            </button>
+
+            {notifOpen && (
+              <>
+                <div className="fixed inset-0 z-10" onClick={() => setNotifOpen(false)} />
+                <div className="absolute right-0 mt-1 w-80 rounded-xl shadow-lg border bg-white z-20 overflow-hidden"
+                  style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+                  <div className="px-4 py-2.5 border-b flex items-center justify-between"
+                    style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
+                    <span className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                      Pesanan Baru
+                    </span>
+                    {notifCount > 0 && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium"
+                        style={{ background: 'hsl(0, 70%, 95%)', color: 'hsl(0, 70%, 45%)' }}>
+                        {notifCount} menunggu
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="max-h-80 overflow-y-auto">
+                    {notifOrders.length === 0 ? (
+                      <div className="px-4 py-8 text-center">
+                        <p className="text-2xl mb-1">📭</p>
+                        <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                          Tidak ada pesanan baru
+                        </p>
+                      </div>
+                    ) : (
+                      notifOrders.map(order => (
+                        <Link
+                          key={order.id}
+                          href={`/dashboard/orders/${order.id}`}
+                          onClick={() => setNotifOpen(false)}
+                          className="flex items-center gap-3 px-4 py-3 border-b hover:bg-gray-50 transition-colors"
+                          style={{ borderColor: 'hsl(36, 20%, 95%)' }}
+                        >
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                            style={{ background: 'hsl(36,80%,92%)', color: 'hsl(32,95%,40%)' }}>
+                            <ShoppingBag size={14} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                              {order.customer_name}
+                            </p>
+                            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                              {order.order_number} · {formatDateTime(order.created_at)}
+                            </p>
+                          </div>
+                          <span className="text-xs font-bold shrink-0" style={{ color: 'hsl(32, 95%, 40%)' }}>
+                            {formatCurrency(order.total_amount)}
+                          </span>
+                        </Link>
+                      ))
+                    )}
+                  </div>
+
+                  <Link
+                    href="/dashboard/orders"
+                    onClick={() => setNotifOpen(false)}
+                    className="block text-center py-2.5 text-xs font-semibold border-t hover:bg-gray-50 transition-colors"
+                    style={{ borderColor: 'hsl(36, 20%, 92%)', color: 'hsl(32, 95%, 40%)' }}
+                  >
+                    Lihat Semua Pesanan
+                  </Link>
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="relative">
           <button
