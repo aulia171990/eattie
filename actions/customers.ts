@@ -1,205 +1,229 @@
--- ============================================================
--- CRM: CUSTOMERS TABLE + AUTO-SYNC + TIER SYSTEM
--- Run in Supabase SQL Editor
--- ============================================================
+'use server'
 
--- ── 1. ADD customer_phone TO sales (for reliable matching) ───
-ALTER TABLE sales ADD COLUMN IF NOT EXISTS customer_phone TEXT;
-CREATE INDEX IF NOT EXISTS idx_sales_customer_phone ON sales(customer_phone);
+import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
+import type { ActionState } from '@/types'
 
--- ── 2. CUSTOMERS TABLE ─────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS customers (
-  id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name             TEXT NOT NULL,
-  phone            TEXT NOT NULL UNIQUE,
-  email            TEXT,
-  address          TEXT,
-  notes            TEXT,                 -- owner's manual notes (preferences, birthday, etc)
-  tier             TEXT NOT NULL DEFAULT 'Bronze'
-                     CHECK (tier IN ('Bronze','Silver','Gold','Platinum')),
-  total_spending   NUMERIC(12,2) NOT NULL DEFAULT 0,
-  total_orders     INTEGER NOT NULL DEFAULT 0,
-  last_order_date  TIMESTAMPTZ,
-  is_manual        BOOLEAN NOT NULL DEFAULT false,  -- true if owner created manually (not yet ordered)
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at       TIMESTAMPTZ NOT NULL DEFAULT now()
-);
+export type CustomerTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum'
 
-CREATE INDEX IF NOT EXISTS idx_customers_phone ON customers(phone);
-CREATE INDEX IF NOT EXISTS idx_customers_tier ON customers(tier);
-CREATE INDEX IF NOT EXISTS idx_customers_total_spending ON customers(total_spending DESC);
+export interface Customer {
+  id: string
+  name: string
+  phone: string
+  email: string | null
+  address: string | null
+  notes: string | null
+  tier: CustomerTier
+  total_spending: number
+  total_orders: number
+  last_order_date: string | null
+  is_manual: boolean
+  created_at: string
+  updated_at: string
+}
 
--- ── 3. RLS ────────────────────────────────────────────────────
-ALTER TABLE customers ENABLE ROW LEVEL SECURITY;
+export interface GetCustomersParams {
+  search?: string
+  tier?: CustomerTier | 'all'
+  page?: number
+  pageSize?: number
+  sortBy?: 'total_spending' | 'last_order_date' | 'name'
+}
 
--- Only owner can view/manage the CRM
-DROP POLICY IF EXISTS "customers_owner_all" ON customers;
-CREATE POLICY "customers_owner_all" ON customers
-  FOR ALL TO authenticated
-  USING (get_user_role() = 'owner')
-  WITH CHECK (get_user_role() = 'owner');
+export interface GetCustomersResult {
+  data: Customer[]
+  total: number
+  page: number
+  pageSize: number
+}
 
--- ── 4. TIER CALCULATION FUNCTION ─────────────────────────────
--- Bronze: < 500k, Silver: 500k-1.5jt, Gold: 1.5jt-5jt, Platinum: 5jt+
-CREATE OR REPLACE FUNCTION calculate_customer_tier(p_total_spending NUMERIC)
-RETURNS TEXT
-LANGUAGE plpgsql
-IMMUTABLE
-AS $$
-BEGIN
-  IF p_total_spending >= 5000000 THEN RETURN 'Platinum';
-  ELSIF p_total_spending >= 1500000 THEN RETURN 'Gold';
-  ELSIF p_total_spending >= 500000 THEN RETURN 'Silver';
-  ELSE RETURN 'Bronze';
-  END IF;
-END;
-$$;
+async function requireOwner() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { supabase, user: null, isOwner: false }
 
--- ── 5. UPSERT CUSTOMER FROM ORDER/SALE (called by trigger) ───
-CREATE OR REPLACE FUNCTION upsert_customer_from_transaction(
-  p_name   TEXT,
-  p_phone  TEXT,
-  p_amount NUMERIC,
-  p_order_date TIMESTAMPTZ
-) RETURNS VOID
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, pg_temp
-AS $$
-DECLARE
-  v_new_total NUMERIC;
-BEGIN
-  IF p_phone IS NULL OR trim(p_phone) = '' THEN
-    RETURN; -- can't track without phone number
-  END IF;
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
 
-  INSERT INTO customers (name, phone, total_spending, total_orders, last_order_date, tier)
-  VALUES (
-    p_name, p_phone, p_amount, 1, p_order_date,
-    calculate_customer_tier(p_amount)
-  )
-  ON CONFLICT (phone) DO UPDATE SET
-    name            = EXCLUDED.name,  -- keep most recent name used
-    total_spending  = customers.total_spending + p_amount,
-    total_orders    = customers.total_orders + 1,
-    last_order_date = GREATEST(customers.last_order_date, EXCLUDED.last_order_date),
-    is_manual       = false,          -- has now ordered, no longer manual-only
-    updated_at      = now()
-  RETURNING total_spending INTO v_new_total;
+  return { supabase, user, isOwner: profile?.role === 'owner' }
+}
 
-  -- Recalculate tier based on new total (separate update to use the function)
-  UPDATE customers
-  SET tier = calculate_customer_tier(total_spending)
-  WHERE phone = p_phone;
-END;
-$$;
+export async function getCustomers(
+  params: GetCustomersParams = {}
+): Promise<GetCustomersResult> {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return { data: [], total: 0, page: 1, pageSize: 20 }
 
--- ── 6. TRIGGER: orders → customers (on COMPLETED via confirm) ─
--- Fires when a sale_id is set on an order (meaning payment confirmed)
-CREATE OR REPLACE FUNCTION trg_sync_customer_from_order()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, pg_temp
-AS $$
-BEGIN
-  IF NEW.sale_id IS NOT NULL AND OLD.sale_id IS NULL THEN
-    PERFORM upsert_customer_from_transaction(
-      NEW.customer_name,
-      NEW.customer_phone,
-      NEW.total_amount,
-      NEW.confirmed_at
-    );
-  END IF;
-  RETURN NEW;
-END;
-$$;
+  const page     = Math.max(1, params.page ?? 1)
+  const pageSize = Math.min(50, Math.max(1, params.pageSize ?? 20))
+  const from     = (page - 1) * pageSize
+  const to       = from + pageSize - 1
+  const sortBy   = params.sortBy ?? 'total_spending'
 
-DROP TRIGGER IF EXISTS trg_orders_sync_customer ON orders;
-CREATE TRIGGER trg_orders_sync_customer
-  AFTER UPDATE ON orders
-  FOR EACH ROW EXECUTE FUNCTION trg_sync_customer_from_order();
+  let query = supabase
+    .from('customers')
+    .select('*', { count: 'exact' })
+    .order(sortBy, { ascending: false, nullsFirst: false })
+    .range(from, to)
 
--- ── 7. TRIGGER: sales → customers (for direct POS sales) ─────
-CREATE OR REPLACE FUNCTION trg_sync_customer_from_sale()
-RETURNS TRIGGER
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = public, pg_temp
-AS $$
-BEGIN
-  IF NEW.customer_name IS NOT NULL AND NEW.customer_phone IS NOT NULL THEN
-    PERFORM upsert_customer_from_transaction(
-      NEW.customer_name,
-      NEW.customer_phone,
-      NEW.total,
-      NEW.created_at
-    );
-  END IF;
-  RETURN NEW;
-END;
-$$;
+  if (params.tier && params.tier !== 'all') {
+    query = query.eq('tier', params.tier)
+  }
+  if (params.search) {
+    query = query.or(`name.ilike.%${params.search}%,phone.ilike.%${params.search}%`)
+  }
 
-DROP TRIGGER IF EXISTS trg_sales_sync_customer ON sales;
-CREATE TRIGGER trg_sales_sync_customer
-  AFTER INSERT ON sales
-  FOR EACH ROW EXECUTE FUNCTION trg_sync_customer_from_sale();
+  const { data, error, count } = await query
+  if (error) throw new Error(error.message)
 
--- ── 8. BACKFILL: populate customers from existing data ───────
--- Run once to import historical orders/sales into the CRM
-DO $$
-DECLARE
-  v_order RECORD;
-  v_sale  RECORD;
-BEGIN
-  -- From completed orders with a sale_id
-  FOR v_order IN
-    SELECT customer_name, customer_phone, total_amount, confirmed_at, created_at
-    FROM orders
-    WHERE sale_id IS NOT NULL
-      AND customer_phone IS NOT NULL
-      AND trim(customer_phone) != ''
-    ORDER BY created_at
-  LOOP
-    PERFORM upsert_customer_from_transaction(
-      v_order.customer_name,
-      v_order.customer_phone,
-      v_order.total_amount,
-      COALESCE(v_order.confirmed_at, v_order.created_at)
-    );
-  END LOOP;
+  return {
+    data: (data ?? []) as Customer[],
+    total: count ?? 0,
+    page,
+    pageSize,
+  }
+}
 
-  -- From POS sales that have customer_phone (likely none yet, but safe to run)
-  FOR v_sale IN
-    SELECT customer_name, customer_phone, total, created_at
-    FROM sales
-    WHERE customer_phone IS NOT NULL
-      AND trim(customer_phone) != ''
-    ORDER BY created_at
-  LOOP
-    PERFORM upsert_customer_from_transaction(
-      v_sale.customer_name,
-      v_sale.customer_phone,
-      v_sale.total,
-      v_sale.created_at
-    );
-  END LOOP;
-END;
-$$;
+export async function getCustomerStats() {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return { total: 0, byTier: {} as Record<CustomerTier, number>, totalRevenue: 0 }
 
--- ── 9. updated_at trigger ──────────────────────────────────────
-CREATE OR REPLACE FUNCTION touch_customer_updated_at()
-RETURNS TRIGGER LANGUAGE plpgsql AS $$
-BEGIN
-  NEW.updated_at := now();
-  RETURN NEW;
-END;
-$$;
+  const { data } = await supabase
+    .from('customers')
+    .select('tier, total_spending')
 
-DROP TRIGGER IF EXISTS trg_customers_touch ON customers;
-CREATE TRIGGER trg_customers_touch
-  BEFORE UPDATE ON customers
-  FOR EACH ROW EXECUTE FUNCTION touch_customer_updated_at();
+  const byTier: Record<CustomerTier, number> = { Bronze: 0, Silver: 0, Gold: 0, Platinum: 0 }
+  let totalRevenue = 0
 
--- ── 10. RELOAD SCHEMA ────────────────────────────────────────
-NOTIFY pgrst, 'reload schema';
+  for (const c of data ?? []) {
+    const tier = c.tier as CustomerTier
+    if (tier in byTier) byTier[tier]++
+    totalRevenue += c.total_spending ?? 0
+  }
+
+  return { total: data?.length ?? 0, byTier, totalRevenue }
+}
+
+export async function getCustomer(id: string): Promise<Customer | null> {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return null
+
+  const { data } = await supabase
+    .from('customers')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle()
+
+  return data as Customer | null
+}
+
+export interface CustomerOrderHistory {
+  id: string
+  order_number: string
+  total_amount: number
+  status: string
+  created_at: string
+}
+
+export async function getCustomerOrderHistory(phone: string): Promise<CustomerOrderHistory[]> {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return []
+
+  const { data } = await supabase
+    .from('orders')
+    .select('id,order_number,total_amount,status,created_at')
+    .eq('customer_phone', phone)
+    .order('created_at', { ascending: false })
+    .limit(20)
+
+  return (data ?? []) as CustomerOrderHistory[]
+}
+
+/**
+ * Manually create a customer profile (owner adds someone who hasn't
+ * ordered yet — e.g. a walk-in contact, or pre-registering a VIP).
+ */
+export async function createCustomer(
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return { error: 'Hanya owner yang dapat menambah pelanggan' }
+
+  const name  = formData.get('name') as string
+  const phone = formData.get('phone') as string
+  const email = (formData.get('email') as string) || null
+  const address = (formData.get('address') as string) || null
+  const notes = (formData.get('notes') as string) || null
+
+  if (!name?.trim() || !phone?.trim()) {
+    return { error: 'Nama dan nomor HP wajib diisi' }
+  }
+
+  const { error } = await supabase
+    .from('customers')
+    .insert({
+      name: name.trim(),
+      phone: phone.trim(),
+      email,
+      address,
+      notes,
+      is_manual: true,
+      tier: 'Bronze',
+    })
+
+  if (error) {
+    if (error.code === '23505') return { error: 'Nomor HP ini sudah terdaftar' }
+    return { error: error.message }
+  }
+
+  revalidatePath('/dashboard/customers')
+  return { success: true }
+}
+
+export async function updateCustomer(
+  id: string,
+  _prev: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return { error: 'Hanya owner yang dapat mengubah data pelanggan' }
+
+  const name = formData.get('name') as string
+  const email = (formData.get('email') as string) || null
+  const address = (formData.get('address') as string) || null
+  const notes = (formData.get('notes') as string) || null
+
+  const { error } = await supabase
+    .from('customers')
+    .update({ name, email, address, notes })
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard/customers')
+  revalidatePath(`/dashboard/customers/${id}`)
+  return { success: true }
+}
+
+export async function deleteCustomer(
+  id: string,
+  _prev: ActionState,
+  _formData: FormData
+): Promise<ActionState> {
+  const { supabase, isOwner } = await requireOwner()
+  if (!isOwner) return { error: 'Hanya owner yang dapat menghapus pelanggan' }
+
+  const { error } = await supabase
+    .from('customers')
+    .delete()
+    .eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard/customers')
+  return { success: true }
+}
