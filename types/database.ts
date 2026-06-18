@@ -9,6 +9,51 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      customers: {
+        Row: {
+          id: string
+          name: string
+          phone: string
+          email: string | null
+          address: string | null
+          notes: string | null
+          tier: string
+          total_spending: number
+          total_orders: number
+          last_order_date: string | null
+          is_manual: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          name: string
+          phone: string
+          email?: string | null
+          address?: string | null
+          notes?: string | null
+          tier?: string
+          total_spending?: number
+          total_orders?: number
+          last_order_date?: string | null
+          is_manual?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          name?: string
+          email?: string | null
+          address?: string | null
+          notes?: string | null
+          tier?: string
+          total_spending?: number
+          total_orders?: number
+          last_order_date?: string | null
+          is_manual?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       custom_cake_requests: {
         Row: {
           id: string
