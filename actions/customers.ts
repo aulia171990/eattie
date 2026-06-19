@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { ActionState } from '@/types'
 
-export type CustomerTier = 'Bronze' | 'Silver' | 'Gold' | 'Platinum'
+export type CustomerTier = 'BRONZE' | 'SILVER' | 'GOLD' | 'PLATINUM'
 
 export interface Customer {
   id: string
@@ -95,7 +95,7 @@ export async function getCustomerStats() {
     .from('customers')
     .select('tier, total_spending')
 
-  const byTier: Record<CustomerTier, number> = { Bronze: 0, Silver: 0, Gold: 0, Platinum: 0 }
+  const byTier: Record<CustomerTier, number> = { BRONZE: 0, SILVER: 0, GOLD: 0, PLATINUM: 0 }
   let totalRevenue = 0
 
   for (const c of data ?? []) {
@@ -172,7 +172,7 @@ export async function createCustomer(
       address,
       notes,
       is_manual: true,
-      tier: 'Bronze',
+      tier: 'BRONZE',
     })
 
   if (error) {
