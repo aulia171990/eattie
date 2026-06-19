@@ -7,10 +7,10 @@ import { Crown, Star, Award, Medal, Phone, Mail, MapPin } from 'lucide-react'
 import { EditCustomerForm } from '@/components/customers/edit-customer-form'
 
 const TIER_STYLE: Record<string, { bg: string; color: string; icon: React.ReactNode; next: string | null; threshold: number }> = {
-  Bronze:   { bg: 'hsl(25, 40%, 92%)',  color: 'hsl(25, 50%, 40%)', icon: <Medal size={14} />, next: 'Silver', threshold: 500000 },
-  Silver:   { bg: 'hsl(210, 15%, 92%)', color: 'hsl(210, 15%, 40%)', icon: <Award size={14} />, next: 'Gold', threshold: 1500000 },
-  Gold:     { bg: 'hsl(45, 90%, 90%)',  color: 'hsl(40, 80%, 35%)', icon: <Star size={14} />, next: 'Platinum', threshold: 5000000 },
-  Platinum: { bg: 'hsl(270, 40%, 93%)', color: 'hsl(270, 50%, 45%)', icon: <Crown size={14} />, next: null, threshold: 0 },
+  BRONZE:   { bg: 'hsl(25, 40%, 92%)',  color: 'hsl(25, 50%, 40%)', icon: <Medal size={14} />, next: 'SILVER', threshold: 500000 },
+  SILVER:   { bg: 'hsl(210, 15%, 92%)', color: 'hsl(210, 15%, 40%)', icon: <Award size={14} />, next: 'GOLD', threshold: 1500000 },
+  GOLD:     { bg: 'hsl(45, 90%, 90%)',  color: 'hsl(40, 80%, 35%)', icon: <Star size={14} />, next: 'PLATINUM', threshold: 5000000 },
+  PLATINUM: { bg: 'hsl(270, 40%, 93%)', color: 'hsl(270, 50%, 45%)', icon: <Crown size={14} />, next: null, threshold: 0 },
 }
 
 const ORDER_STATUS_LABEL: Record<string, string> = {
