@@ -7,10 +7,10 @@ import { Users, Crown, Star, Award, Medal, Plus } from 'lucide-react'
 import { AddCustomerButton } from '@/components/customers/add-customer-button'
 
 const TIER_STYLE: Record<string, { bg: string; color: string; icon: React.ReactNode }> = {
-  Bronze:   { bg: 'hsl(25, 40%, 92%)',  color: 'hsl(25, 50%, 40%)', icon: <Medal size={13} /> },
-  Silver:   { bg: 'hsl(210, 15%, 92%)', color: 'hsl(210, 15%, 40%)', icon: <Award size={13} /> },
-  Gold:     { bg: 'hsl(45, 90%, 90%)',  color: 'hsl(40, 80%, 35%)', icon: <Star size={13} /> },
-  Platinum: { bg: 'hsl(270, 40%, 93%)', color: 'hsl(270, 50%, 45%)', icon: <Crown size={13} /> },
+  BRONZE:   { bg: 'hsl(25, 40%, 92%)',  color: 'hsl(25, 50%, 40%)', icon: <Medal size={13} /> },
+  SILVER:   { bg: 'hsl(210, 15%, 92%)', color: 'hsl(210, 15%, 40%)', icon: <Award size={13} /> },
+  GOLD:     { bg: 'hsl(45, 90%, 90%)',  color: 'hsl(40, 80%, 35%)', icon: <Star size={13} /> },
+  PLATINUM: { bg: 'hsl(270, 40%, 93%)', color: 'hsl(270, 50%, 45%)', icon: <Crown size={13} /> },
 }
 
 export default async function CustomersPage({
@@ -50,7 +50,7 @@ export default async function CustomersPage({
           </div>
           <p className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>{stats.total}</p>
         </div>
-        {(['Bronze', 'Silver', 'Gold', 'Platinum'] as const).map(tier => {
+        {(['BRONZE', 'SILVER', 'GOLD', 'PLATINUM'] as const).map(tier => {
           const style = TIER_STYLE[tier]
           return (
             <Link key={tier} href={`/dashboard/customers?tier=${tier}`}
