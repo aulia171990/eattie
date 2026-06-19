@@ -1,3 +1,4 @@
+import React from 'react'
 import { getCustomers, getCustomerStats } from '@/actions/customers'
 import { PageHeader } from '@/components/shared/page-header'
 import { formatCurrency, formatDate } from '@/lib/utils'
