@@ -1105,6 +1105,10 @@ export type Database = {
         Args: { p_order_id: string; p_user_id: string }
         Returns: Json
       }
+      void_sale: {
+        Args: { p_sale_id: string; p_user_id: string; p_reason?: string }
+        Returns: Json
+      }
       track_order: {
         Args: { p_order_number: string; p_phone: string }
         Returns: Json
