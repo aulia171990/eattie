@@ -162,11 +162,24 @@ export async function getSale(id: string): Promise<SaleWithRelations> {
   return data as unknown as SaleWithRelations
 }
 
-export async function voidSale(id: string): Promise<void> {
+export async function voidSale(id: string, reason?: string): Promise<ActionState> {
   const supabase = await createClient()
-  // Note: stock reversal on void is a business decision.
-  // Current: mark cancelled only. Add reversal logic here if needed.
-  const upd: TablesUpdate<'sales'> = { status: 'cancelled' }
-  await supabase.from('sales').update(upd).eq('id', id)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Tidak terautentikasi' }
+
+  const { data, error } = await supabase.rpc('void_sale', {
+    p_sale_id: id,
+    p_user_id: user.id,
+    p_reason: reason ?? null,
+  })
+
+  if (error) return { error: `Gagal membatalkan transaksi: ${error.message}` }
+
+  const result = data as unknown as { success?: boolean; stock_reversed?: boolean }
+  if (!result?.success) return { error: 'Gagal membatalkan transaksi' }
+
   revalidatePath('/dashboard/sales')
+  revalidatePath('/dashboard/inventory')
+  revalidatePath('/dashboard')
+  return { success: true }
 }
