@@ -170,7 +170,7 @@ export async function voidSale(id: string, reason?: string): Promise<ActionState
   const { data, error } = await supabase.rpc('void_sale', {
     p_sale_id: id,
     p_user_id: user.id,
-    p_reason: reason ?? null,
+    ...(reason ? { p_reason: reason } : {}),
   })
 
   if (error) return { error: `Gagal membatalkan transaksi: ${error.message}` }
