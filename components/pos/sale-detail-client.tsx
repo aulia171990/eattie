@@ -49,9 +49,13 @@ export function SaleDetailClient({ saleId, saleStatus, sale }: SaleDetailClientP
 
   const handleVoid = async () => {
     setVoiding(true)
-    await voidSale(saleId)
+    const result = await voidSale(saleId)
     setVoiding(false)
     setConfirmVoid(false)
+    if (result && 'error' in result && result.error) {
+      alert(`Gagal membatalkan transaksi: ${result.error}`)
+      return
+    }
     window.location.reload()
   }
 
