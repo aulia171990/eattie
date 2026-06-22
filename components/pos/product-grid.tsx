@@ -25,7 +25,7 @@ export function ProductGrid({ products }: ProductGridProps) {
   }
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-3" style={{ WebkitOverflowScrolling: 'touch' }}>
+    <div className="flex-1 overflow-y-auto p-3">
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2.5">
         {products.map(product => {
           const p = product as Product & { current_stock: number }
