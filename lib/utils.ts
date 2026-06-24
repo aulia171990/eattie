@@ -19,6 +19,13 @@ export function formatCurrency(amount: number, locale: string = 'id'): string {
 }
 
 // Number formatter
+export function formatCompact(amount: number): string {
+  if (amount >= 1_000_000_000) return `Rp ${(amount / 1_000_000_000).toFixed(1).replace('.', ',')}M`
+  if (amount >= 1_000_000)     return `Rp ${(amount / 1_000_000).toFixed(1).replace('.', ',')}jt`
+  if (amount >= 1_000)         return `Rp ${(amount / 1_000).toFixed(0)}rb`
+  return `Rp ${amount.toFixed(0)}`
+}
+
 export function formatNumber(num: number, decimals: number = 0): string {
   return new Intl.NumberFormat('id-ID', {
     minimumFractionDigits: decimals,
