@@ -3,7 +3,7 @@ import { getSales } from '@/actions/sales'
 import { createClient } from '@/lib/supabase/server'
 import { PageHeader } from '@/components/shared/page-header'
 import { EmptyState } from '@/components/shared/empty-state'
-import { formatCurrency, formatDateTime } from '@/lib/utils'
+import { formatCurrency, formatCompact, formatDateTime } from '@/lib/utils'
 import { ShoppingCart, TrendingUp, Receipt, Ban } from 'lucide-react'
 import { format, startOfMonth } from 'date-fns'
 
@@ -88,7 +88,7 @@ export default async function SalesPage({
               <div className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ background: s.bg, color: s.ic }}>{s.icon}</div>
             </div>
-            <p className="text-xl font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
+            <p className="text-base lg:text-xl font-bold truncate" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
           </div>
         ))}
       </div>
