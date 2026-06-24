@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getDashboardStats } from '@/actions/reports'
 import { getProductionBatches } from '@/actions/production'
 import { getSales } from '@/actions/sales'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatCompact, formatDate } from '@/lib/utils'
 import { DashboardRevenueChart } from '@/components/charts/dashboard-revenue-chart'
 import Link from 'next/link'
 import { TrendingUp, ShoppingCart, AlertTriangle, Factory, ArrowUpRight, ArrowRight } from 'lucide-react'
@@ -71,8 +71,8 @@ export default async function DashboardPage() {
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
             {(
               [
-                { label: 'Pendapatan Hari Ini', value: formatCurrency(stats.todayRevenue), sub: `${stats.todayTransactions} transaksi`, icon: <TrendingUp size={18} />, color: 'amber' as StatColor, href: '/dashboard/sales' },
-                { label: 'Pendapatan Bulan Ini', value: formatCurrency(stats.monthRevenue), sub: 'Bulan berjalan', icon: <ShoppingCart size={18} />, color: 'green' as StatColor, href: '/dashboard/reports/sales' },
+                { label: 'Pendapatan Hari Ini', value: formatCompact(stats.todayRevenue), sub: `${stats.todayTransactions} transaksi`, icon: <TrendingUp size={18} />, color: 'amber' as StatColor, href: '/dashboard/sales' },
+                { label: 'Pendapatan Bulan Ini', value: formatCompact(stats.monthRevenue), sub: 'Bulan berjalan', icon: <ShoppingCart size={18} />, color: 'green' as StatColor, href: '/dashboard/reports/sales' },
                 { label: 'Stok Rendah', value: stats.lowStockCount.toString(), sub: stats.lowStockCount > 0 ? 'Perlu reorder' : 'Semua aman', icon: <AlertTriangle size={18} />, color: (stats.lowStockCount > 0 ? 'red' : 'green') as StatColor, href: '/dashboard/inventory?filter=low_stock' },
                 { label: 'Produksi Aktif', value: stats.activeBatchCount.toString(), sub: 'Batch berjalan', icon: <Factory size={18} />, color: 'blue' as StatColor, href: '/dashboard/production' },
               ]
@@ -85,7 +85,7 @@ export default async function DashboardPage() {
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="text-xs font-medium" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
-                      <p className="text-2xl font-bold mt-1.5" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
+                      <p className="text-lg lg:text-2xl font-bold mt-1.5 truncate" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
                       <p className="text-xs mt-1" style={{ color: 'hsl(25, 15%, 55%)' }}>{s.sub}</p>
                     </div>
                     <div className="flex flex-col items-end justify-between gap-4">
