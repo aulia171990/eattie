@@ -5,9 +5,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { logout } from '@/actions/auth'
 import { getNewOrderNotifications, type OrderNotification } from '@/actions/notifications'
+import { usePushNotifications } from '@/hooks/use-push-notifications'
 import type { Profile } from '@/types'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
-import { Bell, Globe, LogOut, User, ChevronDown, Menu, ShoppingBag } from 'lucide-react'
+import { Bell, Globe, LogOut, User, ChevronDown, Menu, ShoppingBag, BellRing, BellOff } from 'lucide-react'
 
 interface HeaderProps {
   user: Profile
@@ -25,6 +26,8 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
   const [notifOrders, setNotifOrders] = useState<OrderNotification[]>([])
   const seenRef = useRef<Set<string>>(new Set())
   const isOwner = user.role === 'owner'
+  const { status: pushStatus, errorMessage: pushError, subscribe, unsubscribe } =
+    usePushNotifications(isOwner)
 
   const poll = useCallback(async () => {
     if (!isOwner) return
@@ -111,6 +114,50 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
                       </span>
                     )}
                   </div>
+
+                  {/* Push notification toggle — works when tab is closed */}
+                  {pushStatus !== 'unsupported' && (
+                    <div className="px-4 py-3 border-b" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
+                      {pushStatus === 'subscribed' ? (
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <BellRing size={14} style={{ color: 'hsl(142, 60%, 40%)' }} />
+                            <span className="text-xs" style={{ color: 'hsl(25, 30%, 30%)' }}>
+                              Notifikasi browser aktif
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => unsubscribe()}
+                            className="text-xs font-medium shrink-0 hover:underline"
+                            style={{ color: 'hsl(25, 15%, 50%)' }}
+                          >
+                            Matikan
+                          </button>
+                        </div>
+                      ) : pushStatus === 'denied' ? (
+                        <p className="text-xs" style={{ color: 'hsl(0, 60%, 45%)' }}>
+                          Notifikasi diblokir browser. Aktifkan di pengaturan situs.
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => subscribe()}
+                          disabled={pushStatus === 'loading'}
+                          className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-60"
+                          style={{ background: 'hsl(32, 95%, 94%)', color: 'hsl(32, 95%, 35%)' }}
+                        >
+                          <BellOff size={14} />
+                          {pushStatus === 'loading' ? 'Mengaktifkan...' : 'Aktifkan Notifikasi Browser'}
+                        </button>
+                      )}
+                      {pushError && (
+                        <p className="text-xs mt-1" style={{ color: 'hsl(0, 60%, 45%)' }}>
+                          {pushError}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   <div className="max-h-80 overflow-y-auto">
                     {notifOrders.length === 0 ? (
