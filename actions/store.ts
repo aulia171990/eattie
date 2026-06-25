@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { sendNewOrderPushNotification } from '@/lib/push/send-new-order-push'
 
 export interface StoreProduct {
   id: string
@@ -153,6 +154,13 @@ export async function submitOrder(
     await supabase.from('orders').delete().eq('id', order.id)
     return { error: itemsErr.message }
   }
+
+  void sendNewOrderPushNotification({
+    orderId: order.id,
+    orderNumber: orderNum as string,
+    customerName: input.customer_name,
+    totalAmount: input.total_amount,
+  })
 
   return { success: true, orderNumber: orderNum as string }
 }
