@@ -6,12 +6,24 @@ import { Star } from 'lucide-react'
 
 async function getReviews() {
   const supabase = await createClient()
-  const { data } = await supabase
+  const { data: reviews } = await supabase
     .from('product_reviews')
-    .select('*, products(name)')
+    .select('*')
     .order('created_at', { ascending: false })
     .limit(100)
-  return data ?? []
+
+  if (!reviews || reviews.length === 0) return []
+
+  // Fetch product names separately to avoid FK type issues
+  const productIds = [...new Set(reviews.map(r => r.product_id))]
+  const { data: products } = await supabase
+    .from('products')
+    .select('id, name')
+    .in('id', productIds)
+
+  const productMap = Object.fromEntries((products ?? []).map(p => [p.id, p.name]))
+
+  return reviews.map(r => ({ ...r, product_name: productMap[r.product_id] ?? 'Produk' }))
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -124,7 +136,7 @@ export default async function ReviewsPage() {
               <div className="flex items-center gap-2">
                 <StarRating rating={r.rating} />
                 <span className="text-xs font-medium" style={{ color: 'hsl(32, 90%, 40%)' }}>
-                  {(r as { products?: { name: string } }).products?.name}
+                  {(r as { product_name?: string }).product_name}
                 </span>
               </div>
 
