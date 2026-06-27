@@ -78,7 +78,14 @@ export type Database = {
         Update: {
           comment?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "product_reviews_product_id_fkey"
+            columns: ["product_id"]
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       custom_cake_requests: {
         Row: {
