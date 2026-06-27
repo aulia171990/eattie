@@ -199,7 +199,9 @@ export default async function CustomersPage({
                   </div>
                   <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
                     style={{ background: tier.gradient }}>
-                    <span style={{ color: 'white', display: 'flex' }}>{React.cloneElement(tier.icon as React.ReactElement, { size: 9 })}</span>
+                    <span style={{ color: 'white', fontSize: '9px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {c.tier === 'PLATINUM' ? '♛' : c.tier === 'GOLD' ? '★' : c.tier === 'SILVER' ? '◈' : '◆'}
+                    </span>
                   </div>
                 </div>
 
