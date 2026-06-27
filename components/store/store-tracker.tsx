@@ -252,7 +252,7 @@ export function StoreTracker({ searchParams }: StoreTrackerProps) {
                     required className="w-full px-3 py-2 rounded-xl border text-sm outline-none"
                     style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
                     <option value="">Pilih produk...</option>
-                    {result.order_items.map((item: { product_id: string; product_name: string }) => (
+                    {(result.order_items as { product_id: string; product_name: string; quantity: number; unit_price: number; subtotal: number }[]).map(item => (
                       <option key={item.product_id} value={item.product_id}>{item.product_name}</option>
                     ))}
                   </select>
