@@ -54,6 +54,32 @@ export type Database = {
         }
         Relationships: []
       }
+      product_reviews: {
+        Row: {
+          id: string
+          product_id: string
+          order_id: string
+          customer_name: string
+          customer_phone: string
+          rating: number
+          comment: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          order_id: string
+          customer_name: string
+          customer_phone: string
+          rating: number
+          comment?: string | null
+          created_at?: string
+        }
+        Update: {
+          comment?: string | null
+        }
+        Relationships: []
+      }
       custom_cake_requests: {
         Row: {
           id: string
