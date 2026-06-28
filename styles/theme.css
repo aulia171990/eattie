@@ -1,0 +1,132 @@
+/**
+ * EATTIE DESIGN SYSTEM — THEME
+ * Central source of truth for all color tokens.
+ *
+ * To rebrand: edit values in :root only.
+ * All components reference these variables — no hardcoded values needed.
+ *
+ * Format: HSL without hsl() wrapper (for Tailwind CSS variable compatibility)
+ * Usage:  color: hsl(var(--primary));
+ *         @apply text-primary;  (via tailwind.config.ts mapping)
+ */
+
+ :root {
+  /* ── Brand ──────────────────────────────────────────────── */
+  --primary:             32 95% 44%;    /* orange — main CTA, buttons, accents    */
+  --primary-hover:       32 95% 38%;   /* orange darkened for hover state         */
+  --primary-foreground:  0 0% 100%;    /* text on primary background              */
+  --primary-subtle:      36 80% 92%;   /* very light orange for badges, chips     */
+
+  /* ── Neutrals ───────────────────────────────────────────── */
+  --background:          36 33% 97%;   /* page background — warm off-white        */
+  --surface:             0 0% 100%;    /* card / panel background — pure white    */
+  --surface-raised:      36 25% 98%;   /* slightly elevated surface               */
+
+  --foreground:          25 30% 12%;   /* primary text — warm dark brown          */
+  --text-secondary:      25 20% 35%;   /* secondary text                          */
+  --text-muted:          25 15% 55%;   /* muted / placeholder / meta text         */
+  --text-disabled:       25 10% 70%;   /* disabled state text                     */
+
+  --border:              36 20% 88%;   /* default border color                    */
+  --border-strong:       36 20% 78%;   /* stronger border (focus, active)         */
+  --input:               36 20% 88%;   /* input border                            */
+  --ring:                32 95% 44%;   /* focus ring                              */
+
+  /* ── Semantic ───────────────────────────────────────────── */
+  --success:             142 60% 35%;  /* green — confirmed, completed            */
+  --success-bg:          142 50% 90%;  /* green background for badges             */
+  --success-subtle:      142 50% 95%;  /* very subtle success tint                */
+
+  --warning:             36 80% 40%;   /* amber — low stock, pending              */
+  --warning-bg:          36 80% 92%;   /* amber background for badges             */
+  --warning-subtle:      36 80% 96%;   /* very subtle warning tint                */
+
+  --danger:              0 70% 45%;    /* red — cancelled, error, destructive     */
+  --danger-bg:           0 80% 95%;    /* red background for badges               */
+  --danger-subtle:       0 80% 97%;    /* very subtle danger tint                 */
+
+  --info:                210 70% 40%;  /* blue — in-production, info states       */
+  --info-bg:             210 70% 93%;  /* blue background for badges              */
+  --info-subtle:         210 70% 96%;  /* very subtle info tint                   */
+
+  /* ── Tier colors (CRM) ──────────────────────────────────── */
+  --tier-bronze:         25 50% 40%;
+  --tier-bronze-bg:      25 40% 95%;
+  --tier-silver:         210 15% 40%;
+  --tier-silver-bg:      210 20% 95%;
+  --tier-gold:           40 80% 35%;
+  --tier-gold-bg:        45 90% 94%;
+  --tier-platinum:       270 50% 45%;
+  --tier-platinum-bg:    270 40% 95%;
+
+  /* ── Sidebar ────────────────────────────────────────────── */
+  --sidebar-bg:          25 30% 12%;
+  --sidebar-text:        36 20% 75%;
+  --sidebar-text-muted:  36 10% 50%;
+  --sidebar-accent:      32 95% 44%;
+  --sidebar-border:      25 20% 20%;
+  --sidebar-hover:       25 20% 18%;
+
+  /* ── shadcn/ui compatibility aliases ────────────────────── */
+  --card:                0 0% 100%;
+  --card-foreground:     25 30% 12%;
+  --popover:             0 0% 100%;
+  --popover-foreground:  25 30% 12%;
+  --secondary:           36 20% 92%;
+  --secondary-foreground:25 30% 20%;
+  --muted:               36 15% 94%;
+  --muted-foreground:    25 15% 50%;
+  --accent:              32 80% 90%;
+  --accent-foreground:   32 95% 30%;
+  --destructive:         0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+}
+
+/* ── Dark mode ───────────────────────────────────────────── */
+.dark {
+  --primary:             32 95% 50%;
+  --primary-hover:       32 95% 44%;
+  --primary-foreground:  25 30% 8%;
+  --primary-subtle:      32 60% 18%;
+
+  --background:          25 30% 8%;
+  --surface:             25 25% 12%;
+  --surface-raised:      25 22% 15%;
+
+  --foreground:          36 20% 92%;
+  --text-secondary:      36 15% 70%;
+  --text-muted:          36 10% 50%;
+  --text-disabled:       25 10% 35%;
+
+  --border:              25 20% 22%;
+  --border-strong:       25 20% 32%;
+  --input:               25 20% 22%;
+  --ring:                32 95% 50%;
+
+  --success:             142 60% 45%;
+  --success-bg:          142 30% 15%;
+  --warning:             36 80% 55%;
+  --warning-bg:          36 40% 15%;
+  --danger:              0 70% 55%;
+  --danger-bg:           0 40% 15%;
+  --info:                210 70% 55%;
+  --info-bg:             210 40% 15%;
+
+  --sidebar-bg:          25 30% 8%;
+  --sidebar-text:        36 15% 70%;
+  --sidebar-border:      25 20% 16%;
+  --sidebar-hover:       25 20% 14%;
+
+  --card:                25 25% 12%;
+  --card-foreground:     36 20% 92%;
+  --popover:             25 25% 12%;
+  --popover-foreground:  36 20% 92%;
+  --secondary:           25 20% 18%;
+  --secondary-foreground:36 20% 85%;
+  --muted:               25 20% 18%;
+  --muted-foreground:    36 10% 55%;
+  --accent:              32 60% 20%;
+  --accent-foreground:   32 95% 60%;
+  --destructive:         0 70% 45%;
+  --destructive-foreground: 0 0% 100%;
+}
