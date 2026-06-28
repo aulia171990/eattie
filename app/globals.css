@@ -1,80 +1,29 @@
+/**
+ * EATTIE — GLOBAL STYLES
+ *
+ * This file is the entry point for all styles.
+ * It should only:
+ *   1. Import the Design System
+ *   2. Import Tailwind
+ *   3. Apply global resets and base styles
+ *
+ * Do NOT add component styles or tokens here.
+ * All tokens live in styles/
+ */
+
+/* ── Design System ───────────────────────────────────────── */
+import "@/styles/theme.css";
+import "@/styles/typography.css";
+import "@/styles/spacing.css";
+import "@/styles/shadows.css";
+import "@/styles/animations.css";
+
+/* ── Tailwind ────────────────────────────────────────────── */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Warm bakery color palette */
-    --background: 36 33% 97%;
-    --foreground: 25 30% 12%;
-    --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
-
-    --card: 0 0% 100%;
-    --card-foreground: 25 30% 12%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 25 30% 12%;
-
-    /* Amber/orange primary - warm bakery brand */
-    --primary: 32 95% 44%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 36 20% 92%;
-    --secondary-foreground: 25 30% 20%;
-
-    --muted: 36 15% 94%;
-    --muted-foreground: 25 15% 50%;
-
-    --accent: 32 80% 90%;
-    --accent-foreground: 32 95% 30%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 36 20% 88%;
-    --input: 36 20% 88%;
-    --ring: 32 95% 44%;
-
-    --radius: 0.625rem;
-
-    /* Custom bakery vars */
-    --sidebar-bg: 25 30% 12%;
-    --sidebar-text: 36 20% 85%;
-    --sidebar-accent: 32 95% 44%;
-    --sidebar-border: 25 20% 20%;
-  }
-
-  .dark {
-    --background: 25 30% 8%;
-    --foreground: 36 20% 92%;
-
-    --card: 25 25% 12%;
-    --card-foreground: 36 20% 92%;
-
-    --popover: 25 25% 12%;
-    --popover-foreground: 36 20% 92%;
-
-    --primary: 32 95% 50%;
-    --primary-foreground: 25 30% 8%;
-
-    --secondary: 25 20% 18%;
-    --secondary-foreground: 36 20% 85%;
-
-    --muted: 25 20% 18%;
-    --muted-foreground: 36 10% 55%;
-
-    --accent: 32 60% 20%;
-    --accent-foreground: 32 95% 60%;
-
-    --destructive: 0 70% 45%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 25 20% 22%;
-    --input: 25 20% 22%;
-    --ring: 32 95% 50%;
-  }
-}
-
+/* ── Global Base ─────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border;
@@ -82,47 +31,37 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
-  /* Smooth scrolling */
   html {
     scroll-behavior: smooth;
   }
 
   /* Custom scrollbar */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-muted;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-border rounded-full;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted-foreground;
-  }
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { @apply bg-muted; }
+  ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-muted-foreground; }
 }
 
+/* ── Shared Component Classes ────────────────────────────── */
 @layer components {
-  /* Sidebar styles */
+  /* Sidebar */
   .sidebar {
     background: hsl(var(--sidebar-bg));
     color: hsl(var(--sidebar-text));
   }
 
   .sidebar-item {
-    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200;
+    @apply flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium;
     color: hsl(var(--sidebar-text));
+    transition: var(--transition-colors);
   }
 
   .sidebar-item:hover {
-    background: hsl(var(--sidebar-border));
+    background: hsl(var(--sidebar-hover));
     color: white;
   }
 
@@ -133,58 +72,45 @@
 
   /* Stat cards */
   .stat-card {
-    @apply bg-card rounded-xl border p-6 transition-all duration-200;
+    @apply bg-card rounded-xl border p-6;
+    transition: var(--transition-shadow);
   }
 
   .stat-card:hover {
-    @apply shadow-md;
+    box-shadow: var(--shadow-card-hover);
   }
 
   /* Status badges */
-  .badge-low {
-    @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400;
-  }
+  .badge-success { background: hsl(var(--success-bg));  color: hsl(var(--success)); }
+  .badge-warning { background: hsl(var(--warning-bg));  color: hsl(var(--warning)); }
+  .badge-danger  { background: hsl(var(--danger-bg));   color: hsl(var(--danger));  }
+  .badge-info    { background: hsl(var(--info-bg));     color: hsl(var(--info));    }
 
-  .badge-critical {
-    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
-  }
+  /* Legacy badge names — kept for backwards compatibility */
+  .badge-low      { @apply badge-warning; }
+  .badge-critical { @apply badge-danger;  }
+  .badge-normal   { @apply badge-success; }
+  .badge-out      { @apply bg-muted text-muted-foreground; }
 
-  .badge-normal {
-    @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400;
-  }
-
-  .badge-out {
-    @apply bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400;
-  }
-
-  /* Page transitions */
+  /* Page enter animation */
   .page-enter {
-    animation: fade-in 0.3s ease-out;
+    animation: fade-in var(--duration-slow) var(--ease-out);
   }
 }
 
+/* ── Utilities ───────────────────────────────────────────── */
 @layer utilities {
-  /* Print utilities */
+  /* Hide scrollbar for horizontal scroll strips */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Print */
   @media print {
-    .no-print {
-      display: none !important;
-    }
-
-    .print-only {
-      display: block !important;
-    }
+    .no-print   { display: none !important; }
+    .print-only { display: block !important; }
   }
-
-  .print-only {
-    display: none;
-  }
-}
-
-/* Hide scrollbar for horizontal scroll strips */
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+  .print-only { display: none; }
 }
