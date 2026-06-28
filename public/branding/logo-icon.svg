@@ -1,0 +1,7 @@
+<svg width="120" height="32" viewBox="0 0 120 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon -->
+  <rect width="32" height="32" rx="8" fill="hsl(32, 95%, 44%)"/>
+  <text x="16" y="22" font-size="18" text-anchor="middle" fill="white">🍞</text>
+  <!-- Wordmark -->
+  <text x="44" y="22" font-family="Georgia, serif" font-size="18" font-weight="700" fill="hsl(25, 30%, 12%)" letter-spacing="-0.5">Eattie</text>
+</svg>
