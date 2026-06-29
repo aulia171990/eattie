@@ -33,21 +33,26 @@
   --ring:                338 53% 38%;
 
   /* ── Semantic ───────────────────────────────────────────── */
-  --success:             145 55% 34%;
-  --success-bg:          145 45% 93%;
-  --success-subtle:      145 45% 97%;
 
-  --warning:             38 92% 42%;
-  --warning-bg:          40 90% 93%;
-  --warning-subtle:      40 90% 97%;
+/* Success */
+--success:            145 45% 34%;
+--success-bg:         145 45% 93%;
+--success-subtle:     145 45% 96%;
 
-  --danger:              0 72% 48%;
-  --danger-bg:           0 82% 95%;
-  --danger-subtle:       0 82% 98%;
+/* Warning */
+--warning:            38 82% 42%;
+--warning-bg:         38 90% 94%;
+--warning-subtle:     38 90% 97%;
 
-  --info:                212 72% 45%;
-  --info-bg:             212 75% 94%;
-  --info-subtle:         212 75% 97%;
+/* Danger */
+--danger:             355 68% 46%;
+--danger-bg:          355 85% 95%;
+--danger-subtle:      355 90% 97%;
+
+/* Info */
+--info:               210 60% 42%;
+--info-bg:            210 70% 95%;
+--info-subtle:        210 70% 97%;
 
   /* ── CRM Tier ───────────────────────────────────────────── */
   --tier-bronze:         28 45% 42%;
