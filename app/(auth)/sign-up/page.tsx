@@ -1,4 +1,6 @@
 'use client'
+
+import { BRANDING } from '@/config/branding'
 // SIGNUP DISABLED — remove this redirect and restore the original export below to re-enable
 import { redirect } from 'next/navigation'
 export default function SignUpPage() {
@@ -8,6 +10,7 @@ export default function SignUpPage() {
 
 /* ORIGINAL SIGNUP PAGE — uncomment to re-enable
 'use client'
+
 
 import { useActionState } from 'react'
 import { signUp } from '@/actions/auth'
@@ -22,7 +25,7 @@ export default function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}>🍞</div>
+            style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
           <span className="text-xl font-semibold" style={{ color: 'hsl(25, 30%, 12%)' }}>Bakery Manager</span>
         </div>
 
