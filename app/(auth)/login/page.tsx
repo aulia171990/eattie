@@ -1,5 +1,7 @@
 'use client'
 
+import { BRANDING } from '@/config/branding'
+
 import { useActionState } from 'react'
 import { login } from '@/actions/auth'
 import Link from 'next/link'
@@ -21,7 +23,7 @@ export default function LoginPage() {
 
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-            style={{ background: 'hsl(32, 95%, 44%)' }}>🍞</div>
+            style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
           <span className="text-white text-xl font-semibold">Bakery Manager</span>
         </div>
 
@@ -62,7 +64,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           <div className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-              style={{ background: 'hsl(32, 95%, 44%)' }}>🍞</div>
+              style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
             <span className="text-xl font-semibold" style={{ color: 'hsl(25, 30%, 12%)' }}>
               Bakery Manager
             </span>
