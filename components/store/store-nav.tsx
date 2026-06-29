@@ -1,5 +1,7 @@
 'use client'
 
+import { BRANDING } from '@/config/branding'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useStoreCart } from '@/contexts/store-cart-context'
@@ -24,7 +26,7 @@ export function StoreNav() {
         <Link href="/store" className="flex items-center gap-2 shrink-0" style={{ textDecoration: 'none' }}>
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
             style={{ background: 'hsl(32, 90%, 44%)' }}>
-            🍞
+            {BRANDING.logoEmoji}
           </div>
           <span style={{
             fontFamily: "'Playfair Display', serif",
@@ -33,7 +35,7 @@ export function StoreNav() {
             color: 'hsl(25, 30%, 12%)',
             letterSpacing: '-0.3px',
           }}>
-            Eattie
+            {BRANDING.shortName}
           </span>
         </Link>
 
