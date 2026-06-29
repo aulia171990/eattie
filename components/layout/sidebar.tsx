@@ -1,5 +1,7 @@
 'use client'
 
+import { BRANDING } from '@/config/branding'
+
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -61,7 +63,7 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
     <aside className="sidebar flex flex-col h-full w-64 shrink-0">
       <div className="flex items-center justify-between px-5 py-5 border-b" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: 'hsl(32, 95%, 44%)' }}>🍞</div>
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
           <div className="min-w-0">
             <div className="text-white font-semibold text-sm truncate">Bakery Manager</div>
             <div className="text-xs truncate" style={{ color: 'hsl(36, 20%, 50%)' }}>Manajemen Toko Roti</div>
