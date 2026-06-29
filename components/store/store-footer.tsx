@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { BRANDING } from '@/config/branding'
 
 export function StoreFooter() {
   return (
@@ -14,7 +15,7 @@ export function StoreFooter() {
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
                 style={{ background: 'hsl(32, 90%, 44%)' }}>
-                🍞
+                {BRANDING.logoEmoji}
               </div>
               <span style={{
                 fontFamily: '"Playfair Display", serif',
@@ -22,7 +23,7 @@ export function StoreFooter() {
                 fontSize: '1.05rem',
                 color: 'white',
               }}>
-                Eattie
+                {BRANDING.shortName}
               </span>
             </div>
             <p style={{ fontSize: '0.8rem', lineHeight: 1.7 }}>
@@ -84,7 +85,7 @@ export function StoreFooter() {
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4">
           <p style={{ fontSize: '0.7rem', color: 'hsl(36, 10%, 45%)' }}>
-            © {new Date().getFullYear()} Eattie Bakery. Semua hak dilindungi.
+            © {new Date().getFullYear()} {BRANDING.companyName}. Semua hak dilindungi.
           </p>
           <div className="flex items-center gap-3">
             {['Instagram', 'WhatsApp'].map(s => (
