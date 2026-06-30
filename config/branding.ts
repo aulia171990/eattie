@@ -27,7 +27,7 @@ export const BRANDING = {
   favicon: '/branding/favicon.ico',
 
   /** Emoji fallback — used until SVG logos are ready */
-  logoEmoji= logoIcon ,
+  logoEmoji: '/branding/logo.svg',
 
   /** Brand colors (mirrors CSS variables — for use in JS/TS) */
   colors: {
