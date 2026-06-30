@@ -44,9 +44,9 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
 
       <div
         className="bg-white rounded-xl border p-5"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+        style={{ borderColor: 'hsl(var(--border))' }}
       >
-        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(25, 30%, 15%)' }}>
+        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(var(--foreground))' }}>
           Input Jumlah Diterima
         </h2>
         <div className="space-y-4">
@@ -54,13 +54,13 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
             <div
               key={item.id}
               className="p-4 rounded-lg"
-              style={{ background: 'hsl(36, 20%, 97%)' }}
+              style={{ background: 'hsl(var(--surface-raised))' }}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                   {item.ingredients?.name ?? '—'}
                 </span>
-                <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                   Dipesan: {item.quantity_ordered} {item.unit}
                 </span>
               </div>
@@ -68,7 +68,7 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
                 <div>
                   <label
                     className="text-xs font-medium block mb-1"
-                    style={{ color: 'hsl(25, 30%, 25%)' }}
+                    style={{ color: 'hsl(var(--text-secondary))' }}
                   >
                     Jumlah Diterima*
                   </label>
@@ -84,13 +84,13 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
                       }))
                     }
                     className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-                    style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                    style={{ borderColor: 'hsl(var(--border))' }}
                   />
                 </div>
                 <div>
                   <label
                     className="text-xs font-medium block mb-1"
-                    style={{ color: 'hsl(25, 30%, 25%)' }}
+                    style={{ color: 'hsl(var(--text-secondary))' }}
                   >
                     Tgl Kadaluarsa
                   </label>
@@ -101,7 +101,7 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
                       setExpiry((prev) => ({ ...prev, [item.id]: e.target.value }))
                     }
                     className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-                    style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                    style={{ borderColor: 'hsl(var(--border))' }}
                   />
                 </div>
               </div>
@@ -112,7 +112,7 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
 
       <div
         className="p-4 rounded-xl text-sm"
-        style={{ background: 'hsl(36, 80%, 93%)', color: 'hsl(32, 95%, 35%)' }}
+        style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
       >
         ⚠️ Setelah menyimpan, stok akan diperbarui otomatis dan PO ditandai Diterima.
       </div>
@@ -122,14 +122,14 @@ export function ReceiveStockForm({ action, items, cancelHref }: ReceiveStockForm
           type="submit"
           disabled={isPending}
           className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-          style={{ background: 'hsl(142, 60%, 40%)' }}
+          style={{ background: 'hsl(var(--success))' }}
         >
           {isPending ? 'Memproses...' : '✓ Konfirmasi Penerimaan Stok'}
         </button>
         <Link
           href={cancelHref}
           className="px-6 py-2.5 rounded-lg text-sm font-medium border"
-          style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+          style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
         >
           Batal
         </Link>

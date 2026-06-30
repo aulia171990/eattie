@@ -13,27 +13,27 @@ export function SalesReportCharts({ dailyData, byPayment }: SalesReportChartsPro
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Revenue trend */}
-      <div className="lg:col-span-2 bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(25, 30%, 15%)' }}>
+      <div className="lg:col-span-2 bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(var(--foreground))' }}>
           Tren Pendapatan
         </h2>
         <RevenueChart data={chartData} height={220} />
       </div>
 
       {/* Payment pie */}
-      <div className="bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(25, 30%, 15%)' }}>
+      <div className="bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(var(--foreground))' }}>
           Metode Bayar
         </h2>
         {byPayment.length > 0
           ? <PaymentPieChart data={byPayment} height={200} />
-          : <div className="flex items-center justify-center h-48 text-sm" style={{ color: 'hsl(25, 15%, 55%)' }}>Tidak ada data</div>
+          : <div className="flex items-center justify-center h-48 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>Tidak ada data</div>
         }
       </div>
 
       {/* Transaction count */}
-      <div className="lg:col-span-3 bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(25, 30%, 15%)' }}>
+      <div className="lg:col-span-3 bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(var(--foreground))' }}>
           Jumlah Transaksi per Hari
         </h2>
         <TransactionChart data={chartData} height={160} />

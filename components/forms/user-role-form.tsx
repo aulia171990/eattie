@@ -26,7 +26,7 @@ export function UserRoleForm({ currentRole, action }: UserRoleFormProps) {
         defaultValue={currentRole}
         disabled={isPending}
         className="text-xs px-2 py-1.5 rounded-lg border outline-none"
-        style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 20%)' }}
+        style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
       >
         {ROLES.map(r => (
           <option key={r.value} value={r.value}>{r.label}</option>
@@ -36,7 +36,7 @@ export function UserRoleForm({ currentRole, action }: UserRoleFormProps) {
         type="submit"
         disabled={isPending}
         className="text-xs px-3 py-1.5 rounded-lg font-medium text-white disabled:opacity-60"
-        style={{ background: 'hsl(32, 95%, 44%)' }}
+        style={{ background: 'hsl(var(--primary))' }}
         onClick={e => {
           if (!confirm('Ubah role pengguna ini?')) e.preventDefault()
         }}
@@ -47,7 +47,7 @@ export function UserRoleForm({ currentRole, action }: UserRoleFormProps) {
         <span className="text-xs text-red-600">{state.error}</span>
       )}
       {state?.success && (
-        <span className="text-xs" style={{ color: 'hsl(142, 60%, 35%)' }}>✓</span>
+        <span className="text-xs" style={{ color: 'hsl(var(--success))' }}>✓</span>
       )}
     </form>
   )

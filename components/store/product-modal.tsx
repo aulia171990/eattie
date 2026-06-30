@@ -94,7 +94,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
           <div className="overflow-y-auto overscroll-contain" style={{ maxHeight: '90dvh' }}>
 
             {/* Product image */}
-            <div className="relative w-full" style={{ aspectRatio: '4/3', background: 'hsl(36, 35%, 96%)' }}>
+            <div className="relative w-full" style={{ aspectRatio: '4/3', background: 'hsl(var(--surface-raised))' }}>
               {product.image_url
                 ? <img src={product.image_url} alt={product.name}
                     className="w-full h-full object-cover" />
@@ -109,7 +109,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                   style={{
                     background: 'rgba(255,255,255,0.9)',
                     backdropFilter: 'blur(8px)',
-                    color: 'hsl(32, 90%, 40%)',
+                    color: 'hsl(var(--primary))',
                   }}>
                   {CAT_EMOJI[product.category] ?? '•'} {product.category}
                 </div>
@@ -124,12 +124,12 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 <h2 className="text-xl font-bold leading-tight flex-1"
                   style={{
                     fontFamily: '"Playfair Display", serif',
-                    color: 'hsl(25, 30%, 12%)',
+                    color: 'hsl(var(--foreground))',
                   }}>
                   {product.name}
                 </h2>
                 <span className="text-xl font-extrabold shrink-0"
-                  style={{ color: 'hsl(32, 90%, 42%)' }}>
+                  style={{ color: 'hsl(var(--primary))' }}>
                   {formatCurrency(product.selling_price)}
                 </span>
               </div>
@@ -138,23 +138,23 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
               {description && (
                 <div className="space-y-1">
                   <p className="text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: 'hsl(25, 15%, 50%)' }}>
+                    style={{ color: 'hsl(var(--text-muted))' }}>
                     Deskripsi
                   </p>
                   <p className="text-sm leading-relaxed"
-                    style={{ color: 'hsl(25, 20%, 35%)' }}>
+                    style={{ color: 'hsl(var(--text-secondary))' }}>
                     {description}
                   </p>
                 </div>
               )}
 
               {/* Divider */}
-              <div className="h-px" style={{ background: 'hsl(36, 20%, 92%)' }} />
+              <div className="h-px" style={{ background: 'hsl(var(--border))' }} />
 
               {/* Qty + Add to cart */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                  <p className="text-sm font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                     Jumlah
                   </p>
                   <div className="flex items-center gap-3">
@@ -162,17 +162,17 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                       onClick={() => qty > 0 && updateQty(product.id, qty - 1)}
                       disabled={qty === 0}
                       className="w-9 h-9 rounded-xl flex items-center justify-center font-bold transition-all disabled:opacity-30"
-                      style={{ background: 'hsl(36, 25%, 93%)', color: 'hsl(25, 30%, 25%)' }}>
+                      style={{ background: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
                       <Minus size={14} />
                     </button>
                     <span className="w-8 text-center text-lg font-bold"
-                      style={{ color: 'hsl(25, 30%, 12%)' }}>
+                      style={{ color: 'hsl(var(--foreground))' }}>
                       {qty}
                     </span>
                     <button
                       onClick={handleAdd}
                       className="w-9 h-9 rounded-xl flex items-center justify-center font-bold transition-all active:scale-95"
-                      style={{ background: 'hsl(32, 90%, 44%)', color: 'white' }}>
+                      style={{ background: 'hsl(var(--primary))', color: 'white' }}>
                       <Plus size={14} />
                     </button>
                   </div>
@@ -185,7 +185,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                     onClose()
                   }}
                   className="w-full py-4 rounded-2xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
-                  style={{ background: added ? 'hsl(142, 55%, 40%)' : 'hsl(32, 90%, 44%)' }}>
+                  style={{ background: added ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}>
                   {added
                     ? <><Check size={16} /> Ditambahkan ke Keranjang</>
                     : <><ShoppingBag size={16} /> {qty > 0 ? `Perbarui Keranjang (${qty})` : 'Tambah ke Keranjang'}</>
@@ -193,7 +193,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
                 </button>
 
                 {qty > 0 && (
-                  <p className="text-center text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                  <p className="text-center text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                     Subtotal: {formatCurrency(product.selling_price * qty)}
                   </p>
                 )}

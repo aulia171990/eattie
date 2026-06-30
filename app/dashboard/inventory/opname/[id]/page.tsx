@@ -46,16 +46,16 @@ export default async function OpnameDetailPage({
       ) : (
         <div
           className="bg-white rounded-xl border overflow-hidden"
-          style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+          style={{ borderColor: 'hsl(var(--border))' }}
         >
           <table className="w-full">
             <thead>
-              <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+              <tr style={{ background: 'hsl(var(--surface-raised))' }}>
                 {['Bahan', 'Stok Sistem', 'Stok Aktual', 'Selisih', 'Alasan'].map((h) => (
                   <th
                     key={h}
                     className="text-left px-4 py-3 text-xs font-semibold"
-                    style={{ color: 'hsl(25, 15%, 45%)' }}
+                    style={{ color: 'hsl(var(--text-muted))' }}
                   >
                     {h}
                   </th>
@@ -67,12 +67,12 @@ export default async function OpnameDetailPage({
                 <tr
                   key={item.id}
                   className="border-t"
-                  style={{ borderColor: 'hsl(36, 20%, 94%)' }}
+                  style={{ borderColor: 'hsl(var(--border))' }}
                 >
-                  <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                  <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                     {item.ingredients?.name ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                  <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
                     {item.system_stock} {item.unit}
                   </td>
                   <td className="px-4 py-3 text-sm">{item.actual_stock ?? '—'}</td>
@@ -81,10 +81,10 @@ export default async function OpnameDetailPage({
                     style={{
                       color:
                         item.difference == null || item.difference === 0
-                          ? 'hsl(142, 60%, 35%)'
+                          ? 'hsl(var(--success))'
                           : item.difference > 0
-                          ? 'hsl(210, 70%, 40%)'
-                          : 'hsl(0, 70%, 45%)',
+                          ? 'hsl(var(--info))'
+                          : 'hsl(var(--danger))',
                     }}
                   >
                     {item.difference != null
@@ -93,7 +93,7 @@ export default async function OpnameDetailPage({
                         : item.difference
                       : '—'}
                   </td>
-                  <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                  <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                     {item.reason ?? '—'}
                   </td>
                 </tr>

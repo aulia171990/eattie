@@ -40,7 +40,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
   const isDirty = status !== req.status || price !== (req.quoted_price?.toString() ?? '')
 
   return (
-    <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(36, 25%, 88%)' }}>
+    <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
 
       {/* Card Header */}
       <button className="w-full flex items-center justify-between px-5 py-4 hover:bg-orange-50/30 transition-colors text-left"
@@ -50,15 +50,15 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
             style={{ background: 'hsl(36, 40%, 93%)' }}>🎂</div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 12%)' }}>
+              <span className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                 {req.customer_name}
               </span>
               <span className="font-mono text-[10px] px-2 py-0.5 rounded"
-                style={{ background: 'hsl(36, 40%, 93%)', color: 'hsl(25, 20%, 45%)' }}>
+                style={{ background: 'hsl(36, 40%, 93%)', color: 'hsl(var(--text-muted))' }}>
                 {req.req_number}
               </span>
             </div>
-            <div className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <div className="text-xs mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>
               {req.size} · {req.flavor} · {formatDate(req.created_at)}
             </div>
           </div>
@@ -66,12 +66,12 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
         <div className="flex items-center gap-3 shrink-0 ml-3">
           <StatusBadge status={req.status} />
           {req.quoted_price && (
-            <span className="text-sm font-bold hidden sm:block" style={{ color: 'hsl(32, 90%, 44%)' }}>
+            <span className="text-sm font-bold hidden sm:block" style={{ color: 'hsl(var(--primary))' }}>
               {formatCurrency(req.quoted_price)}
             </span>
           )}
           <ChevronDown size={16} className={`transition-transform ${open ? 'rotate-180' : ''}`}
-            style={{ color: 'hsl(25, 15%, 55%)' }} />
+            style={{ color: 'hsl(var(--text-muted))' }} />
         </div>
       </button>
 
@@ -82,31 +82,31 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div className="space-y-3">
               <div className="flex items-start gap-2">
-                <Phone size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(32, 90%, 44%)' }} />
+                <Phone size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} />
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>WhatsApp</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(var(--text-muted))' }}>WhatsApp</p>
                   <a href={`https://wa.me/62${req.customer_phone.replace(/^0/, '')}`}
                     target="_blank" rel="noopener noreferrer"
-                    className="font-medium hover:underline" style={{ color: 'hsl(32, 90%, 44%)' }}>
+                    className="font-medium hover:underline" style={{ color: 'hsl(var(--primary))' }}>
                     {req.customer_phone}
                   </a>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Cake size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(32, 90%, 44%)' }} />
+                <Cake size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} />
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>Detail Kue</p>
-                  <p style={{ color: 'hsl(25, 30%, 15%)' }}>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(var(--text-muted))' }}>Detail Kue</p>
+                  <p style={{ color: 'hsl(var(--foreground))' }}>
                     {req.size} · {req.flavor}
                     {req.color_theme && <span> · <span className="italic">{req.color_theme}</span></span>}
                   </p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <Calendar size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(32, 90%, 44%)' }} />
+                <Calendar size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} />
                 <div>
-                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>Tanggal Request</p>
-                  <p style={{ color: 'hsl(25, 30%, 15%)' }}>{formatDate(req.created_at)}</p>
+                  <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(var(--text-muted))' }}>Tanggal Request</p>
+                  <p style={{ color: 'hsl(var(--foreground))' }}>{formatDate(req.created_at)}</p>
                 </div>
               </div>
             </div>
@@ -114,18 +114,18 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
             <div className="space-y-3">
               {req.special_notes && (
                 <div className="flex items-start gap-2">
-                  <StickyNote size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(32, 90%, 44%)' }} />
+                  <StickyNote size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} />
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>Catatan Khusus</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(var(--text-muted))' }}>Catatan Khusus</p>
                     <p className="text-xs leading-relaxed" style={{ color: 'hsl(25, 25%, 30%)' }}>{req.special_notes}</p>
                   </div>
                 </div>
               )}
               {req.reference_image_url && (
                 <div className="flex items-start gap-2">
-                  <ImageIcon size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(32, 90%, 44%)' }} />
+                  <ImageIcon size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} />
                   <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: 'hsl(25, 15%, 55%)' }}>Gambar Referensi</p>
+                    <p className="text-[10px] font-semibold uppercase tracking-wider mb-1" style={{ color: 'hsl(var(--text-muted))' }}>Gambar Referensi</p>
                     <a href={req.reference_image_url} target="_blank" rel="noopener noreferrer">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={req.reference_image_url} alt="Referensi"
@@ -139,10 +139,10 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
           </div>
 
           {/* Admin Controls */}
-          <div className="flex flex-wrap items-end gap-3 pt-4 border-t" style={{ borderColor: 'hsl(36, 25%, 88%)' }}>
+          <div className="flex flex-wrap items-end gap-3 pt-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
             {/* Status */}
             <div className="space-y-1.5 flex-1 min-w-[160px]">
-              <label className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(25, 15%, 55%)' }}>
+              <label className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(var(--text-muted))' }}>
                 Update Status
               </label>
               <select value={status} onChange={e => setStatus(e.target.value as CustomCakeStatus)}
@@ -156,7 +156,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
 
             {/* Quoted Price */}
             <div className="space-y-1.5 flex-1 min-w-[140px]">
-              <label className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(25, 15%, 55%)' }}>
+              <label className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(var(--text-muted))' }}>
                 Harga Penawaran (Rp)
               </label>
               <input type="number" value={price} onChange={e => setPrice(e.target.value)}
@@ -168,7 +168,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
             {/* Save Button */}
             <button onClick={handleSave} disabled={saving || !isDirty}
               className="px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50 flex items-center gap-2"
-              style={{ background: saved ? 'hsl(142, 55%, 42%)' : 'hsl(32, 90%, 44%)' }}>
+              style={{ background: saved ? 'hsl(142, 55%, 42%)' : 'hsl(var(--primary))' }}>
               {saving
                 ? <><Loader2 size={14} className="animate-spin" /> Menyimpan...</>
                 : saved
@@ -220,8 +220,8 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>Custom Cake</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>
+          <h1 className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Custom Cake</h1>
+          <p className="text-sm mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>
             {requests.length} permintaan masuk
           </p>
         </div>
@@ -234,14 +234,14 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
             className="rounded-2xl p-4 text-left border transition-all"
             style={{
               background: 'white',
-              borderColor: filterStatus === s ? 'hsl(32, 90%, 44%)' : 'hsl(36, 25%, 88%)',
+              borderColor: filterStatus === s ? 'hsl(var(--primary))' : 'hsl(var(--border))',
               boxShadow: filterStatus === s ? '0 0 0 2px hsl(32, 90%, 44%)' : 'none',
             }}>
-            <p className="text-2xl font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>
+            <p className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>
               {counts[s] ?? 0}
             </p>
             <p className="text-[10px] font-semibold uppercase tracking-wider mt-1"
-              style={{ color: 'hsl(25, 15%, 55%)' }}>
+              style={{ color: 'hsl(var(--text-muted))' }}>
               {CUSTOM_CAKE_STATUS_LABEL[s]}
             </p>
           </button>
@@ -253,16 +253,16 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
         <button onClick={() => setFilterStatus('all')}
           className="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
           style={filterStatus === 'all'
-            ? { background: 'hsl(32, 90%, 44%)', color: 'white' }
-            : { background: 'white', color: 'hsl(25, 20%, 45%)', border: '1px solid hsl(36,25%,85%)' }}>
+            ? { background: 'hsl(var(--primary))', color: 'white' }
+            : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(36,25%,85%)' }}>
           Semua ({requests.length})
         </button>
         {ALL_STATUSES.map(s => (
           <button key={s} onClick={() => setFilterStatus(s)}
             className="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
             style={filterStatus === s
-              ? { background: 'hsl(32, 90%, 44%)', color: 'white' }
-              : { background: 'white', color: 'hsl(25, 20%, 45%)', border: '1px solid hsl(36,25%,85%)' }}>
+              ? { background: 'hsl(var(--primary))', color: 'white' }
+              : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(36,25%,85%)' }}>
             {CUSTOM_CAKE_STATUS_LABEL[s]} {counts[s] ? `(${counts[s]})` : ''}
           </button>
         ))}

@@ -23,7 +23,7 @@ export default async function OpnamePage() {
           <Link
             href="/dashboard/inventory/opname/new"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}
+            style={{ background: 'hsl(var(--primary))' }}
           >
             <Plus size={16} /> Buat Opname
           </Link>
@@ -39,12 +39,12 @@ export default async function OpnamePage() {
           actionHref="/dashboard/inventory/opname/new"
         />
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           <table className="w-full">
             <thead>
-              <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+              <tr style={{ background: 'hsl(var(--surface-raised))' }}>
                 {['No. Opname', 'Tanggal', 'Status', 'Dibuat Oleh', 'Selesai', 'Aksi'].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
                     {h}
                   </th>
                 ))}
@@ -52,27 +52,27 @@ export default async function OpnamePage() {
             </thead>
             <tbody>
               {opnames.map((op) => (
-                <tr key={op.id} className="border-t hover:bg-gray-50/50" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-                  <td className="px-4 py-3 text-xs font-mono font-medium" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                <tr key={op.id} className="border-t hover:bg-gray-50/50" style={{ borderColor: 'hsl(var(--border))' }}>
+                  <td className="px-4 py-3 text-xs font-mono font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
                     {op.opname_number}
                   </td>
-                  <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                  <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                     {formatDate(op.opname_date)}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={op.status} type="purchase" />
                   </td>
-                  <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                  <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
                     {op.profiles?.full_name ?? '—'}
                   </td>
-                  <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                  <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                     {op.completed_at ? formatDate(op.completed_at) : '—'}
                   </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/dashboard/inventory/opname/${op.id}`}
                       className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
-                      style={{ color: 'hsl(210, 70%, 45%)' }}
+                      style={{ color: 'hsl(var(--info))' }}
                     >
                       {op.status === 'draft' || op.status === 'in_progress' ? 'Lanjutkan' : 'Detail'}
                     </Link>

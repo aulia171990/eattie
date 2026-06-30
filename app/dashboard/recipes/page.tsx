@@ -22,7 +22,7 @@ export default async function RecipesPage() {
           <Link
             href="/dashboard/recipes/new"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}
+            style={{ background: 'hsl(var(--primary))' }}
           >
             <Plus size={16} /> Tambah Resep
           </Link>
@@ -54,21 +54,21 @@ export default async function RecipesPage() {
               <div
                 key={recipe.id}
                 className="bg-white rounded-xl border p-5 hover:shadow-sm transition-all"
-                style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+                style={{ borderColor: 'hsl(var(--border))' }}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-                      style={{ background: 'hsl(36, 80%, 93%)' }}
+                      style={{ background: 'hsl(var(--primary-subtle))' }}
                     >
                       {emoji}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                      <h3 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                         {product?.name ?? 'Produk'}
                       </h3>
-                      <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                      <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                         Hasil: {recipe.yield_quantity} pcs
                       </p>
                     </div>
@@ -76,7 +76,7 @@ export default async function RecipesPage() {
                   <Link
                     href={`/dashboard/recipes/${recipe.id}/edit`}
                     className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
-                    style={{ color: 'hsl(32, 95%, 44%)' }}
+                    style={{ color: 'hsl(var(--primary))' }}
                   >
                     Edit
                   </Link>
@@ -85,17 +85,17 @@ export default async function RecipesPage() {
                 {/* Timing info */}
                 <div className="flex gap-4 mb-4">
                   {recipe.prep_time_minutes != null && (
-                    <div className="flex items-center gap-1 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                    <div className="flex items-center gap-1 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                       <Clock size={12} /> {recipe.prep_time_minutes} min prep
                     </div>
                   )}
                   {recipe.bake_time_minutes != null && (
-                    <div className="flex items-center gap-1 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                    <div className="flex items-center gap-1 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                       <ChefHat size={12} /> {recipe.bake_time_minutes} min bake
                     </div>
                   )}
                   {recipe.bake_temperature != null && (
-                    <div className="flex items-center gap-1 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                    <div className="flex items-center gap-1 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                       <Thermometer size={12} /> {recipe.bake_temperature}°C
                     </div>
                   )}
@@ -104,33 +104,33 @@ export default async function RecipesPage() {
                 {/* Ingredients list */}
                 <div
                   className="border rounded-lg overflow-hidden mb-4"
-                  style={{ borderColor: 'hsl(36, 20%, 92%)' }}
+                  style={{ borderColor: 'hsl(var(--border))' }}
                 >
                   <div
                     className="px-3 py-2 text-xs font-semibold"
                     style={{
-                      background: 'hsl(36, 20%, 97%)',
-                      color: 'hsl(25, 15%, 45%)',
+                      background: 'hsl(var(--surface-raised))',
+                      color: 'hsl(var(--text-muted))',
                     }}
                   >
                     Bahan ({recipe.recipe_ingredients.length})
                   </div>
-                  <div className="divide-y" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+                  <div className="divide-y" style={{ borderColor: 'hsl(var(--border))' }}>
                     {recipe.recipe_ingredients.slice(0, 4).map((ri) => (
                       <div
                         key={ri.id}
                         className="flex items-center justify-between px-3 py-1.5"
                       >
-                        <span className="text-xs" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                        <span className="text-xs" style={{ color: 'hsl(var(--text-secondary))' }}>
                           {ri.ingredients?.name ?? '—'}
                         </span>
-                        <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                        <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                           {ri.quantity} {ri.unit}
                         </span>
                       </div>
                     ))}
                     {recipe.recipe_ingredients.length > 4 && (
-                      <div className="px-3 py-1.5 text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                      <div className="px-3 py-1.5 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                         +{recipe.recipe_ingredients.length - 4} bahan lainnya
                       </div>
                     )}
@@ -140,18 +140,18 @@ export default async function RecipesPage() {
                 {/* Cost & margin */}
                 <div
                   className="flex items-center justify-between pt-3 border-t"
-                  style={{ borderColor: 'hsl(36, 20%, 92%)' }}
+                  style={{ borderColor: 'hsl(var(--border))' }}
                 >
                   <div>
-                    <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>HPP per pcs</p>
-                    <p className="text-sm font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                    <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>HPP per pcs</p>
+                    <p className="text-sm font-bold" style={{ color: 'hsl(var(--foreground))' }}>
                       {formatCurrency(costPerUnit)}
                     </p>
                   </div>
                   {product?.selling_price != null && costPerUnit > 0 && (
                     <div className="text-right">
-                      <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Margin</p>
-                      <p className="text-sm font-bold" style={{ color: 'hsl(142, 60%, 35%)' }}>
+                      <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Margin</p>
+                      <p className="text-sm font-bold" style={{ color: 'hsl(var(--success))' }}>
                         {(
                           ((product.selling_price - costPerUnit) / product.selling_price) *
                           100

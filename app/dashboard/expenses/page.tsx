@@ -25,7 +25,7 @@ export default async function ExpensesPage() {
           <Link
             href="/dashboard/expenses/new"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}
+            style={{ background: 'hsl(var(--primary))' }}
           >
             <Plus size={16} /> Tambah Pengeluaran
           </Link>
@@ -33,14 +33,14 @@ export default async function ExpensesPage() {
       />
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        <div className="bg-white rounded-xl border p-4 col-span-2 lg:col-span-1" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-          <p className="text-xs font-medium" style={{ color: 'hsl(25, 15%, 50%)' }}>Total Pengeluaran</p>
+        <div className="bg-white rounded-xl border p-4 col-span-2 lg:col-span-1" style={{ borderColor: 'hsl(var(--border))' }}>
+          <p className="text-xs font-medium" style={{ color: 'hsl(var(--text-muted))' }}>Total Pengeluaran</p>
           <p className="text-2xl font-bold mt-1" style={{ color: 'hsl(0, 70%, 48%)' }}>{formatCurrency(total)}</p>
         </div>
         {byCat.slice(0, 3).map((c) => (
-          <div key={c.value} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-            <p className="text-xs font-medium" style={{ color: 'hsl(25, 15%, 50%)' }}>{c.label}</p>
-            <p className="text-xl font-bold mt-1" style={{ color: 'hsl(25, 30%, 15%)' }}>{formatCurrency(c.total)}</p>
+          <div key={c.value} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs font-medium" style={{ color: 'hsl(var(--text-muted))' }}>{c.label}</p>
+            <p className="text-xl font-bold mt-1" style={{ color: 'hsl(var(--foreground))' }}>{formatCurrency(c.total)}</p>
           </div>
         ))}
       </div>
@@ -48,12 +48,12 @@ export default async function ExpensesPage() {
       {expenses.length === 0 ? (
         <EmptyState icon="💸" title="Belum ada pengeluaran" actionLabel="Tambah Pengeluaran" actionHref="/dashboard/expenses/new" />
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           <table className="w-full">
             <thead>
-              <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+              <tr style={{ background: 'hsl(var(--surface-raised))' }}>
                 {['Tanggal', 'Kategori', 'Deskripsi', 'Jumlah', 'Dicatat Oleh', 'Aksi'].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
                     {h}
                   </th>
                 ))}
@@ -63,19 +63,19 @@ export default async function ExpensesPage() {
               {expenses.map((exp) => {
                 const cat = EXPENSE_CATEGORIES.find((c) => c.value === exp.category)
                 return (
-                  <tr key={exp.id} className="border-t hover:bg-gray-50/50" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-                    <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{formatDate(exp.expense_date)}</td>
+                  <tr key={exp.id} className="border-t hover:bg-gray-50/50" style={{ borderColor: 'hsl(var(--border))' }}>
+                    <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{formatDate(exp.expense_date)}</td>
                     <td className="px-4 py-3">
-                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'hsl(36, 20%, 93%)', color: 'hsl(25, 30%, 30%)' }}>
+                      <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
                         {cat?.label ?? exp.category}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>{exp.description}</td>
+                    <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--foreground))' }}>{exp.description}</td>
                     <td className="px-4 py-3 text-sm font-semibold" style={{ color: 'hsl(0, 70%, 48%)' }}>{formatCurrency(exp.amount)}</td>
-                    <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{exp.profiles?.full_name ?? '—'}</td>
+                    <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{exp.profiles?.full_name ?? '—'}</td>
                     <td className="px-4 py-3">
                       <Link href={`/dashboard/expenses/${exp.id}/edit`}
-                        className="text-xs px-2 py-1 rounded-md hover:bg-gray-100" style={{ color: 'hsl(32, 95%, 44%)' }}>
+                        className="text-xs px-2 py-1 rounded-md hover:bg-gray-100" style={{ color: 'hsl(var(--primary))' }}>
                         Edit
                       </Link>
                     </td>
@@ -84,7 +84,7 @@ export default async function ExpensesPage() {
               })}
             </tbody>
           </table>
-          <div className="px-4 py-3 border-t text-xs flex justify-between" style={{ borderColor: 'hsl(36, 20%, 92%)', color: 'hsl(25, 15%, 55%)' }}>
+          <div className="px-4 py-3 border-t text-xs flex justify-between" style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             <span>{expenses.length} pengeluaran</span>
             <span className="font-medium" style={{ color: 'hsl(0, 70%, 48%)' }}>Total: {formatCurrency(total)}</span>
           </div>

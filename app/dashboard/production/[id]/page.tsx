@@ -45,15 +45,15 @@ export default async function ProductionDetailPage({
 
       <div className="grid grid-cols-2 gap-4 mb-6">
         {statsRows.map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
-            <p className="text-xl font-bold mt-1" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
+          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
+            <p className="text-xl font-bold mt-1" style={{ color: 'hsl(var(--foreground))' }}>{s.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border p-5 mb-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm mb-3" style={{ color: 'hsl(25, 30%, 15%)' }}>Timeline</h2>
+      <div className="bg-white rounded-xl border p-5 mb-4" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm mb-3" style={{ color: 'hsl(var(--foreground))' }}>Timeline</h2>
         <div className="space-y-2 text-sm">
           {[
             { label: 'Dibuat', value: formatDateTime(batch.created_at) },
@@ -62,15 +62,15 @@ export default async function ProductionDetailPage({
             { label: 'Dibuat Oleh', value: batch.profiles?.full_name ?? '—' },
           ].map((row) => (
             <div key={row.label} className="flex justify-between">
-              <span style={{ color: 'hsl(25, 15%, 50%)' }}>{row.label}</span>
-              <span style={{ color: 'hsl(25, 30%, 20%)' }}>{row.value}</span>
+              <span style={{ color: 'hsl(var(--text-muted))' }}>{row.label}</span>
+              <span style={{ color: 'hsl(var(--text-secondary))' }}>{row.value}</span>
             </div>
           ))}
         </div>
         {batch.notes && (
-          <div className="mt-3 pt-3 border-t" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-            <p className="text-xs font-medium mb-1" style={{ color: 'hsl(25, 15%, 50%)' }}>Catatan</p>
-            <p className="text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>{batch.notes}</p>
+          <div className="mt-3 pt-3 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs font-medium mb-1" style={{ color: 'hsl(var(--text-muted))' }}>Catatan</p>
+            <p className="text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>{batch.notes}</p>
           </div>
         )}
       </div>

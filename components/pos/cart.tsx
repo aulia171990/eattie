@@ -41,22 +41,22 @@ export function Cart({ onCheckout }: CartProps) {
     <div className="flex flex-col h-full">
       {/* Cart header */}
       <div className="px-4 py-3 border-b flex items-center justify-between shrink-0"
-        style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
+        style={{ borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-2">
-          <ShoppingCart size={16} style={{ color: 'hsl(32, 95%, 44%)' }} />
-          <span className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+          <ShoppingCart size={16} style={{ color: 'hsl(var(--primary))' }} />
+          <span className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
             Keranjang
           </span>
           {itemCount > 0 && (
             <span className="px-1.5 py-0.5 rounded-full text-xs font-bold text-white"
-              style={{ background: 'hsl(32, 95%, 44%)' }}>
+              style={{ background: 'hsl(var(--primary))' }}>
               {itemCount}
             </span>
           )}
         </div>
         {items.length > 0 && (
           <button onClick={clearCart} className="text-xs hover:underline"
-            style={{ color: 'hsl(0, 70%, 50%)' }}>
+            style={{ color: 'hsl(var(--danger))' }}>
             Kosongkan
           </button>
         )}
@@ -67,23 +67,23 @@ export function Cart({ onCheckout }: CartProps) {
         {items.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full py-12 text-center">
             <div className="text-4xl mb-3">🛒</div>
-            <p className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 35%)' }}>
+            <p className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
               Keranjang kosong
             </p>
-            <p className="text-xs mt-1" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <p className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>
               Pilih produk di sebelah kiri
             </p>
           </div>
         ) : (
-          <div className="divide-y" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
+          <div className="divide-y" style={{ borderColor: 'hsl(var(--border))' }}>
             {items.map(item => (
               <div key={item.product.id} className="px-4 py-3 flex items-center gap-3">
                 {/* Product info */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                  <p className="text-sm font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>
                     {item.product.name}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                  <p className="text-xs mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>
                     {formatCurrency(item.product.selling_price)} / pcs
                   </p>
                 </div>
@@ -93,24 +93,24 @@ export function Cart({ onCheckout }: CartProps) {
                   <button
                     onClick={() => updateQty(item.product.id, item.quantity - 1)}
                     className="w-6 h-6 rounded-md flex items-center justify-center transition-all hover:opacity-80"
-                    style={{ background: 'hsl(36, 20%, 92%)', color: 'hsl(25, 30%, 30%)' }}>
+                    style={{ background: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
                     <Minus size={11} />
                   </button>
                   <span className="w-7 text-center text-sm font-semibold"
-                    style={{ color: 'hsl(25, 30%, 15%)' }}>
+                    style={{ color: 'hsl(var(--foreground))' }}>
                     {item.quantity}
                   </span>
                   <button
                     onClick={() => updateQty(item.product.id, item.quantity + 1)}
                     className="w-6 h-6 rounded-md flex items-center justify-center transition-all hover:opacity-80"
-                    style={{ background: 'hsl(32, 95%, 44%)', color: 'white' }}>
+                    style={{ background: 'hsl(var(--primary))', color: 'white' }}>
                     <Plus size={11} />
                   </button>
                 </div>
 
                 {/* Subtotal + delete */}
                 <div className="text-right shrink-0 w-20">
-                  <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                  <p className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
                     {formatCurrency(item.subtotal)}
                   </p>
                   <button onClick={() => removeItem(item.product.id)}
@@ -127,22 +127,22 @@ export function Cart({ onCheckout }: CartProps) {
 
       {/* Summary + checkout */}
       {items.length > 0 && (
-        <div className="border-t shrink-0" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="border-t shrink-0" style={{ borderColor: 'hsl(var(--border))' }}>
           {/* Discount section */}
-          <div className="px-4 py-3 border-b" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
+          <div className="px-4 py-3 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
             {discountAmount > 0 ? (
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 text-xs"
-                  style={{ color: 'hsl(142, 60%, 35%)' }}>
+                  style={{ color: 'hsl(var(--success))' }}>
                   <Tag size={12} />
                   Diskon {discountPercent > 0 ? `${discountPercent}%` : ''}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium" style={{ color: 'hsl(142, 60%, 35%)' }}>
+                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--success))' }}>
                     -{formatCurrency(discountAmount)}
                   </span>
                   <button onClick={removeDiscount} className="text-xs hover:underline"
-                    style={{ color: 'hsl(0, 70%, 50%)' }}>
+                    style={{ color: 'hsl(var(--danger))' }}>
                     Hapus
                   </button>
                 </div>
@@ -154,16 +154,16 @@ export function Cart({ onCheckout }: CartProps) {
                     onClick={() => setDiscountMode('percent')}
                     className="flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all"
                     style={discountMode === 'percent'
-                      ? { background: 'hsl(32, 95%, 44%)', color: 'white', borderColor: 'transparent' }
-                      : { borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 45%)' }}>
+                      ? { background: 'hsl(var(--primary))', color: 'white', borderColor: 'transparent' }
+                      : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
                     Persen (%)
                   </button>
                   <button
                     onClick={() => setDiscountMode('amount')}
                     className="flex-1 py-1.5 rounded-lg text-xs font-medium border transition-all"
                     style={discountMode === 'amount'
-                      ? { background: 'hsl(32, 95%, 44%)', color: 'white', borderColor: 'transparent' }
-                      : { borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 45%)' }}>
+                      ? { background: 'hsl(var(--primary))', color: 'white', borderColor: 'transparent' }
+                      : { borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
                     Nominal (Rp)
                   </button>
                 </div>
@@ -174,18 +174,18 @@ export function Cart({ onCheckout }: CartProps) {
                     onChange={e => setDiscountInput(e.target.value)}
                     placeholder={discountMode === 'percent' ? 'Contoh: 10' : 'Contoh: 5000'}
                     className="flex-1 px-3 py-1.5 rounded-lg border text-sm outline-none"
-                    style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                    style={{ borderColor: 'hsl(var(--border))' }}
                     onKeyDown={e => e.key === 'Enter' && applyDiscount()}
                     autoFocus
                   />
                   <button onClick={applyDiscount}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                    style={{ background: 'hsl(142, 60%, 40%)' }}>
+                    style={{ background: 'hsl(var(--success))' }}>
                     OK
                   </button>
                   <button onClick={() => setShowDiscount(false)}
                     className="px-3 py-1.5 rounded-lg text-xs border"
-                    style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 50%)' }}>
+                    style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
                     ✕
                   </button>
                 </div>
@@ -194,7 +194,7 @@ export function Cart({ onCheckout }: CartProps) {
               <button
                 onClick={() => setShowDiscount(true)}
                 className="flex items-center gap-1.5 text-xs hover:underline"
-                style={{ color: 'hsl(32, 95%, 44%)' }}>
+                style={{ color: 'hsl(var(--primary))' }}>
                 <Tag size={12} /> Tambah Diskon
               </button>
             )}
@@ -203,19 +203,19 @@ export function Cart({ onCheckout }: CartProps) {
           {/* Totals */}
           <div className="px-4 py-3 space-y-1.5">
             <div className="flex justify-between text-sm">
-              <span style={{ color: 'hsl(25, 15%, 50%)' }}>Subtotal</span>
-              <span style={{ color: 'hsl(25, 30%, 20%)' }}>{formatCurrency(subtotal)}</span>
+              <span style={{ color: 'hsl(var(--text-muted))' }}>Subtotal</span>
+              <span style={{ color: 'hsl(var(--text-secondary))' }}>{formatCurrency(subtotal)}</span>
             </div>
             {discountAmount > 0 && (
               <div className="flex justify-between text-sm">
-                <span style={{ color: 'hsl(142, 60%, 35%)' }}>Diskon</span>
-                <span style={{ color: 'hsl(142, 60%, 35%)' }}>-{formatCurrency(discountAmount)}</span>
+                <span style={{ color: 'hsl(var(--success))' }}>Diskon</span>
+                <span style={{ color: 'hsl(var(--success))' }}>-{formatCurrency(discountAmount)}</span>
               </div>
             )}
             <div className="flex justify-between items-center pt-2 border-t"
-              style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
-              <span className="font-bold text-base" style={{ color: 'hsl(25, 30%, 12%)' }}>Total</span>
-              <span className="font-bold text-xl" style={{ color: 'hsl(32, 95%, 40%)' }}>
+              style={{ borderColor: 'hsl(var(--border))' }}>
+              <span className="font-bold text-base" style={{ color: 'hsl(var(--foreground))' }}>Total</span>
+              <span className="font-bold text-xl" style={{ color: 'hsl(var(--primary))' }}>
                 {formatCurrency(total)}
               </span>
             </div>
@@ -226,7 +226,7 @@ export function Cart({ onCheckout }: CartProps) {
             <button
               onClick={onCheckout}
               className="w-full py-3.5 rounded-xl font-bold text-white text-base transition-all active:scale-98 hover:opacity-90 shadow-sm"
-              style={{ background: 'hsl(32, 95%, 44%)' }}>
+              style={{ background: 'hsl(var(--primary))' }}>
               💳 Bayar {formatCurrency(total)}
             </button>
           </div>
