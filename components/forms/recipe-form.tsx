@@ -219,7 +219,7 @@ export function RecipeForm({
             type="button"
             onClick={addItem}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
-            style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(var(--primary-hover))' }}
+            style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary-hover))' }}
           >
             <Plus size={13} /> Tambah Bahan
           </button>

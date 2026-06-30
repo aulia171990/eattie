@@ -39,8 +39,8 @@ export default async function DashboardPage() {
   type StatColor = 'amber' | 'green' | 'red' | 'blue'
   const colorMap: Record<StatColor, { bg: string; icon: string }> = {
     amber: { bg: 'hsl(var(--primary-subtle))',  icon: 'hsl(var(--primary))' },
-    green: { bg: 'hsl(142, 50%, 92%)', icon: 'hsl(var(--success))' },
-    red:   { bg: 'hsl(var(--danger-bg))',   icon: 'hsl(0, 70%, 48%)' },
+    green: { bg: 'hsl(var(--success-bg))', icon: 'hsl(var(--success))' },
+    red:   { bg: 'hsl(var(--danger-bg))',   icon: 'hsl(var(--danger))' },
     blue:  { bg: 'hsl(var(--info-bg))', icon: 'hsl(var(--info))' },
   }
 

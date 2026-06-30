@@ -40,8 +40,8 @@ export function ProductGrid({ products }: ProductGridProps) {
               disabled={outOfStock}
               className="relative flex flex-col rounded-xl border text-left transition-all active:scale-95 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 overflow-hidden"
               style={{
-                borderColor: outOfStock ? 'hsl(0, 40%, 85%)' : inCart ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-                background: outOfStock ? 'hsl(0, 30%, 97%)' : inCart ? 'hsl(36, 80%, 97%)' : 'white',
+                borderColor: outOfStock ? 'hsl(var(--danger-bg))' : inCart ? 'hsl(var(--primary))' : 'hsl(var(--border))',
+                background: outOfStock ? 'hsl(var(--danger-bg))' : inCart ? 'hsl(var(--primary-subtle))' : 'white',
               }}
             >
               {/* Badge qty in cart */}
@@ -69,7 +69,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                 className="relative w-full"
                 style={{
                   paddingTop: '70%',
-                  background: outOfStock ? 'hsl(0, 20%, 92%)' : inCart ? 'hsl(32, 60%, 90%)' : 'hsl(var(--primary-subtle))'
+                  background: outOfStock ? 'hsl(var(--danger-bg))' : inCart ? 'hsl(var(--text-muted))' : 'hsl(var(--primary-subtle))'
                 }}
               >
                 {p.image_url ? (
@@ -90,14 +90,14 @@ export function ProductGrid({ products }: ProductGridProps) {
               {/* Info */}
               <div className="p-2 flex flex-col gap-0.5">
                 <p className="text-xs font-semibold leading-tight line-clamp-2"
-                  style={{ color: outOfStock ? 'hsl(25, 10%, 55%)' : 'hsl(var(--foreground))' }}>
+                  style={{ color: outOfStock ? 'hsl(var(--text-muted))' : 'hsl(var(--foreground))' }}>
                   {p.name}
                 </p>
                 <p className="text-sm font-bold"
-                  style={{ color: outOfStock ? 'hsl(25, 10%, 60%)' : 'hsl(var(--primary))' }}>
+                  style={{ color: outOfStock ? 'hsl(var(--border-strong))' : 'hsl(var(--primary))' }}>
                   {formatCurrency(p.selling_price)}
                 </p>
-                <p className="text-xs" style={{ color: outOfStock ? 'hsl(var(--danger))' : 'hsl(142, 50%, 40%)' }}>
+                <p className="text-xs" style={{ color: outOfStock ? 'hsl(var(--danger))' : 'hsl(var(--success))' }}>
                   {outOfStock ? 'Stok habis' : `Stok: ${p.current_stock}`}
                 </p>
               </div>

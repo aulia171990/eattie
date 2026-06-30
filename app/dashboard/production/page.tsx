@@ -55,8 +55,8 @@ export default async function ProductionPage({
         {[
           { label: 'Total Batch',    value: counts.all,         color: 'hsl(var(--info))', bg: 'hsl(var(--info-bg))' },
           { label: 'Direncanakan',   value: counts.planned,     color: 'hsl(var(--primary))',  bg: 'hsl(var(--primary-subtle))' },
-          { label: 'Berlangsung',    value: counts.in_progress, color: 'hsl(var(--success))', bg: 'hsl(142, 50%, 92%)' },
-          { label: 'Selesai',        value: counts.completed,   color: 'hsl(210, 10%, 45%)', bg: 'hsl(210, 10%, 93%)' },
+          { label: 'Berlangsung',    value: counts.in_progress, color: 'hsl(var(--success))', bg: 'hsl(var(--success-bg))' },
+          { label: 'Selesai',        value: counts.completed,   color: 'hsl(var(--info))', bg: 'hsl(var(--info-bg))' },
         ].map((s) => (
           <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
             <p className="text-xs font-medium" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
@@ -77,7 +77,7 @@ export default async function ProductionPage({
               style={
                 isActive
                   ? { background: 'hsl(var(--primary))', color: 'white' }
-                  : { background: 'hsl(36, 15%, 93%)', color: 'hsl(var(--text-muted))' }
+                  : { background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }
               }
             >
               {tab.label}

@@ -75,7 +75,7 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
         <button
           onClick={() => setLang(l => l === 'id' ? 'en' : 'id')}
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all hover:bg-gray-100"
-          style={{ color: 'hsl(25, 30%, 40%)' }}
+          style={{ color: 'hsl(var(--text-muted))' }}
         >
           <Globe size={14} />
           {lang.toUpperCase()}
@@ -88,7 +88,7 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
               className="relative p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
               aria-label="Notifikasi"
             >
-              <Bell size={18} style={{ color: 'hsl(25, 30%, 40%)' }} />
+              <Bell size={18} style={{ color: 'hsl(var(--text-muted))' }} />
               {notifCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
                   style={{ background: 'hsl(var(--danger))' }}>
@@ -109,7 +109,7 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
                     </span>
                     {notifCount > 0 && (
                       <span className="text-xs px-2 py-0.5 rounded-full font-medium"
-                        style={{ background: 'hsl(0, 70%, 95%)', color: 'hsl(var(--danger))' }}>
+                        style={{ background: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}>
                         {notifCount} menunggu
                       </span>
                     )}
@@ -136,7 +136,7 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
                           </button>
                         </div>
                       ) : pushStatus === 'denied' ? (
-                        <p className="text-xs" style={{ color: 'hsl(0, 60%, 45%)' }}>
+                        <p className="text-xs" style={{ color: 'hsl(var(--danger))' }}>
                           Notifikasi diblokir browser. Aktifkan di pengaturan situs.
                         </p>
                       ) : (
@@ -145,14 +145,14 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
                           onClick={() => subscribe()}
                           disabled={pushStatus === 'loading'}
                           className="w-full flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold transition-colors disabled:opacity-60"
-                          style={{ background: 'hsl(32, 95%, 94%)', color: 'hsl(var(--primary))' }}
+                          style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
                         >
                           <BellOff size={14} />
                           {pushStatus === 'loading' ? 'Mengaktifkan...' : 'Aktifkan Notifikasi Browser'}
                         </button>
                       )}
                       {pushError && (
-                        <p className="text-xs mt-1" style={{ color: 'hsl(0, 60%, 45%)' }}>
+                        <p className="text-xs mt-1" style={{ color: 'hsl(var(--danger))' }}>
                           {pushError}
                         </p>
                       )}
@@ -177,7 +177,7 @@ export function Header({ user, onMenuToggle }: HeaderProps) {
                           style={{ borderColor: 'hsl(var(--border))' }}
                         >
                           <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: 'hsl(36,80%,92%)', color: 'hsl(32,95%,40%)' }}>
+                            style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}>
                             <ShoppingBag size={14} />
                           </div>
                           <div className="flex-1 min-w-0">

@@ -20,8 +20,8 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
   const statData = [
     { label: 'Total Item', value: ingredients.length, color: 'hsl(var(--info-bg))', iconColor: 'hsl(var(--info))' },
     { label: 'Nilai Inventory', value: formatCurrency(totalValue), color: 'hsl(var(--primary-subtle))', iconColor: 'hsl(var(--primary))' },
-    { label: 'Stok Rendah', value: lowStockItems.length, color: lowStockItems.length > 0 ? 'hsl(var(--danger-bg))' : 'hsl(142, 50%, 92%)', iconColor: lowStockItems.length > 0 ? 'hsl(0, 70%, 48%)' : 'hsl(var(--success))' },
-    { label: 'Stok Habis', value: outOfStock.length, color: outOfStock.length > 0 ? 'hsl(var(--danger-bg))' : 'hsl(142, 50%, 92%)', iconColor: outOfStock.length > 0 ? 'hsl(0, 70%, 48%)' : 'hsl(var(--success))' },
+    { label: 'Stok Rendah', value: lowStockItems.length, color: lowStockItems.length > 0 ? 'hsl(var(--danger-bg))' : 'hsl(var(--success-bg))', iconColor: lowStockItems.length > 0 ? 'hsl(var(--danger))' : 'hsl(var(--success))' },
+    { label: 'Stok Habis', value: outOfStock.length, color: outOfStock.length > 0 ? 'hsl(var(--danger-bg))' : 'hsl(var(--success-bg))', iconColor: outOfStock.length > 0 ? 'hsl(var(--danger))' : 'hsl(var(--success))' },
   ]
 
   return (
@@ -59,12 +59,12 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
           <div className="flex gap-2">
             <Link href="/dashboard/inventory"
               className="px-3 py-2 rounded-lg text-xs font-medium"
-              style={!sp.filter ? { background: 'hsl(var(--primary))', color: 'white' } : { background: 'hsl(36, 15%, 93%)', color: 'hsl(var(--text-muted))' }}>
+              style={!sp.filter ? { background: 'hsl(var(--primary))', color: 'white' } : { background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }}>
               Semua
             </Link>
             <Link href="/dashboard/inventory?filter=low_stock"
               className="px-3 py-2 rounded-lg text-xs font-medium"
-              style={sp.filter === 'low_stock' ? { background: 'hsl(var(--primary))', color: 'white' } : { background: 'hsl(36, 15%, 93%)', color: 'hsl(var(--text-muted))' }}>
+              style={sp.filter === 'low_stock' ? { background: 'hsl(var(--primary))', color: 'white' } : { background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }}>
               Stok Rendah {lowStockItems.length > 0 && `(${lowStockItems.length})`}
             </Link>
           </div>
@@ -72,13 +72,13 @@ export default async function InventoryPage({ searchParams }: { searchParams: Pr
         <div className="flex gap-2 px-4 pb-4 overflow-x-auto">
           <Link href={sp.filter ? `/dashboard/inventory?filter=${sp.filter}` : '/dashboard/inventory'}
             className="px-3 py-1 rounded-full text-xs whitespace-nowrap"
-            style={!sp.category ? { background: 'hsl(var(--text-secondary))', color: 'white' } : { background: 'hsl(36, 15%, 93%)', color: 'hsl(var(--text-muted))' }}>
+            style={!sp.category ? { background: 'hsl(var(--text-secondary))', color: 'white' } : { background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }}>
             Semua Kategori
           </Link>
           {categories.map(cat => (
             <Link key={cat.id} href={`/dashboard/inventory?category=${cat.id}${sp.filter ? `&filter=${sp.filter}` : ''}`}
               className="px-3 py-1 rounded-full text-xs whitespace-nowrap"
-              style={sp.category === cat.id ? { background: 'hsl(var(--text-secondary))', color: 'white' } : { background: 'hsl(36, 15%, 93%)', color: 'hsl(var(--text-muted))' }}>
+              style={sp.category === cat.id ? { background: 'hsl(var(--text-secondary))', color: 'white' } : { background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }}>
               {cat.name}
             </Link>
           ))}

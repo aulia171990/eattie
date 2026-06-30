@@ -86,8 +86,8 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
                   background:
                     diff !== 0
                       ? diff > 0
-                        ? 'hsl(210, 70%, 97%)'
-                        : 'hsl(0, 70%, 97%)'
+                        ? 'hsl(var(--info-bg))'
+                        : 'hsl(var(--danger-bg))'
                       : 'transparent',
                 }}
               >
@@ -114,8 +114,8 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
                       borderColor:
                         diff !== 0
                           ? diff > 0
-                            ? 'hsl(210, 70%, 70%)'
-                            : 'hsl(0, 70%, 70%)'
+                            ? 'hsl(var(--info))'
+                            : 'hsl(var(--danger))'
                           : 'hsl(var(--border))',
                     }}
                   />
