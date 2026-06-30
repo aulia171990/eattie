@@ -10,7 +10,7 @@ export default function NotFound() {
         <a
           href="/dashboard"
           className="inline-flex rounded-lg px-4 py-2 text-sm font-medium text-white"
-          style={{ background: 'hsl(32, 95%, 44%)' }}
+          style={{ background: 'hsl(var(--primary))' }}
         >
           Kembali ke Dashboard
         </a>

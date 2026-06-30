@@ -6,26 +6,26 @@ interface StatusBadgeProps {
 const configs: Record<string, Record<string, { label: string; bg: string; text: string }>> = {
   production: {
     planned:     { label: 'Direncanakan', bg: 'hsl(210, 60%, 93%)', text: 'hsl(210, 60%, 35%)' },
-    in_progress: { label: 'Berlangsung',  bg: 'hsl(36, 80%, 90%)',  text: 'hsl(32, 95%, 38%)' },
-    completed:   { label: 'Selesai',      bg: 'hsl(142, 50%, 90%)', text: 'hsl(142, 60%, 28%)' },
-    cancelled:   { label: 'Dibatalkan',   bg: 'hsl(0, 60%, 93%)',   text: 'hsl(0, 70%, 40%)' },
+    in_progress: { label: 'Berlangsung',  bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
+    completed:   { label: 'Selesai',      bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
+    cancelled:   { label: 'Dibatalkan',   bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
   },
   purchase: {
     draft:     { label: 'Draft',     bg: 'hsl(210, 10%, 93%)', text: 'hsl(210, 10%, 40%)' },
     ordered:   { label: 'Dipesan',   bg: 'hsl(210, 60%, 93%)', text: 'hsl(210, 60%, 35%)' },
-    received:  { label: 'Diterima',  bg: 'hsl(142, 50%, 90%)', text: 'hsl(142, 60%, 28%)' },
-    cancelled: { label: 'Dibatalkan',bg: 'hsl(0, 60%, 93%)',   text: 'hsl(0, 70%, 40%)' },
+    received:  { label: 'Diterima',  bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
+    cancelled: { label: 'Dibatalkan',bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
   },
   stock: {
-    normal:   { label: 'Normal',    bg: 'hsl(142, 50%, 90%)', text: 'hsl(142, 60%, 28%)' },
-    low:      { label: 'Menipis',   bg: 'hsl(36, 80%, 90%)',  text: 'hsl(32, 95%, 38%)' },
-    critical: { label: 'Kritis',    bg: 'hsl(0, 80%, 95%)',   text: 'hsl(0, 70%, 40%)' },
+    normal:   { label: 'Normal',    bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
+    low:      { label: 'Menipis',   bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
+    critical: { label: 'Kritis',    bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
     out:      { label: 'Habis',     bg: 'hsl(210, 10%, 93%)', text: 'hsl(210, 10%, 40%)' },
   },
   payment: {
-    unpaid:  { label: 'Belum Bayar', bg: 'hsl(0, 80%, 95%)',   text: 'hsl(0, 70%, 40%)' },
-    partial: { label: 'Sebagian',    bg: 'hsl(36, 80%, 90%)',  text: 'hsl(32, 95%, 38%)' },
-    paid:    { label: 'Lunas',       bg: 'hsl(142, 50%, 90%)', text: 'hsl(142, 60%, 28%)' },
+    unpaid:  { label: 'Belum Bayar', bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
+    partial: { label: 'Sebagian',    bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
+    paid:    { label: 'Lunas',       bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
   },
 }
 

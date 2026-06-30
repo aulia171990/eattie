@@ -55,8 +55,8 @@ export default async function OrderDetailPage({
       />
 
       {/* Customer info */}
-      <div className="bg-white rounded-xl border p-4 space-y-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <p className="text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>INFO PEMESAN</p>
+      <div className="bg-white rounded-xl border p-4 space-y-3" style={{ borderColor: 'hsl(var(--border))' }}>
+        <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>INFO PEMESAN</p>
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Nama',     value: order.customer_name },
@@ -68,54 +68,54 @@ export default async function OrderDetailPage({
             ...(order.delivery_address ? [{ label: 'Alamat Kirim', value: order.delivery_address }] : []),
           ].map(row => (
             <div key={row.label}>
-              <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>{row.label}</p>
-              <p className="text-sm font-medium mt-0.5" style={{ color: 'hsl(25, 30%, 15%)' }}>{row.value}</p>
+              <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{row.label}</p>
+              <p className="text-sm font-medium mt-0.5" style={{ color: 'hsl(var(--foreground))' }}>{row.value}</p>
             </div>
           ))}
         </div>
         {order.notes && (
-          <div className="pt-3 border-t" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Catatan</p>
-            <p className="text-sm mt-0.5" style={{ color: 'hsl(25, 30%, 20%)' }}>{order.notes}</p>
+          <div className="pt-3 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Catatan</p>
+            <p className="text-sm mt-0.5" style={{ color: 'hsl(var(--text-secondary))' }}>{order.notes}</p>
           </div>
         )}
       </div>
 
       {/* Payment proof */}
       {order.payment_proof_url && (
-        <div className="bg-white rounded-xl border p-4 space-y-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-          <p className="text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>BUKTI PEMBAYARAN</p>
+        <div className="bg-white rounded-xl border p-4 space-y-3" style={{ borderColor: 'hsl(var(--border))' }}>
+          <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>BUKTI PEMBAYARAN</p>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={order.payment_proof_url} alt="Bukti pembayaran"
             className="w-full max-w-xs rounded-xl border object-cover"
-            style={{ borderColor: 'hsl(36, 20%, 90%)' }} />
+            style={{ borderColor: 'hsl(var(--border))' }} />
         </div>
       )}
 
       {/* Order items */}
-      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <div className="px-4 py-3 border-b" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-          <p className="text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>DETAIL PESANAN</p>
+      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
+        <div className="px-4 py-3 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+          <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>DETAIL PESANAN</p>
         </div>
         {order.order_items.map((item, idx) => (
           <div key={item.id}
             className={`flex items-center justify-between px-4 py-3 ${idx > 0 ? 'border-t' : ''}`}
-            style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+            style={{ borderColor: 'hsl(var(--border))' }}>
             <div>
-              <p className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>{item.product_name}</p>
-              <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+              <p className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>{item.product_name}</p>
+              <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                 {item.quantity} × {formatCurrency(item.unit_price)}
               </p>
             </div>
-            <p className="text-sm font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+            <p className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
               {formatCurrency(item.subtotal)}
             </p>
           </div>
         ))}
         <div className="flex justify-between items-center px-4 py-3 border-t"
-          style={{ borderColor: 'hsl(36, 20%, 90%)', background: 'hsl(36, 20%, 98%)' }}>
+          style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }}>
           <span className="text-sm font-semibold">Total</span>
-          <span className="text-base font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+          <span className="text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>
             {formatCurrency(order.total_amount)}
           </span>
         </div>
@@ -124,7 +124,7 @@ export default async function OrderDetailPage({
       {/* Sale link */}
       {order.sale_id && (
         <div className="p-3 rounded-xl text-sm"
-          style={{ background: 'hsl(142, 50%, 95%)', color: 'hsl(142, 60%, 30%)' }}>
+          style={{ background: 'hsl(var(--success-subtle))', color: 'hsl(142, 60%, 30%)' }}>
           ✓ Order sudah dikonfirmasi dan masuk sebagai sale.
         </div>
       )}

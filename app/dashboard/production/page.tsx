@@ -44,7 +44,7 @@ export default async function ProductionPage({
           <Link
             href="/dashboard/production/new"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}
+            style={{ background: 'hsl(var(--primary))' }}
           >
             <Plus size={16} /> Buat Batch
           </Link>
@@ -53,13 +53,13 @@ export default async function ProductionPage({
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total Batch',    value: counts.all,         color: 'hsl(210, 70%, 40%)', bg: 'hsl(210, 70%, 93%)' },
-          { label: 'Direncanakan',   value: counts.planned,     color: 'hsl(32, 95%, 44%)',  bg: 'hsl(36, 80%, 93%)' },
-          { label: 'Berlangsung',    value: counts.in_progress, color: 'hsl(142, 60%, 35%)', bg: 'hsl(142, 50%, 92%)' },
+          { label: 'Total Batch',    value: counts.all,         color: 'hsl(var(--info))', bg: 'hsl(var(--info-bg))' },
+          { label: 'Direncanakan',   value: counts.planned,     color: 'hsl(var(--primary))',  bg: 'hsl(var(--primary-subtle))' },
+          { label: 'Berlangsung',    value: counts.in_progress, color: 'hsl(var(--success))', bg: 'hsl(142, 50%, 92%)' },
           { label: 'Selesai',        value: counts.completed,   color: 'hsl(210, 10%, 45%)', bg: 'hsl(210, 10%, 93%)' },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-            <p className="text-xs font-medium" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
+          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs font-medium" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
             <p className="text-2xl font-bold mt-1" style={{ color: s.color }}>{s.value}</p>
           </div>
         ))}
@@ -76,8 +76,8 @@ export default async function ProductionPage({
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium whitespace-nowrap"
               style={
                 isActive
-                  ? { background: 'hsl(32, 95%, 44%)', color: 'white' }
-                  : { background: 'hsl(36, 15%, 93%)', color: 'hsl(25, 15%, 50%)' }
+                  ? { background: 'hsl(var(--primary))', color: 'white' }
+                  : { background: 'hsl(36, 15%, 93%)', color: 'hsl(var(--text-muted))' }
               }
             >
               {tab.label}
@@ -87,7 +87,7 @@ export default async function ProductionPage({
                   style={
                     isActive
                       ? { background: 'rgba(255,255,255,0.3)' }
-                      : { background: 'hsl(36, 20%, 85%)' }
+                      : { background: 'hsl(var(--border))' }
                   }
                 >
                   {tab.count}
@@ -106,14 +106,14 @@ export default async function ProductionPage({
           actionHref="/dashboard/production/new"
         />
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+                <tr style={{ background: 'hsl(var(--surface-raised))' }}>
                   {['No. Batch', 'Produk', 'Jadwal', 'Target', 'Hasil', 'Status', 'Aksi'].map((h) => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-semibold"
-                      style={{ color: 'hsl(25, 15%, 45%)' }}>{h}</th>
+                      style={{ color: 'hsl(var(--text-muted))' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -123,38 +123,38 @@ export default async function ProductionPage({
                     PRODUCT_CATEGORIES.find((c) => c.value === batch.products?.category)?.emoji ?? '🥐'
                   return (
                     <tr key={batch.id} className="border-t hover:bg-gray-50/50 transition-colors"
-                      style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+                      style={{ borderColor: 'hsl(var(--border))' }}>
                       <td className="px-4 py-3 text-xs font-mono font-medium"
-                        style={{ color: 'hsl(25, 30%, 20%)' }}>
+                        style={{ color: 'hsl(var(--text-secondary))' }}>
                         {batch.batch_number}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
                           <span>{emoji}</span>
-                          <span className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                          <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                             {batch.products?.name ?? '—'}
                           </span>
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-1.5 text-xs"
-                          style={{ color: 'hsl(25, 15%, 50%)' }}>
+                          style={{ color: 'hsl(var(--text-muted))' }}>
                           <Calendar size={12} />
                           {batch.scheduled_date ? formatDate(batch.scheduled_date) : '—'}
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                      <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                         {batch.quantity_planned} pcs
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                        <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                           {batch.quantity_produced}
                         </span>
-                        <span className="text-xs ml-1" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                        <span className="text-xs ml-1" style={{ color: 'hsl(var(--text-muted))' }}>
                           / {batch.quantity_planned}
                         </span>
                         {batch.quantity_defect > 0 && (
-                          <span className="text-xs ml-2" style={{ color: 'hsl(0, 70%, 50%)' }}>
+                          <span className="text-xs ml-2" style={{ color: 'hsl(var(--danger))' }}>
                             ({batch.quantity_defect} defect)
                           </span>
                         )}
@@ -165,7 +165,7 @@ export default async function ProductionPage({
                       <td className="px-4 py-3">
                         <Link href={`/dashboard/production/${batch.id}`}
                           className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
-                          style={{ color: 'hsl(210, 70%, 45%)' }}>
+                          style={{ color: 'hsl(var(--info))' }}>
                           Detail
                         </Link>
                       </td>

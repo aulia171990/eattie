@@ -21,16 +21,16 @@ export default function SignUpPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6"
-      style={{ background: 'hsl(36, 33%, 97%)' }}>
+      style={{ background: 'hsl(var(--background))' }}>
       <div className="w-full max-w-md">
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl text-white"
             style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
-          <span className="text-xl font-semibold" style={{ color: 'hsl(25, 30%, 12%)' }}>Bakery Manager</span>
+          <span className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Bakery Manager</span>
         </div>
 
-        <h2 className="text-2xl font-bold mb-1" style={{ color: 'hsl(25, 30%, 12%)' }}>Daftar Akun</h2>
-        <p className="text-sm mb-6" style={{ color: 'hsl(25, 15%, 50%)' }}>
+        <h2 className="text-2xl font-bold mb-1" style={{ color: 'hsl(var(--foreground))' }}>Daftar Akun</h2>
+        <p className="text-sm mb-6" style={{ color: 'hsl(var(--text-muted))' }}>
           Buat akun untuk mulai menggunakan sistem
         </p>
 
@@ -47,7 +47,7 @@ export default function SignUpPage() {
             { name: 'password', label: 'Password', type: 'password', placeholder: '••••••••' },
           ].map((f) => (
             <div key={f.name}>
-              <label className="text-sm font-medium block mb-1" style={{ color: 'hsl(25, 30%, 20%)' }}>
+              <label className="text-sm font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
                 {f.label}
               </label>
               <input name={f.name} type={f.type} required placeholder={f.placeholder}
@@ -58,7 +58,7 @@ export default function SignUpPage() {
           ))}
 
           <div>
-            <label className="text-sm font-medium block mb-1" style={{ color: 'hsl(25, 30%, 20%)' }}>
+            <label className="text-sm font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
               Role
             </label>
             <select name="role" required
@@ -72,14 +72,14 @@ export default function SignUpPage() {
 
           <button type="submit" disabled={isPending}
             className="w-full py-2.5 px-4 rounded-lg font-medium text-sm text-white disabled:opacity-60"
-            style={{ background: 'hsl(32, 95%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             {isPending ? 'Mendaftar...' : 'Daftar'}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+        <p className="mt-6 text-center text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
           Sudah punya akun?{' '}
-          <Link href="/login" className="font-medium hover:underline" style={{ color: 'hsl(32, 95%, 44%)' }}>
+          <Link href="/login" className="font-medium hover:underline" style={{ color: 'hsl(var(--primary))' }}>
             Masuk
           </Link>
         </p>

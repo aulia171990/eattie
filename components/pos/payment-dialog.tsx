@@ -10,10 +10,10 @@ import { X, Banknote, CreditCard, Smartphone, Building2 } from 'lucide-react'
 const QRIS_IMAGE_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? ''
 
 const PAYMENT_METHODS = [
-  { id: 'cash', label: 'Tunai', icon: <Banknote size={20} />, color: 'hsl(142, 60%, 40%)' },
-  { id: 'qris', label: 'QRIS', icon: <Smartphone size={20} />, color: 'hsl(210, 70%, 45%)' },
+  { id: 'cash', label: 'Tunai', icon: <Banknote size={20} />, color: 'hsl(var(--success))' },
+  { id: 'qris', label: 'QRIS', icon: <Smartphone size={20} />, color: 'hsl(var(--info))' },
   { id: 'transfer', label: 'Transfer', icon: <Building2 size={20} />, color: 'hsl(262, 60%, 50%)' },
-  { id: 'card', label: 'Kartu', icon: <CreditCard size={20} />, color: 'hsl(32, 95%, 44%)' },
+  { id: 'card', label: 'Kartu', icon: <CreditCard size={20} />, color: 'hsl(var(--primary))' },
 ] as const
 
 const QUICK_CASH = [5000, 10000, 20000, 50000, 100000]
@@ -112,8 +112,8 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }}>
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-          <div className="p-6 text-center" style={{ background: 'hsl(142, 50%, 95%)' }}>
-            <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-3 text-white" style={{ background: 'hsl(142, 60%, 40%)' }}>✓</div>
+          <div className="p-6 text-center" style={{ background: 'hsl(var(--success-subtle))' }}>
+            <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-3 text-white" style={{ background: 'hsl(var(--success))' }}>✓</div>
             <h2 className="text-lg font-bold" style={{ color: 'hsl(142, 60%, 25%)' }}>Pembayaran Berhasil!</h2>
             <p className="text-sm mt-1" style={{ color: 'hsl(142, 30%, 40%)' }}>{completedSale.invoiceNumber}</p>
           </div>
@@ -124,9 +124,9 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
               ...(completedSale.method === 'cash' ? [{ label: 'Kembalian', value: formatCurrency(completedSale.change), highlight: true }] : []),
             ].map(row => (
               <div key={row.label} className="flex justify-between items-center">
-                <span className="text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>{row.label}</span>
+                <span className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>{row.label}</span>
                 <span className={`font-${row.bold ? 'bold text-base' : 'semibold text-sm'}`}
-                  style={{ color: row.highlight ? 'hsl(32, 95%, 40%)' : 'hsl(25, 30%, 15%)' }}>
+                  style={{ color: row.highlight ? 'hsl(var(--primary))' : 'hsl(var(--foreground))' }}>
                   {row.value}
                 </span>
               </div>
@@ -151,12 +151,12 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
             <div className="flex gap-3 pt-2">
               <button onClick={handlePrint}
                 className="flex-1 py-2.5 rounded-xl border text-sm font-medium"
-                style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}>
+                style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
                 🖨️ Print Struk
               </button>
               <button onClick={() => onSuccess(completedSale.invoiceNumber, completedSale.total)}
                 className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white"
-                style={{ background: 'hsl(32, 95%, 44%)' }}>
+                style={{ background: 'hsl(var(--primary))' }}>
                 Transaksi Baru
               </button>
             </div>
@@ -169,31 +169,31 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.5)' }}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col" style={{ maxHeight: '92dvh' }}>
-        <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
-          <h2 className="font-bold text-base" style={{ color: 'hsl(25, 30%, 12%)' }}>Pembayaran</h2>
+        <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+          <h2 className="font-bold text-base" style={{ color: 'hsl(var(--foreground))' }}>Pembayaran</h2>
           <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100"><X size={18} /></button>
         </div>
 
         <div className="p-5 space-y-5 overflow-y-auto flex-1">
           <div className="rounded-xl p-4 text-center" style={{ background: 'hsl(36, 80%, 95%)' }}>
-            <p className="text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>Total Pembayaran</p>
-            <p className="text-3xl font-bold mt-1" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(total)}</p>
-            <p className="text-xs mt-1" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>Total Pembayaran</p>
+            <p className="text-3xl font-bold mt-1" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(total)}</p>
+            <p className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>
               {items.length} item · {items.reduce((s, i) => s + i.quantity, 0)} pcs
               {discountAmount > 0 && ` · Diskon ${formatCurrency(discountAmount)}`}
             </p>
           </div>
 
           <div>
-            <p className="text-xs font-semibold mb-2" style={{ color: 'hsl(25, 15%, 45%)' }}>METODE PEMBAYARAN</p>
+            <p className="text-xs font-semibold mb-2" style={{ color: 'hsl(var(--text-muted))' }}>METODE PEMBAYARAN</p>
             <div className="grid grid-cols-4 gap-2">
               {PAYMENT_METHODS.map(pm => (
                 <button key={pm.id} onClick={() => { setMethod(pm.id); setPaymentInput('') }}
                   className="flex flex-col items-center gap-1.5 py-3 px-2 rounded-xl border-2 transition-all"
                   style={{
-                    borderColor: method === pm.id ? pm.color : 'hsl(36, 20%, 88%)',
+                    borderColor: method === pm.id ? pm.color : 'hsl(var(--border))',
                     background: method === pm.id ? `${pm.color}20` : 'white',
-                    color: method === pm.id ? pm.color : 'hsl(25, 15%, 50%)',
+                    color: method === pm.id ? pm.color : 'hsl(var(--text-muted))',
                   }}>
                   {pm.icon}
                   <span className="text-xs font-medium">{pm.label}</span>
@@ -218,13 +218,13 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
                     />
                   </div>
                   <div className="text-center space-y-1">
-                    <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                    <p className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
                       Scan QRIS untuk membayar
                     </p>
-                    <p className="text-2xl font-bold" style={{ color: 'hsl(210, 70%, 45%)' }}>
+                    <p className="text-2xl font-bold" style={{ color: 'hsl(var(--info))' }}>
                       {formatCurrency(total)}
                     </p>
-                    <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                    <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                       GoPay · OVO · Dana · ShopeePay · semua m-banking
                     </p>
                   </div>
@@ -242,10 +242,10 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
                   style={{ borderColor: 'hsl(210, 40%, 75%)', background: 'hsl(210, 30%, 97%)' }}
                 >
                   <p className="text-3xl">📷</p>
-                  <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 25%)' }}>
+                  <p className="text-sm font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                     QR belum dikonfigurasi
                   </p>
-                  <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                  <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                     Tambahkan <code className="bg-gray-100 px-1 rounded">NEXT_PUBLIC_QRIS_IMAGE_URL</code> di Vercel
                   </p>
                 </div>
@@ -255,29 +255,29 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
 
           {method === 'cash' && (
             <div>
-              <p className="text-xs font-semibold mb-2" style={{ color: 'hsl(25, 15%, 45%)' }}>UANG DITERIMA</p>
+              <p className="text-xs font-semibold mb-2" style={{ color: 'hsl(var(--text-muted))' }}>UANG DITERIMA</p>
               <input type="number" value={paymentInput} onChange={e => setPaymentInput(e.target.value)}
                 placeholder="Masukkan jumlah uang..."
                 className="w-full px-4 py-3 rounded-xl border-2 text-lg font-semibold outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 15%)' }} autoFocus />
+                style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }} autoFocus />
               <div className="flex gap-2 mt-2 flex-wrap">
                 {QUICK_CASH.filter(v => v >= total * 0.5).slice(0, 4).map(v => (
                   <button key={v} onClick={() => setPaymentInput(String(v))}
                     className="px-3 py-1.5 rounded-lg text-xs font-medium border"
-                    style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 45%)' }}>
+                    style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
                     {formatCurrency(v)}
                   </button>
                 ))}
                 <button onClick={() => setPaymentInput(String(total))}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                  style={{ background: 'hsl(142, 60%, 40%)' }}>
+                  style={{ background: 'hsl(var(--success))' }}>
                   Pas {formatCurrency(total)}
                 </button>
               </div>
               {paymentAmount >= total && (
-                <div className="mt-3 p-3 rounded-xl flex justify-between items-center" style={{ background: 'hsl(36, 80%, 93%)' }}>
-                  <span className="text-sm font-medium" style={{ color: 'hsl(32, 95%, 35%)' }}>Kembalian</span>
-                  <span className="text-xl font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(change)}</span>
+                <div className="mt-3 p-3 rounded-xl flex justify-between items-center" style={{ background: 'hsl(var(--primary-subtle))' }}>
+                  <span className="text-sm font-medium" style={{ color: 'hsl(var(--primary))' }}>Kembalian</span>
+                  <span className="text-xl font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(change)}</span>
                 </div>
               )}
             </div>
@@ -286,13 +286,13 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
           <input type="text" value={customerName} onChange={e => setCustomerName(e.target.value)}
             placeholder="Nama pelanggan (opsional)"
             className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+            style={{ borderColor: 'hsl(var(--border))' }} />
 
           {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
 
           <button onClick={handleConfirm} disabled={loading || !canPay}
             className="w-full py-3.5 rounded-xl font-bold text-white text-base disabled:opacity-50"
-            style={{ background: canPay ? 'hsl(142, 60%, 40%)' : 'hsl(210, 10%, 70%)' }}>
+            style={{ background: canPay ? 'hsl(var(--success))' : 'hsl(210, 10%, 70%)' }}>
             {loading ? 'Memproses...' : method === 'cash' && !canPay
               ? `Kurang ${formatCurrency(total - paymentAmount)}`
               : `✓ Konfirmasi ${PAYMENT_METHODS.find(p => p.id === method)?.label}`}

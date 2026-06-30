@@ -14,12 +14,12 @@ export default function LoginPage() {
       {/* Left branding panel */}
       <div
         className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 relative overflow-hidden"
-        style={{ background: 'hsl(25, 30%, 12%)' }}
+        style={{ background: 'hsl(var(--foreground))' }}
       >
         <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full opacity-10"
-          style={{ background: 'hsl(32, 95%, 44%)' }} />
+          style={{ background: 'hsl(var(--primary))' }} />
         <div className="absolute -bottom-32 -right-16 w-80 h-80 rounded-full opacity-10"
-          style={{ background: 'hsl(32, 95%, 44%)' }} />
+          style={{ background: 'hsl(var(--primary))' }} />
 
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
@@ -44,7 +44,7 @@ export default function LoginPage() {
               { emoji: '💳', label: 'POS Kasir', desc: 'Sistem kasir cepat' },
               { emoji: '📊', label: 'Laporan', desc: 'Analisis keuangan' },
             ].map((item) => (
-              <div key={item.label} className="rounded-xl p-4" style={{ background: 'hsl(25, 20%, 18%)' }}>
+              <div key={item.label} className="rounded-xl p-4" style={{ background: 'hsl(var(--sidebar-hover))' }}>
                 <div className="text-2xl mb-2">{item.emoji}</div>
                 <div className="text-white font-medium text-sm">{item.label}</div>
                 <div className="text-xs mt-1" style={{ color: 'hsl(36, 15%, 55%)' }}>{item.desc}</div>
@@ -60,20 +60,20 @@ export default function LoginPage() {
 
       {/* Right login panel */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8"
-        style={{ background: 'hsl(36, 33%, 97%)' }}>
+        style={{ background: 'hsl(var(--background))' }}>
         <div className="w-full max-w-md">
           <div className="flex items-center gap-3 mb-8 lg:hidden">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
               style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
-            <span className="text-xl font-semibold" style={{ color: 'hsl(25, 30%, 12%)' }}>
+            <span className="text-xl font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
               Bakery Manager
             </span>
           </div>
 
-          <h2 className="text-2xl font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>
+          <h2 className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>
             Selamat Datang
           </h2>
-          <p className="mt-1 text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+          <p className="mt-1 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
             Masuk ke akun Anda untuk melanjutkan
           </p>
 
@@ -85,38 +85,38 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 20%)' }}>
+              <label htmlFor="email" className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Email
               </label>
               <input id="email" name="email" type="email" autoComplete="email" required
                 placeholder="nama@email.com"
                 className="w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white', color: 'hsl(25, 30%, 12%)' }}
+                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white', color: 'hsl(var(--foreground))' }}
               />
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 20%)' }}>
+              <label htmlFor="password" className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Password
               </label>
               <input id="password" name="password" type="password" autoComplete="current-password" required
                 placeholder="••••••••"
                 className="w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white', color: 'hsl(25, 30%, 12%)' }}
+                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white', color: 'hsl(var(--foreground))' }}
               />
             </div>
 
             <button type="submit" disabled={isPending}
               className="w-full py-2.5 px-4 rounded-lg font-medium text-sm text-white disabled:opacity-60"
-              style={{ background: 'hsl(32, 95%, 44%)' }}>
+              style={{ background: 'hsl(var(--primary))' }}>
               {isPending ? 'Masuk...' : 'Masuk'}
             </button>
           </form>
 
           {/* SIGNUP LINK DISABLED — uncomment to re-enable
-          <p className="mt-6 text-center text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+          <p className="mt-6 text-center text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
             Belum punya akun?{' '}
-            <Link href="/sign-up" className="font-medium hover:underline" style={{ color: 'hsl(32, 95%, 44%)' }}>
+            <Link href="/sign-up" className="font-medium hover:underline" style={{ color: 'hsl(var(--primary))' }}>
               Daftar Sekarang
             </Link>
           </p>

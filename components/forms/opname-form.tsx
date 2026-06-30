@@ -49,7 +49,7 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
       {diffItems.length > 0 && (
         <div
           className="p-3 rounded-lg text-sm"
-          style={{ background: 'hsl(36, 80%, 93%)', color: 'hsl(32, 95%, 35%)' }}
+          style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
         >
           ⚠️ {diffItems.length} item memiliki selisih stok
         </div>
@@ -57,14 +57,14 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
 
       <div
         className="bg-white rounded-xl border overflow-hidden"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+        style={{ borderColor: 'hsl(var(--border))' }}
       >
         <div
           className="grid grid-cols-12 gap-3 px-4 py-3 border-b text-xs font-semibold"
           style={{
-            background: 'hsl(36, 20%, 97%)',
-            borderColor: 'hsl(36, 20%, 92%)',
-            color: 'hsl(25, 15%, 45%)',
+            background: 'hsl(var(--surface-raised))',
+            borderColor: 'hsl(var(--border))',
+            color: 'hsl(var(--text-muted))',
           }}
         >
           <div className="col-span-4">Bahan</div>
@@ -74,7 +74,7 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
           <div className="col-span-2">Alasan</div>
         </div>
 
-        <div className="divide-y" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+        <div className="divide-y" style={{ borderColor: 'hsl(var(--border))' }}>
           {items.map((item) => {
             const actual = actuals[item.id] ?? item.system_stock
             const diff = actual - item.system_stock
@@ -91,10 +91,10 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
                       : 'transparent',
                 }}
               >
-                <div className="col-span-4 text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                <div className="col-span-4 text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                   {item.ingredients?.name ?? '—'}
                 </div>
-                <div className="col-span-2 text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                <div className="col-span-2 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
                   {item.system_stock} {item.unit}
                 </div>
                 <div className="col-span-2">
@@ -116,7 +116,7 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
                           ? diff > 0
                             ? 'hsl(210, 70%, 70%)'
                             : 'hsl(0, 70%, 70%)'
-                          : 'hsl(36, 20%, 85%)',
+                          : 'hsl(var(--border))',
                     }}
                   />
                 </div>
@@ -125,10 +125,10 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
                   style={{
                     color:
                       diff === 0
-                        ? 'hsl(142, 60%, 35%)'
+                        ? 'hsl(var(--success))'
                         : diff > 0
-                        ? 'hsl(210, 70%, 40%)'
-                        : 'hsl(0, 70%, 45%)',
+                        ? 'hsl(var(--info))'
+                        : 'hsl(var(--danger))',
                   }}
                 >
                   {diff === 0 ? '✓ OK' : diff > 0 ? `+${diff}` : diff}
@@ -143,7 +143,7 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
                         setReasons((prev) => ({ ...prev, [item.id]: e.target.value }))
                       }
                       className="w-full px-2 py-1.5 rounded-lg border text-xs outline-none"
-                      style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                      style={{ borderColor: 'hsl(var(--border))' }}
                     />
                   )}
                 </div>
@@ -158,14 +158,14 @@ export function OpnameForm({ action, items, cancelHref }: OpnameFormProps) {
           type="submit"
           disabled={isPending}
           className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-          style={{ background: 'hsl(142, 60%, 40%)' }}
+          style={{ background: 'hsl(var(--success))' }}
         >
           {isPending ? 'Menyimpan...' : '✓ Selesaikan Opname & Update Stok'}
         </button>
         <Link
           href={cancelHref}
           className="px-6 py-2.5 rounded-lg text-sm font-medium border"
-          style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+          style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
         >
           Batal
         </Link>

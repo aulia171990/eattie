@@ -21,20 +21,20 @@ export function RevenueChart({ data, height = 220 }: RevenueChartProps) {
       <AreaChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="revenueGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="hsl(32, 95%, 44%)" stopOpacity={0.15} />
-            <stop offset="95%" stopColor="hsl(32, 95%, 44%)" stopOpacity={0} />
+            <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.15} />
+            <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(36, 20%, 92%)" vertical={false} />
-        <XAxis dataKey={key} tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false}
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis dataKey={key} tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false}
           tickFormatter={v => v >= 1000000 ? `${(v / 1000000).toFixed(1)}jt` : v >= 1000 ? `${(v / 1000).toFixed(0)}rb` : String(v)} />
         <Tooltip
           formatter={(v: number) => [formatCurrency(v), 'Revenue']}
-          contentStyle={{ borderRadius: '10px', border: '1px solid hsl(36, 20%, 88%)', fontSize: 12 }}
+          contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }}
         />
-        <Area type="monotone" dataKey="revenue" stroke="hsl(32, 95%, 44%)" strokeWidth={2}
-          fill="url(#revenueGrad)" dot={false} activeDot={{ r: 4, fill: 'hsl(32, 95%, 44%)' }} />
+        <Area type="monotone" dataKey="revenue" stroke="hsl(var(--primary))" strokeWidth={2}
+          fill="url(#revenueGrad)" dot={false} activeDot={{ r: 4, fill: 'hsl(var(--primary))' }} />
       </AreaChart>
     </ResponsiveContainer>
   )
@@ -51,10 +51,10 @@ export function TransactionChart({ data, height = 180 }: TxnChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }} barSize={12}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(36, 20%, 92%)" vertical={false} />
-        <XAxis dataKey={key} tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false} allowDecimals={false} />
-        <Tooltip contentStyle={{ borderRadius: '10px', border: '1px solid hsl(36, 20%, 88%)', fontSize: 12 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis dataKey={key} tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} allowDecimals={false} />
+        <Tooltip contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
         <Bar dataKey="transactions" name="Transaksi" fill="hsl(210, 70%, 55%)" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
@@ -71,12 +71,12 @@ export function PnlChart({ data, height = 240 }: PnlChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }} barGap={4} barSize={14}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(36, 20%, 92%)" vertical={false} />
-        <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false} />
-        <YAxis tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false}
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+        <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} />
+        <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false}
           tickFormatter={v => v >= 1000000 ? `${(v / 1000000).toFixed(1)}jt` : v >= 1000 ? `${(v / 1000).toFixed(0)}rb` : String(v)} />
         <Tooltip formatter={(v: number) => formatCurrency(v)}
-          contentStyle={{ borderRadius: '10px', border: '1px solid hsl(36, 20%, 88%)', fontSize: 12 }} />
+          contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
         <Bar dataKey="revenue" name="Pendapatan" fill="hsl(32, 95%, 50%)" radius={[4, 4, 0, 0]} />
         <Bar dataKey="expenses" name="Pengeluaran" fill="hsl(0, 70%, 60%)" radius={[4, 4, 0, 0]} />
@@ -115,7 +115,7 @@ export function PaymentPieChart({ data, height = 200 }: PaymentPieProps) {
           ))}
         </Pie>
         <Tooltip formatter={(v: number) => formatCurrency(v)}
-          contentStyle={{ borderRadius: '10px', border: '1px solid hsl(36, 20%, 88%)', fontSize: 12 }} />
+          contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
       </PieChart>
     </ResponsiveContainer>
@@ -132,10 +132,10 @@ export function ProductionChart({ data, height = 220 }: ProductionChartProps) {
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={data} layout="vertical" margin={{ top: 5, right: 40, left: 0, bottom: 0 }} barSize={14}>
-        <CartesianGrid strokeDasharray="3 3" stroke="hsl(36, 20%, 92%)" horizontal={false} />
-        <XAxis type="number" tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false} />
-        <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: 'hsl(25, 15%, 55%)' }} axisLine={false} tickLine={false} width={90} />
-        <Tooltip contentStyle={{ borderRadius: '10px', border: '1px solid hsl(36, 20%, 88%)', fontSize: 12 }} />
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" horizontal={false} />
+        <XAxis type="number" tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} />
+        <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} width={90} />
+        <Tooltip contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
         <Bar dataKey="produced" name="Berhasil" fill="hsl(142, 60%, 45%)" radius={[0, 4, 4, 0]} stackId="a" />
         <Bar dataKey="defect" name="Defect" fill="hsl(0, 70%, 60%)" radius={[0, 4, 4, 0]} stackId="a" />

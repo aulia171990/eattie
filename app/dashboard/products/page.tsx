@@ -26,7 +26,7 @@ export default async function ProductsPage() {
         action={
           <Link href="/dashboard/products/new"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             <Plus size={16} /> Tambah Produk
           </Link>
         }
@@ -39,9 +39,9 @@ export default async function ProductsPage() {
           { label: 'Nonaktif', value: products.length - active.length },
           { label: 'Stok Habis', value: active.filter(p => (p as Product & { current_stock: number }).current_stock <= 0).length },
         ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
-            <p className="text-2xl font-bold mt-1" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
+          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
+            <p className="text-2xl font-bold mt-1" style={{ color: 'hsl(var(--foreground))' }}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -52,8 +52,8 @@ export default async function ProductsPage() {
         <div className="space-y-6">
           {byCategory.map(cat => (
             <div key={cat.value}>
-              <h2 className="flex items-center gap-2 font-semibold text-sm mb-3" style={{ color: 'hsl(25, 30%, 20%)' }}>
-                <span>{cat.emoji}</span> {cat.label} <span className="text-xs font-normal" style={{ color: 'hsl(25, 15%, 55%)' }}>({cat.items.length})</span>
+              <h2 className="flex items-center gap-2 font-semibold text-sm mb-3" style={{ color: 'hsl(var(--text-secondary))' }}>
+                <span>{cat.emoji}</span> {cat.label} <span className="text-xs font-normal" style={{ color: 'hsl(var(--text-muted))' }}>({cat.items.length})</span>
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {cat.items.map(p => <ProductCard key={p.id} product={p} />)}
@@ -62,7 +62,7 @@ export default async function ProductsPage() {
           ))}
           {uncategorized.length > 0 && (
             <div>
-              <h2 className="font-semibold text-sm mb-3" style={{ color: 'hsl(25, 30%, 20%)' }}>Lainnya</h2>
+              <h2 className="font-semibold text-sm mb-3" style={{ color: 'hsl(var(--text-secondary))' }}>Lainnya</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {uncategorized.map(p => <ProductCard key={p.id} product={p} />)}
               </div>
@@ -82,7 +82,7 @@ function ProductCard({ product }: { product: ProductCardType }) {
   const emoji = PRODUCT_CATEGORIES.find(c => c.value === p.category)?.emoji ?? '🧁'
 
   return (
-    <div className="bg-white rounded-xl border overflow-hidden hover:shadow-sm transition-all" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+    <div className="bg-white rounded-xl border overflow-hidden hover:shadow-sm transition-all" style={{ borderColor: 'hsl(var(--border))' }}>
       {/* Gambar produk */}
       <div className="relative w-full h-36" style={{ background: 'hsl(36, 50%, 96%)' }}>
         {p.image_url ? (
@@ -102,28 +102,28 @@ function ProductCard({ product }: { product: ProductCardType }) {
         <Link
           href={`/dashboard/products/${p.id}/edit`}
           className="absolute top-2 right-2 text-xs px-2 py-1 rounded-md font-medium backdrop-blur-sm"
-          style={{ background: 'rgba(255,255,255,0.9)', color: 'hsl(32, 95%, 44%)' }}
+          style={{ background: 'rgba(255,255,255,0.9)', color: 'hsl(var(--primary))' }}
         >
           Edit
         </Link>
       </div>
 
       <div className="p-3">
-        <h3 className="font-semibold text-sm leading-tight" style={{ color: 'hsl(25, 30%, 15%)' }}>{p.name}</h3>
-        {p.name_en && <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>{p.name_en}</p>}
-        <div className="mt-2 pt-2 border-t" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-          <p className="text-base font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(p.selling_price)}</p>
+        <h3 className="font-semibold text-sm leading-tight" style={{ color: 'hsl(var(--foreground))' }}>{p.name}</h3>
+        {p.name_en && <p className="text-xs mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>{p.name_en}</p>}
+        <div className="mt-2 pt-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+          <p className="text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(p.selling_price)}</p>
           <div className="flex items-center justify-between mt-0.5">
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>HPP: {formatCurrency(p.cost_price)}</p>
-            {margin !== null && <span className="text-xs font-medium" style={{ color: 'hsl(142, 60%, 35%)' }}>~{margin.toFixed(0)}%</span>}
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>HPP: {formatCurrency(p.cost_price)}</p>
+            {margin !== null && <span className="text-xs font-medium" style={{ color: 'hsl(var(--success))' }}>~{margin.toFixed(0)}%</span>}
           </div>
-          <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Stok</p>
+          <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Stok</p>
             <span
               className="text-xs font-bold px-2 py-0.5 rounded-full"
               style={{
-                background: p.current_stock <= 0 ? 'hsl(0, 80%, 95%)' : p.current_stock <= p.min_stock ? 'hsl(36, 80%, 90%)' : 'hsl(142, 50%, 90%)',
-                color: p.current_stock <= 0 ? 'hsl(0, 70%, 40%)' : p.current_stock <= p.min_stock ? 'hsl(32, 95%, 38%)' : 'hsl(142, 60%, 28%)',
+                background: p.current_stock <= 0 ? 'hsl(var(--danger-bg))' : p.current_stock <= p.min_stock ? 'hsl(var(--primary-subtle))' : 'hsl(var(--success-bg))',
+                color: p.current_stock <= 0 ? 'hsl(var(--danger))' : p.current_stock <= p.min_stock ? 'hsl(var(--primary-hover))' : 'hsl(var(--success))',
               }}
             >
               {p.current_stock <= 0 ? 'Habis' : `${p.current_stock} pcs`}

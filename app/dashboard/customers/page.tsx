@@ -73,8 +73,8 @@ export default async function CustomersPage({
       {/* Header */}
       <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>Pelanggan</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'hsl(25, 15%, 50%)' }}>
+          <h1 className="text-xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Pelanggan</h1>
+          <p className="text-sm mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>
             {stats.total} pelanggan terdaftar
           </p>
         </div>
@@ -85,7 +85,7 @@ export default async function CustomersPage({
       <div className="rounded-2xl p-5 text-white relative overflow-hidden"
         style={{ background: 'linear-gradient(135deg, hsl(25,30%,15%) 0%, hsl(25,30%,22%) 100%)' }}>
         <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
-          style={{ background: 'hsl(32,95%,44%)', transform: 'translate(30%, -30%)' }} />
+          style={{ background: 'hsl(var(--primary))', transform: 'translate(30%, -30%)' }} />
         <p className="text-xs font-medium opacity-60 uppercase tracking-widest mb-1">Total Nilai Pelanggan</p>
         <p className="text-3xl font-bold">{formatCompact(stats.totalRevenue)}</p>
         <div className="flex items-center gap-1.5 mt-2 opacity-70">
@@ -124,7 +124,7 @@ export default async function CustomersPage({
                 )}
               </div>
               <p className="text-2xl font-bold mb-0.5"
-                style={{ color: isActive ? 'white' : 'hsl(25, 30%, 12%)' }}>
+                style={{ color: isActive ? 'white' : 'hsl(var(--foreground))' }}>
                 {count}
               </p>
               <p className="text-xs font-medium"
@@ -140,7 +140,7 @@ export default async function CustomersPage({
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2"
-            style={{ color: 'hsl(25, 15%, 55%)' }} />
+            style={{ color: 'hsl(var(--text-muted))' }} />
           <form>
             {activeTier && <input type="hidden" name="tier" value={activeTier} />}
             <input
@@ -149,14 +149,14 @@ export default async function CustomersPage({
               defaultValue={sp.search}
               placeholder="Cari nama atau nomor HP..."
               className="w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm outline-none transition-shadow focus:shadow-sm"
-              style={{ borderColor: 'hsl(36, 20%, 86%)', background: 'white' }}
+              style={{ borderColor: 'hsl(var(--border))', background: 'white' }}
             />
           </form>
         </div>
         {activeTier && (
           <Link href="/dashboard/customers"
             className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border text-xs font-medium transition-colors hover:bg-gray-50"
-            style={{ borderColor: 'hsl(36, 20%, 86%)', color: 'hsl(25, 30%, 40%)' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(25, 30%, 40%)' }}>
             ✕ {TIER[activeTier].label}
           </Link>
         )}
@@ -166,14 +166,14 @@ export default async function CustomersPage({
       {customers.length === 0 ? (
         <div className="py-16 text-center space-y-3">
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto"
-            style={{ background: 'hsl(36, 20%, 93%)' }}>
-            <Users size={28} style={{ color: 'hsl(25, 15%, 55%)' }} />
+            style={{ background: 'hsl(var(--border))' }}>
+            <Users size={28} style={{ color: 'hsl(var(--text-muted))' }} />
           </div>
           <div>
-            <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 25%)' }}>
+            <p className="text-sm font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
               {sp.search ? `Tidak ada hasil untuk "${sp.search}"` : 'Belum ada pelanggan'}
             </p>
-            <p className="text-xs mt-1" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <p className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>
               Pelanggan otomatis tercatat setelah order pertama.
             </p>
           </div>
@@ -189,7 +189,7 @@ export default async function CustomersPage({
             return (
               <Link key={c.id} href={`/dashboard/customers/${c.id}`}
                 className="flex items-center gap-3 bg-white rounded-2xl border p-3.5 hover:shadow-md transition-all hover:-translate-y-px group"
-                style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
+                style={{ borderColor: 'hsl(var(--border))' }}>
 
                 {/* Avatar with tier ring */}
                 <div className="relative shrink-0">
@@ -208,11 +208,11 @@ export default async function CustomersPage({
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-sm font-semibold truncate" style={{ color: 'hsl(25, 30%, 12%)' }}>
+                    <p className="text-sm font-semibold truncate" style={{ color: 'hsl(var(--foreground))' }}>
                       {c.name}
                     </p>
                   </div>
-                  <p className="text-xs mb-1.5" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                  <p className="text-xs mb-1.5" style={{ color: 'hsl(var(--text-muted))' }}>
                     {c.phone}
                     {c.total_orders > 0 && ` · ${c.total_orders}× order`}
                     {c.last_order_date && ` · ${formatDate(c.last_order_date)}`}
@@ -220,7 +220,7 @@ export default async function CustomersPage({
                   {/* Tier progress bar */}
                   {tier.max !== Infinity && (
                     <div className="h-1 rounded-full overflow-hidden w-24"
-                      style={{ background: 'hsl(36, 20%, 92%)' }}>
+                      style={{ background: 'hsl(var(--border))' }}>
                       <div className="h-full rounded-full transition-all"
                         style={{ width: `${progressPct}%`, background: tier.gradient }} />
                     </div>
@@ -230,7 +230,7 @@ export default async function CustomersPage({
                 {/* Spending + chevron */}
                 <div className="text-right shrink-0 flex items-center gap-2">
                   <div>
-                    <p className="text-sm font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+                    <p className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
                       {formatCompact(c.total_spending)}
                     </p>
                     <p className="text-[10px]" style={{ color: tier.color }}>
@@ -238,7 +238,7 @@ export default async function CustomersPage({
                     </p>
                   </div>
                   <ChevronRight size={15} className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ color: 'hsl(25, 15%, 55%)' }} />
+                    style={{ color: 'hsl(var(--text-muted))' }} />
                 </div>
               </Link>
             )
@@ -257,7 +257,7 @@ export default async function CustomersPage({
             </Link>
           )}
           <span className="px-3 py-1.5 rounded-lg text-xs font-medium"
-            style={{ background: 'hsl(32, 95%, 44%)', color: 'white' }}>
+            style={{ background: 'hsl(var(--primary))', color: 'white' }}>
             {page} / {totalPages}
           </span>
           {page < totalPages && (

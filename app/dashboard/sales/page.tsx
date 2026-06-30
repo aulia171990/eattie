@@ -22,9 +22,9 @@ const paymentLabels: Record<string, string> = {
 }
 
 const statusStyle: Record<string, { label: string; bg: string; text: string }> = {
-  completed: { label: 'Selesai',    bg: 'hsl(142, 50%, 90%)', text: 'hsl(142, 60%, 28%)' },
-  pending:   { label: 'Pending',    bg: 'hsl(36, 80%, 90%)',  text: 'hsl(32, 95%, 38%)' },
-  cancelled: { label: 'Dibatalkan', bg: 'hsl(0, 60%, 93%)',   text: 'hsl(0, 70%, 40%)' },
+  completed: { label: 'Selesai',    bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
+  pending:   { label: 'Pending',    bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
+  cancelled: { label: 'Dibatalkan', bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
   refunded:  { label: 'Refund',     bg: 'hsl(210, 60%, 93%)', text: 'hsl(210, 60%, 35%)' },
 }
 
@@ -67,7 +67,7 @@ export default async function SalesPage({
           <Link
             href="/pos"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}
+            style={{ background: 'hsl(var(--primary))' }}
           >
             <ShoppingCart size={16} /> Buka POS
           </Link>
@@ -78,54 +78,54 @@ export default async function SalesPage({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Total Transaksi',  value: completed.length,          icon: <Receipt size={18} />,     bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)', ownerOnly: false },
-          { label: 'Total Pendapatan', value: formatCurrency(totalRevenue), icon: <TrendingUp size={18} />,  bg: 'hsl(36,80%,93%)',  ic: 'hsl(32,95%,44%)',  ownerOnly: true },
+          { label: 'Total Pendapatan', value: formatCurrency(totalRevenue), icon: <TrendingUp size={18} />,  bg: 'hsl(var(--primary-subtle))',  ic: 'hsl(var(--primary))',  ownerOnly: true },
           { label: 'Rata-rata Order',  value: formatCurrency(avgOrder),    icon: <ShoppingCart size={18} />, bg: 'hsl(142,50%,92%)', ic: 'hsl(142,60%,35%)', ownerOnly: true },
           { label: 'Dibatalkan',       value: sales.filter((s) => s.status === 'cancelled').length, icon: <Ban size={18} />, bg: 'hsl(0,80%,95%)', ic: 'hsl(0,70%,48%)', ownerOnly: false },
         ].filter(s => !s.ownerOnly || isOwner).map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-medium" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
+              <p className="text-xs font-medium" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
               <div className="w-8 h-8 rounded-lg flex items-center justify-center"
                 style={{ background: s.bg, color: s.ic }}>{s.icon}</div>
             </div>
-            <p className="text-base lg:text-xl font-bold truncate" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
+            <p className="text-base lg:text-xl font-bold truncate" style={{ color: 'hsl(var(--foreground))' }}>{s.value}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
       <form className="bg-white rounded-xl border p-4 mb-4 flex flex-wrap gap-3"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        style={{ borderColor: 'hsl(var(--border))' }}>
         <input name="search" defaultValue={sp.search} placeholder="Cari invoice / nama pelanggan..."
           className="flex-1 min-w-48 px-3 py-2 rounded-lg border text-sm outline-none"
-          style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+          style={{ borderColor: 'hsl(var(--border))' }} />
         <div className="flex items-center gap-2">
-          <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'hsl(25, 15%, 50%)' }}>Dari</label>
+          <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'hsl(var(--text-muted))' }}>Dari</label>
           <input name="dateFrom" type="date" defaultValue={sp.dateFrom ?? today}
             className="px-3 py-2 rounded-lg border text-sm outline-none"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+            style={{ borderColor: 'hsl(var(--border))' }} />
         </div>
         <div className="flex items-center gap-2">
-          <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'hsl(25, 15%, 50%)' }}>Sampai</label>
+          <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'hsl(var(--text-muted))' }}>Sampai</label>
           <input name="dateTo" type="date" defaultValue={sp.dateTo ?? today}
             className="px-3 py-2 rounded-lg border text-sm outline-none"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+            style={{ borderColor: 'hsl(var(--border))' }} />
         </div>
         <select name="status" defaultValue={sp.status ?? 'all'}
           className="px-3 py-2 rounded-lg border text-sm outline-none"
-          style={{ borderColor: 'hsl(36, 20%, 85%)' }}>
+          style={{ borderColor: 'hsl(var(--border))' }}>
           <option value="all">Semua Status</option>
           <option value="completed">Selesai</option>
           <option value="cancelled">Dibatalkan</option>
         </select>
         <button type="submit"
           className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-          style={{ background: 'hsl(32, 95%, 44%)' }}>
+          style={{ background: 'hsl(var(--primary))' }}>
           Cari
         </button>
         <Link href="/dashboard/sales"
           className="px-4 py-2 rounded-lg text-sm border"
-          style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 50%)' }}>
+          style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
           Reset
         </Link>
       </form>
@@ -137,14 +137,14 @@ export default async function SalesPage({
           description="Transaksi akan muncul di sini setelah ada penjualan"
         />
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+                <tr style={{ background: 'hsl(var(--surface-raised))' }}>
                   {(['Invoice', 'Waktu', 'Pelanggan', 'Kasir', ...(isOwner ? ['Total'] : []), 'Pembayaran', 'Status', 'Aksi'] as string[]).map((h) => (
                     <th key={h} className="text-left px-4 py-3 text-xs font-semibold"
-                      style={{ color: 'hsl(25, 15%, 45%)' }}>{h}</th>
+                      style={{ color: 'hsl(var(--text-muted))' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
@@ -157,22 +157,22 @@ export default async function SalesPage({
                   }
                   return (
                     <tr key={sale.id} className="border-t hover:bg-gray-50/50 transition-colors"
-                      style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+                      style={{ borderColor: 'hsl(var(--border))' }}>
                       <td className="px-4 py-3 text-xs font-mono font-medium"
-                        style={{ color: 'hsl(25, 30%, 20%)' }}>{sale.invoice_number}</td>
+                        style={{ color: 'hsl(var(--text-secondary))' }}>{sale.invoice_number}</td>
                       <td className="px-4 py-3 text-xs whitespace-nowrap"
-                        style={{ color: 'hsl(25, 15%, 50%)' }}>{formatDateTime(sale.created_at)}</td>
-                      <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                        style={{ color: 'hsl(var(--text-muted))' }}>{formatDateTime(sale.created_at)}</td>
+                      <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>
                         {sale.customer_name ?? '—'}
                       </td>
-                      <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                      <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                         {sale.profiles?.full_name ?? '—'}
                       </td>
                       {isOwner && (
                         <td className="px-4 py-3 text-sm font-semibold"
-                          style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(sale.total)}</td>
+                          style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(sale.total)}</td>
                       )}
-                      <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                      <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                         {paymentLabels[sale.payment_method ?? ''] ?? sale.payment_method ?? '—'}
                       </td>
                       <td className="px-4 py-3">
@@ -184,7 +184,7 @@ export default async function SalesPage({
                       <td className="px-4 py-3">
                         <Link href={`/dashboard/sales/${sale.id}`}
                           className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
-                          style={{ color: 'hsl(210, 70%, 45%)' }}>
+                          style={{ color: 'hsl(var(--info))' }}>
                           Detail
                         </Link>
                       </td>
@@ -195,10 +195,10 @@ export default async function SalesPage({
             </table>
           </div>
           <div className="px-4 py-3 border-t text-xs flex justify-between"
-            style={{ borderColor: 'hsl(36, 20%, 92%)', color: 'hsl(25, 15%, 55%)' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             <span>{sales.length} transaksi ditampilkan</span>
             {isOwner && (
-              <span className="font-medium" style={{ color: 'hsl(32, 95%, 44%)' }}>
+              <span className="font-medium" style={{ color: 'hsl(var(--primary))' }}>
                 Total: {formatCurrency(totalRevenue)}
               </span>
             )}
