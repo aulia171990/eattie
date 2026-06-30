@@ -22,8 +22,18 @@ export default function LoginPage() {
           style={{ background: 'hsl(var(--primary))' }} />
 
         <div className="relative z-10 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-            style={{ background: BRANDING.colors.primary }}>{BRANDING.logo}</div>
+          <div
+  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-sm"
+  style={{ background: BRANDING.colors.primary }}
+>
+  <Image
+    src={BRANDING.logoIcon}
+    alt={BRANDING.shortName}
+    width={28}
+    height={28}
+    priority
+  />
+</div>
           <span className="text-white text-xl font-semibold">Bakery Manager</span>
         </div>
 
