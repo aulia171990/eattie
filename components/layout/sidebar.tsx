@@ -61,7 +61,7 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
 
   return (
     <aside className="sidebar flex flex-col h-full w-64 shrink-0">
-      <div className="flex items-center justify-between px-5 py-5 border-b" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
+      <div className="flex items-center justify-between px-5 py-5 border-b" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
           <div className="min-w-0">
@@ -115,17 +115,17 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
       </nav>
 
       {(user.role === 'owner' || user.role === 'cashier') && (
-        <div className="px-3 py-2 border-t" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
+        <div className="px-3 py-2 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
           <Link href="/pos" onClick={onClose}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white transition-all hover:opacity-90"
-            style={{ background: 'hsl(32, 95%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             <ShoppingCart size={18} />
             <span>Buka POS Kasir</span>
           </Link>
         </div>
       )}
 
-      <div className="px-3 pb-4 pt-2 border-t" style={{ borderColor: 'hsl(25, 20%, 20%)' }}>
+      <div className="px-3 pb-4 pt-2 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
             style={{ background: 'hsl(32, 60%, 30%)', color: 'hsl(32, 95%, 70%)' }}>

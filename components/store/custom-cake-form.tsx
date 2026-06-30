@@ -87,22 +87,22 @@ export function CustomCakeForm({ onClose }: Props) {
         <div className="flex justify-center">
           <CheckCircle size={56} className="text-green-500" />
         </div>
-        <h3 className="text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+        <h3 className="text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
           Permintaan Terkirim!
         </h3>
-        <p className="text-sm" style={{ color: 'hsl(25, 15%, 45%)' }}>
+        <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
           Nomor request Anda:
         </p>
         <div className="inline-block px-5 py-2 rounded-xl font-mono font-bold text-lg"
-          style={{ background: 'hsl(36, 80%, 93%)', color: 'hsl(32, 90%, 40%)' }}>
+          style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}>
           {reqNumber}
         </div>
-        <p className="text-xs max-w-xs mx-auto leading-relaxed" style={{ color: 'hsl(25, 15%, 50%)' }}>
+        <p className="text-xs max-w-xs mx-auto leading-relaxed" style={{ color: 'hsl(var(--text-muted))' }}>
           Tim kami akan menghubungi Anda dalam 1×24 jam untuk konfirmasi harga dan detail pesanan.
         </p>
         <button onClick={onClose}
           className="mt-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white"
-          style={{ background: 'hsl(32, 90%, 44%)' }}>
+          style={{ background: 'hsl(var(--primary))' }}>
           Tutup
         </button>
       </div>
@@ -113,7 +113,7 @@ export function CustomCakeForm({ onClose }: Props) {
     <>
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h3 className="text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+          <h3 className="text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
             Pesan Custom Cake
           </h3>
           <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 52%)' }}>
@@ -137,13 +137,13 @@ export function CustomCakeForm({ onClose }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-xs font-semibold uppercase tracking-wide"
-              style={{ color: 'hsl(25, 20%, 40%)' }}>Nama Anda *</label>
+              style={{ color: 'hsl(var(--text-secondary))' }}>Nama Anda *</label>
             <input name="customer_name" type="text" required placeholder="Nama lengkap"
               className={inputCls} style={inputStyle} />
           </div>
           <div className="space-y-1">
             <label className="text-xs font-semibold uppercase tracking-wide"
-              style={{ color: 'hsl(25, 20%, 40%)' }}>No. WhatsApp *</label>
+              style={{ color: 'hsl(var(--text-secondary))' }}>No. WhatsApp *</label>
             <input name="customer_phone" type="tel" required placeholder="08xxxxxxxxxx"
               className={inputCls} style={inputStyle} />
           </div>
@@ -152,7 +152,7 @@ export function CustomCakeForm({ onClose }: Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-xs font-semibold uppercase tracking-wide"
-              style={{ color: 'hsl(25, 20%, 40%)' }}>Ukuran *</label>
+              style={{ color: 'hsl(var(--text-secondary))' }}>Ukuran *</label>
             <select name="size" required className={inputCls} style={inputStyle}>
               {SIZES.map(s => (
                 <option key={s.value} value={s.value}>{s.label}</option>
@@ -161,7 +161,7 @@ export function CustomCakeForm({ onClose }: Props) {
           </div>
           <div className="space-y-1">
             <label className="text-xs font-semibold uppercase tracking-wide"
-              style={{ color: 'hsl(25, 20%, 40%)' }}>Rasa *</label>
+              style={{ color: 'hsl(var(--text-secondary))' }}>Rasa *</label>
             <select name="flavor" required className={inputCls} style={inputStyle}>
               {FLAVORS.map(f => (
                 <option key={f.value} value={f.value}>{f.label}</option>
@@ -172,14 +172,14 @@ export function CustomCakeForm({ onClose }: Props) {
 
         <div className="space-y-1">
           <label className="text-xs font-semibold uppercase tracking-wide"
-            style={{ color: 'hsl(25, 20%, 40%)' }}>Tema Warna <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(opsional)</span></label>
+            style={{ color: 'hsl(var(--text-secondary))' }}>Tema Warna <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(opsional)</span></label>
           <input name="color_theme" type="text" placeholder="Contoh: Pastel pink, Gold, Navy blue"
             className={inputCls} style={inputStyle} />
         </div>
 
         <div className="space-y-1">
           <label className="text-xs font-semibold uppercase tracking-wide"
-            style={{ color: 'hsl(25, 20%, 40%)' }}>Catatan Khusus <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(tulisan di kue, dll)</span></label>
+            style={{ color: 'hsl(var(--text-secondary))' }}>Catatan Khusus <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(tulisan di kue, dll)</span></label>
           <textarea name="special_notes" rows={3}
             placeholder="Contoh: Tulisan 'Happy Birthday Budi', lilin angka 25, dekorasi mawar merah..."
             className={inputCls} style={{ ...inputStyle, resize: 'none' }} />
@@ -188,7 +188,7 @@ export function CustomCakeForm({ onClose }: Props) {
         {/* Image Upload */}
         <div className="space-y-2">
           <label className="text-xs font-semibold uppercase tracking-wide"
-            style={{ color: 'hsl(25, 20%, 40%)' }}>Gambar Referensi <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(opsional)</span></label>
+            style={{ color: 'hsl(var(--text-secondary))' }}>Gambar Referensi <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(opsional)</span></label>
 
           {imagePreview ? (
             <div className="relative w-full aspect-video rounded-xl overflow-hidden border"
@@ -197,7 +197,7 @@ export function CustomCakeForm({ onClose }: Props) {
               <img src={imagePreview} alt="Referensi" className="w-full h-full object-cover" />
               {uploading && (
                 <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
-                  <Loader2 size={24} className="animate-spin" style={{ color: 'hsl(32, 90%, 44%)' }} />
+                  <Loader2 size={24} className="animate-spin" style={{ color: 'hsl(var(--primary))' }} />
                 </div>
               )}
               <button type="button"
@@ -209,7 +209,7 @@ export function CustomCakeForm({ onClose }: Props) {
           ) : (
             <button type="button" onClick={() => fileRef.current?.click()}
               className="w-full py-8 rounded-xl border-2 border-dashed flex flex-col items-center gap-2 transition-colors hover:bg-orange-50"
-              style={{ borderColor: 'hsl(36, 30%, 80%)', color: 'hsl(25, 15%, 55%)' }}>
+              style={{ borderColor: 'hsl(36, 30%, 80%)', color: 'hsl(var(--text-muted))' }}>
               <Upload size={22} />
               <span className="text-xs">Klik untuk upload foto referensi</span>
               <span className="text-[10px]">JPG / PNG, maks. 2MB</span>
@@ -227,7 +227,7 @@ export function CustomCakeForm({ onClose }: Props) {
           </button>
           <button type="submit" disabled={loading || uploading}
             className="flex-1 py-2.5 rounded-full text-sm font-semibold text-white transition-all disabled:opacity-60 flex items-center justify-center gap-2"
-            style={{ background: 'hsl(32, 90%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             {loading ? <><Loader2 size={14} className="animate-spin" /> Mengirim...</> : 'Kirim Permintaan'}
           </button>
         </div>

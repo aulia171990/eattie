@@ -35,8 +35,8 @@ export function BatchUpdateForm({
   }
 
   return (
-    <div className="bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-      <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(25, 30%, 15%)' }}>
+    <div className="bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(var(--border))' }}>
+      <h2 className="font-semibold text-sm mb-4" style={{ color: 'hsl(var(--foreground))' }}>
         Update Status Produksi
       </h2>
 
@@ -55,7 +55,7 @@ export function BatchUpdateForm({
         {currentStatus === 'in_progress' && (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>
+              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Jumlah Berhasil (pcs)
               </label>
               <input
@@ -64,11 +64,11 @@ export function BatchUpdateForm({
                 min="0"
                 defaultValue={currentProduced}
                 className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                style={{ borderColor: 'hsl(var(--border))' }}
               />
             </div>
             <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>
+              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Defect / Reject (pcs)
               </label>
               <input
@@ -77,21 +77,21 @@ export function BatchUpdateForm({
                 min="0"
                 defaultValue={0}
                 className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                style={{ borderColor: 'hsl(var(--border))' }}
               />
             </div>
           </div>
         )}
 
         <div>
-          <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>
+          <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
             Catatan
           </label>
           <textarea
             name="notes"
             rows={2}
             className="w-full px-3 py-2 rounded-lg border text-sm outline-none resize-none"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+            style={{ borderColor: 'hsl(var(--border))' }}
           />
         </div>
 
@@ -106,8 +106,8 @@ export function BatchUpdateForm({
                 style={{
                   background:
                     nextStatus === 'completed'
-                      ? 'hsl(142, 60%, 40%)'
-                      : 'hsl(32, 95%, 44%)',
+                      ? 'hsl(var(--success))'
+                      : 'hsl(var(--primary))',
                 }}
               >
                 {isPending ? 'Memperbarui...' : nextLabel}
@@ -124,7 +124,7 @@ export function BatchUpdateForm({
               handleCancel(fd)
             }}
             className="px-4 py-2.5 rounded-lg text-sm font-medium border disabled:opacity-60"
-            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(0, 70%, 50%)' }}
+            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
           >
             Batalkan
           </button>

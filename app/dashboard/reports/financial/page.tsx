@@ -23,15 +23,15 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
         breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Laporan', href: '/dashboard/reports' }, { label: 'Keuangan' }]}
       />
 
-      <form className="flex flex-wrap gap-3 mb-6 bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+      <form className="flex flex-wrap gap-3 mb-6 bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
         {[
           { name: 'dateFrom', label: 'Dari', value: dateFrom },
           { name: 'dateTo', label: 'Sampai', value: dateTo },
         ].map(f => (
           <div key={f.name} className="flex items-center gap-2">
-            <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'hsl(25, 15%, 50%)' }}>{f.label}</label>
+            <label className="text-xs font-medium whitespace-nowrap" style={{ color: 'hsl(var(--text-muted))' }}>{f.label}</label>
             <input name={f.name} type="date" defaultValue={f.value}
-              className="px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+              className="px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(var(--border))' }} />
           </div>
         ))}
         {[
@@ -40,33 +40,33 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
         ].map(p => (
           <a key={p.label} href={`?dateFrom=${p.from}&dateTo=${p.to}`}
             className="px-3 py-2 rounded-lg text-xs font-medium border"
-            style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 50%)' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             {p.label}
           </a>
         ))}
         <button type="submit" className="px-4 py-2 rounded-lg text-sm font-medium text-white"
-          style={{ background: 'hsl(32, 95%, 44%)' }}>Tampilkan</button>
+          style={{ background: 'hsl(var(--primary))' }}>Tampilkan</button>
       </form>
 
       {!data ? (
-        <div className="text-center py-12 text-sm" style={{ color: 'hsl(25, 15%, 55%)' }}>Tidak ada data</div>
+        <div className="text-center py-12 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>Tidak ada data</div>
       ) : (
         <>
           {/* P&L Summary */}
-          <div className="bg-white rounded-xl border p-6 mb-6" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-            <h2 className="font-semibold text-sm mb-5" style={{ color: 'hsl(25, 30%, 15%)' }}>Ringkasan P&L</h2>
+          <div className="bg-white rounded-xl border p-6 mb-6" style={{ borderColor: 'hsl(var(--border))' }}>
+            <h2 className="font-semibold text-sm mb-5" style={{ color: 'hsl(var(--foreground))' }}>Ringkasan P&L</h2>
             <div className="space-y-3">
               {[
-                { label: 'Pendapatan Kotor', value: data.revenue, color: 'hsl(142, 60%, 35%)', indent: false },
-                { label: 'Total Diskon', value: -data.totalDiscount, color: 'hsl(0, 70%, 45%)', indent: true },
-                { label: 'Total Pengeluaran', value: -data.totalExpenses, color: 'hsl(0, 70%, 45%)', indent: false },
-                { label: 'Laba Bersih', value: data.netProfit, color: data.netProfit >= 0 ? 'hsl(142, 60%, 35%)' : 'hsl(0, 70%, 45%)', indent: false, bold: true },
+                { label: 'Pendapatan Kotor', value: data.revenue, color: 'hsl(var(--success))', indent: false },
+                { label: 'Total Diskon', value: -data.totalDiscount, color: 'hsl(var(--danger))', indent: true },
+                { label: 'Total Pengeluaran', value: -data.totalExpenses, color: 'hsl(var(--danger))', indent: false },
+                { label: 'Laba Bersih', value: data.netProfit, color: data.netProfit >= 0 ? 'hsl(var(--success))' : 'hsl(var(--danger))', indent: false, bold: true },
               ].map(row => (
                 <div key={row.label}
                   className={`flex items-center justify-between py-2 ${row.bold ? 'border-t-2 pt-3 mt-1' : 'border-t'}`}
-                  style={{ borderColor: row.bold ? 'hsl(25, 30%, 15%)' : 'hsl(36, 20%, 92%)' }}>
+                  style={{ borderColor: row.bold ? 'hsl(var(--foreground))' : 'hsl(var(--border))' }}>
                   <span className={`${row.bold ? 'font-bold text-base' : 'text-sm'} ${row.indent ? 'pl-4' : ''}`}
-                    style={{ color: 'hsl(25, 30%, 20%)' }}>
+                    style={{ color: 'hsl(var(--text-secondary))' }}>
                     {row.indent && '↳ '}{row.label}
                   </span>
                   <span className={row.bold ? 'font-bold text-xl' : 'font-semibold text-sm'}
@@ -77,10 +77,10 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
               ))}
             </div>
             <div className="mt-4 pt-4 border-t flex items-center justify-between"
-              style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-              <span className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>Margin Laba</span>
+              style={{ borderColor: 'hsl(var(--border))' }}>
+              <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Margin Laba</span>
               <span className="text-lg font-bold"
-                style={{ color: data.profitMargin >= 0 ? 'hsl(142, 60%, 35%)' : 'hsl(0, 70%, 45%)' }}>
+                style={{ color: data.profitMargin >= 0 ? 'hsl(var(--success))' : 'hsl(var(--danger))' }}>
                 {data.profitMargin.toFixed(1)}%
               </span>
             </div>
@@ -93,30 +93,30 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
 
           {/* Expense breakdown */}
           {data.expenseBreakdown.length > 0 && (
-            <div className="mt-6 bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-              <div className="px-5 py-4 border-b" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-                <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Rincian Pengeluaran</h2>
+            <div className="mt-6 bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
+              <div className="px-5 py-4 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+                <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Rincian Pengeluaran</h2>
               </div>
-              <div className="divide-y" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+              <div className="divide-y" style={{ borderColor: 'hsl(var(--border))' }}>
                 {data.expenseBreakdown.map(exp => {
                   const cat = EXPENSE_CATEGORIES.find(c => c.value === exp.category)
                   const pct = data.totalExpenses > 0 ? (exp.amount / data.totalExpenses * 100) : 0
                   return (
                     <div key={exp.category} className="px-5 py-3">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                        <span className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                           {cat?.label ?? exp.category}
                         </span>
                         <div className="flex items-center gap-3">
-                          <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+                          <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                             {pct.toFixed(1)}%
                           </span>
-                          <span className="text-sm font-semibold" style={{ color: 'hsl(0, 70%, 45%)' }}>
+                          <span className="text-sm font-semibold" style={{ color: 'hsl(var(--danger))' }}>
                             {formatCurrency(exp.amount)}
                           </span>
                         </div>
                       </div>
-                      <div className="w-full h-1.5 rounded-full" style={{ background: 'hsl(36, 20%, 92%)' }}>
+                      <div className="w-full h-1.5 rounded-full" style={{ background: 'hsl(var(--border))' }}>
                         <div className="h-1.5 rounded-full"
                           style={{ width: `${pct}%`, background: 'hsl(0, 70%, 55%)' }} />
                       </div>
@@ -125,9 +125,9 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
                 })}
               </div>
               <div className="px-5 py-3 border-t flex justify-between"
-                style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-                <span className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 20%)' }}>Total</span>
-                <span className="text-sm font-bold" style={{ color: 'hsl(0, 70%, 45%)' }}>
+                style={{ borderColor: 'hsl(var(--border))' }}>
+                <span className="text-sm font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>Total</span>
+                <span className="text-sm font-bold" style={{ color: 'hsl(var(--danger))' }}>
                   {formatCurrency(data.totalExpenses)}
                 </span>
               </div>

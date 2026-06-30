@@ -30,11 +30,11 @@ function ProductCard({ product }: { product: StoreProduct }) {
 
   return (
     <div className="group bg-white rounded-2xl border overflow-hidden flex flex-col transition-all duration-200 hover:shadow-lg"
-      style={{ borderColor: 'hsl(36, 20%, 91%)' }}>
+      style={{ borderColor: 'hsl(var(--border))' }}>
 
       {/* Image */}
       <div className="relative w-full overflow-hidden shrink-0"
-        style={{ aspectRatio: '4/3', background: 'hsl(36, 35%, 96%)' }}>
+        style={{ aspectRatio: '4/3', background: 'hsl(var(--surface-raised))' }}>
         {product.image_url
           ? <img src={product.image_url} alt={product.name}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -45,7 +45,7 @@ function ProductCard({ product }: { product: StoreProduct }) {
         {/* Qty badge */}
         {qty > 0 && (
           <div className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white"
-            style={{ background: 'hsl(32, 90%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             {qty}
           </div>
         )}
@@ -58,13 +58,13 @@ function ProductCard({ product }: { product: StoreProduct }) {
             {product.category ?? 'Produk'}
           </p>
           <p className="text-sm font-bold leading-snug line-clamp-2"
-            style={{ color: 'hsl(25, 30%, 12%)', fontFamily: '"Playfair Display", serif' }}>
+            style={{ color: 'hsl(var(--foreground))', fontFamily: '"Playfair Display", serif' }}>
             {product.name}
           </p>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-sm font-extrabold" style={{ color: 'hsl(32, 90%, 42%)' }}>
+          <span className="text-sm font-extrabold" style={{ color: 'hsl(var(--primary))' }}>
             {formatCurrency(product.selling_price)}
           </span>
 
@@ -73,22 +73,22 @@ function ProductCard({ product }: { product: StoreProduct }) {
               <button
                 onClick={() => updateQty(product.id, qty - 1)}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition-colors"
-                style={{ background: 'hsl(36, 30%, 93%)', color: 'hsl(25, 30%, 30%)' }}>
+                style={{ background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-secondary))' }}>
                 −
               </button>
               <span className="w-5 text-center text-sm font-bold"
-                style={{ color: 'hsl(25, 30%, 15%)' }}>{qty}</span>
+                style={{ color: 'hsl(var(--foreground))' }}>{qty}</span>
               <button
                 onClick={handleAdd}
                 className="w-7 h-7 rounded-lg flex items-center justify-center font-bold transition-colors"
-                style={{ background: 'hsl(32, 90%, 44%)', color: 'white' }}>
+                style={{ background: 'hsl(var(--primary))', color: 'white' }}>
                 +
               </button>
             </div>
           ) : (
             <button onClick={handleAdd}
               className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition-all"
-              style={{ background: added ? 'hsl(142, 55%, 40%)' : 'hsl(32, 90%, 44%)' }}>
+              style={{ background: added ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}>
               {added ? <Check size={11} /> : <Plus size={11} />}
               {added ? 'Added!' : 'Pesan'}
             </button>
@@ -150,7 +150,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
                   letterSpacing: '-0.02em',
                 }}>
                 Roti & Kue<br />
-                <span style={{ color: 'hsl(32, 90%, 55%)' }}>Dibuat dengan Cinta</span>
+                <span style={{ color: 'hsl(var(--primary))' }}>Dibuat dengan Cinta</span>
               </h1>
 
               <p className="text-sm leading-relaxed max-w-sm"
@@ -161,7 +161,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               <div className="flex gap-2 flex-wrap">
                 <a href="#katalog"
                   className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: 'hsl(32, 90%, 44%)' }}>
+                  style={{ background: 'hsl(var(--primary))' }}>
                   Lihat Katalog
                 </a>
                 <button onClick={() => setShowCustomCake(true)}
@@ -191,7 +191,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
             {hero && (
               <div className="w-full lg:w-72 shrink-0 relative">
                 <div className="rounded-t-2xl overflow-hidden"
-                  style={{ aspectRatio: '1/1', background: 'hsl(36, 35%, 88%)' }}>
+                  style={{ aspectRatio: '1/1', background: 'hsl(var(--border))' }}>
                   {hero.image_url
                     ? <img src={hero.image_url} alt={hero.name} className="w-full h-full object-cover" />
                     : <div className="w-full h-full flex items-center justify-center text-7xl">
@@ -203,16 +203,16 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
                 <div className="absolute bottom-3 left-3 right-3 rounded-xl px-3 py-2"
                   style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)' }}>
                   <p className="text-[9px] uppercase font-bold tracking-widest mb-0.5"
-                    style={{ color: 'hsl(32, 90%, 44%)' }}>
+                    style={{ color: 'hsl(var(--primary))' }}>
                     🔥 {bestsellers.length > 0 ? 'Paling Laris' : 'Pilihan Kami'}
                   </p>
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-bold truncate"
-                      style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+                      style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
                       {hero.name}
                     </p>
                     <span className="text-xs font-bold shrink-0 ml-2"
-                      style={{ color: 'hsl(32, 90%, 42%)' }}>
+                      style={{ color: 'hsl(var(--primary))' }}>
                       {formatCurrency(hero.selling_price)}
                     </span>
                   </div>
@@ -224,7 +224,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
       </section>
 
       {/* ── FEATURES ─────────────────────────────────────── */}
-      <section className="py-6 border-b" style={{ borderColor: 'hsl(36, 20%, 90%)', background: 'white' }}>
+      <section className="py-6 border-b" style={{ borderColor: 'hsl(var(--border))', background: 'white' }}>
         <div className="max-w-5xl mx-auto px-4">
           <div className="flex overflow-x-auto gap-4 pb-1 no-scrollbar">
             {[
@@ -234,11 +234,11 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               { icon: '🎂', title: 'Custom Cake', desc: 'Desain sesuai keinginan' },
             ].map(f => (
               <div key={f.title} className="flex items-center gap-2.5 shrink-0 px-4 py-2.5 rounded-xl"
-                style={{ background: 'hsl(36, 25%, 97%)', border: '1px solid hsl(36,20%,92%)' }}>
+                style={{ background: 'hsl(var(--surface-raised))', border: '1px solid hsl(36,20%,92%)' }}>
                 <span className="text-xl">{f.icon}</span>
                 <div>
-                  <p className="text-xs font-semibold whitespace-nowrap" style={{ color: 'hsl(25, 30%, 15%)' }}>{f.title}</p>
-                  <p className="text-[10px] whitespace-nowrap" style={{ color: 'hsl(25, 15%, 55%)' }}>{f.desc}</p>
+                  <p className="text-xs font-semibold whitespace-nowrap" style={{ color: 'hsl(var(--foreground))' }}>{f.title}</p>
+                  <p className="text-[10px] whitespace-nowrap" style={{ color: 'hsl(var(--text-muted))' }}>{f.desc}</p>
                 </div>
               </div>
             ))}
@@ -252,11 +252,11 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
           <div className="max-w-5xl mx-auto px-4">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background: 'hsl(32, 90%, 44%)' }}>
+                style={{ background: 'hsl(var(--primary))' }}>
                 <Star size={12} fill="white" style={{ color: 'white' }} />
               </div>
               <h2 className="text-base font-bold"
-                style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+                style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
                 Paling Laris
               </h2>
             </div>
@@ -278,10 +278,10 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
           {/* Section header */}
           <div className="flex items-center justify-between">
             <h2 className="text-base font-bold"
-              style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(25, 30%, 12%)' }}>
+              style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
               Semua Produk
             </h2>
-            <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
               {filtered.length} produk
             </span>
           </div>
@@ -289,7 +289,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
           {/* Search */}
           <div className="relative">
             <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2"
-              style={{ color: 'hsl(25, 15%, 55%)' }} />
+              style={{ color: 'hsl(var(--text-muted))' }} />
             <input
               type="text"
               placeholder="Cari produk..."
@@ -297,15 +297,15 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-9 pr-10 py-3 rounded-2xl border text-sm outline-none"
               style={{
-                borderColor: 'hsl(36, 20%, 88%)',
+                borderColor: 'hsl(var(--border))',
                 background: 'white',
-                color: 'hsl(25, 30%, 15%)',
+                color: 'hsl(var(--foreground))',
               }}
             />
             {search && (
               <button onClick={() => setSearch('')}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full"
-                style={{ color: 'hsl(25, 15%, 55%)' }}>
+                style={{ color: 'hsl(var(--text-muted))' }}>
                 <X size={14} />
               </button>
             )}
@@ -317,8 +317,8 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               <button key={cat} onClick={() => setActiveCategory(cat)}
                 className="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={activeCategory === cat
-                  ? { background: 'hsl(32, 90%, 44%)', color: 'white' }
-                  : { background: 'white', color: 'hsl(25, 20%, 45%)', border: '1px solid hsl(36,20%,88%)' }
+                  ? { background: 'hsl(var(--primary))', color: 'white' }
+                  : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(36,20%,88%)' }
                 }>
                 {cat === 'all' ? '🧁 Semua' : `${CAT_EMOJI[cat] ?? '•'} ${cat}`}
               </button>
@@ -329,7 +329,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
           {filtered.length === 0 ? (
             <div className="py-16 text-center space-y-2">
               <p className="text-3xl">🔍</p>
-              <p className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 30%)' }}>
+              <p className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Produk tidak ditemukan
               </p>
             </div>
@@ -347,7 +347,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
 
       {/* ── TESTIMONIAL ──────────────────────────────────── */}
       <section className="py-10 mx-4 mb-4 rounded-3xl"
-        style={{ background: 'hsl(25, 30%, 12%)' }}>
+        style={{ background: 'hsl(var(--foreground))' }}>
         <div className="max-w-lg mx-auto px-4 text-center">
           <div className="flex justify-center gap-0.5 mb-3">
             {[...Array(5)].map((_, i) => (
@@ -370,10 +370,10 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
         <div className="fixed bottom-4 inset-x-4 max-w-sm mx-auto z-50">
           <Link href="/store/checkout"
             className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl shadow-xl transition-all active:scale-[0.98]"
-            style={{ background: 'hsl(25, 30%, 12%)' }}>
+            style={{ background: 'hsl(var(--foreground))' }}>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ background: 'hsl(32, 90%, 44%)' }}>
+                style={{ background: 'hsl(var(--primary))' }}>
                 <ShoppingBag size={14} style={{ color: 'white' }} />
               </div>
               <div>
@@ -382,7 +382,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold" style={{ color: 'hsl(32, 90%, 55%)' }}>
+              <span className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
                 {formatCurrency(total)}
               </span>
               <ChevronRight size={15} style={{ color: 'hsl(36, 20%, 55%)' }} />

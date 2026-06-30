@@ -15,7 +15,7 @@ export default function StoreLayout({ children }: { children: React.ReactNode })
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
         rel="stylesheet"
       />
-      <div className="min-h-screen" style={{ background: 'hsl(36, 33%, 97%)' }}>
+      <div className="min-h-screen" style={{ background: 'hsl(var(--background))' }}>
         <StoreNav />
         <main>
           {children}

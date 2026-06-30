@@ -98,16 +98,16 @@ export function RecipeForm({
 
       <div
         className="bg-white rounded-xl border p-6 space-y-4"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+        style={{ borderColor: 'hsl(var(--border))' }}
       >
-        <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+        <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
           Informasi Resep
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label
               className="text-xs font-medium block mb-1"
-              style={{ color: 'hsl(25, 30%, 25%)' }}
+              style={{ color: 'hsl(var(--text-secondary))' }}
             >
               Produk*
             </label>
@@ -116,7 +116,7 @@ export function RecipeForm({
               defaultValue={recipe?.product_id ?? ''}
               required
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+              style={{ borderColor: 'hsl(var(--border))' }}
             >
               <option value="">-- Pilih Produk --</option>
               {products.map((p) => (
@@ -127,7 +127,7 @@ export function RecipeForm({
           <div>
             <label
               className="text-xs font-medium block mb-1"
-              style={{ color: 'hsl(25, 30%, 25%)' }}
+              style={{ color: 'hsl(var(--text-secondary))' }}
             >
               Hasil (yield) per batch
             </label>
@@ -137,13 +137,13 @@ export function RecipeForm({
               defaultValue={recipe?.yield_quantity ?? 1}
               min="1"
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+              style={{ borderColor: 'hsl(var(--border))' }}
             />
           </div>
           <div>
             <label
               className="text-xs font-medium block mb-1"
-              style={{ color: 'hsl(25, 30%, 25%)' }}
+              style={{ color: 'hsl(var(--text-secondary))' }}
             >
               Waktu Persiapan (menit)
             </label>
@@ -153,13 +153,13 @@ export function RecipeForm({
               defaultValue={recipe?.prep_time_minutes ?? ''}
               min="0"
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+              style={{ borderColor: 'hsl(var(--border))' }}
             />
           </div>
           <div>
             <label
               className="text-xs font-medium block mb-1"
-              style={{ color: 'hsl(25, 30%, 25%)' }}
+              style={{ color: 'hsl(var(--text-secondary))' }}
             >
               Waktu Panggang (menit)
             </label>
@@ -169,13 +169,13 @@ export function RecipeForm({
               defaultValue={recipe?.bake_time_minutes ?? ''}
               min="0"
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+              style={{ borderColor: 'hsl(var(--border))' }}
             />
           </div>
           <div>
             <label
               className="text-xs font-medium block mb-1"
-              style={{ color: 'hsl(25, 30%, 25%)' }}
+              style={{ color: 'hsl(var(--text-secondary))' }}
             >
               Suhu Panggang (°C)
             </label>
@@ -185,14 +185,14 @@ export function RecipeForm({
               defaultValue={recipe?.bake_temperature ?? ''}
               min="0"
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+              style={{ borderColor: 'hsl(var(--border))' }}
             />
           </div>
         </div>
         <div>
           <label
             className="text-xs font-medium block mb-1"
-            style={{ color: 'hsl(25, 30%, 25%)' }}
+            style={{ color: 'hsl(var(--text-secondary))' }}
           >
             Instruksi
           </label>
@@ -202,24 +202,24 @@ export function RecipeForm({
             rows={4}
             placeholder="Tulis langkah-langkah pembuatan..."
             className="w-full px-3 py-2 rounded-lg border text-sm outline-none resize-none"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+            style={{ borderColor: 'hsl(var(--border))' }}
           />
         </div>
       </div>
 
       <div
         className="bg-white rounded-xl border p-6"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+        style={{ borderColor: 'hsl(var(--border))' }}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+          <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
             Bahan-Bahan ({items.length})
           </h2>
           <button
             type="button"
             onClick={addItem}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium"
-            style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(32, 95%, 38%)' }}
+            style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(var(--primary-hover))' }}
           >
             <Plus size={13} /> Tambah Bahan
           </button>
@@ -228,9 +228,9 @@ export function RecipeForm({
         {items.length === 0 ? (
           <div
             className="py-8 text-center rounded-lg border-2 border-dashed"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+            style={{ borderColor: 'hsl(var(--border))' }}
           >
-            <p className="text-sm" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
               Klik &quot;Tambah Bahan&quot; untuk mulai.
             </p>
           </div>
@@ -243,14 +243,14 @@ export function RecipeForm({
                 <div
                   key={i}
                   className="flex gap-3 items-start p-3 rounded-lg"
-                  style={{ background: 'hsl(36, 20%, 97%)' }}
+                  style={{ background: 'hsl(var(--surface-raised))' }}
                 >
                   <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <select
                       value={item.ingredient_id}
                       onChange={(e) => updateItem(i, 'ingredient_id', e.target.value)}
                       className="px-3 py-2 rounded-lg border text-sm outline-none"
-                      style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                      style={{ borderColor: 'hsl(var(--border))' }}
                     >
                       <option value="">-- Pilih Bahan --</option>
                       {ingredients.map((x) => (
@@ -267,14 +267,14 @@ export function RecipeForm({
                         updateItem(i, 'quantity', parseFloat(e.target.value) || 0)
                       }
                       className="px-3 py-2 rounded-lg border text-sm outline-none"
-                      style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                      style={{ borderColor: 'hsl(var(--border))' }}
                     />
                     <div className="flex gap-2">
                       <select
                         value={item.unit}
                         onChange={(e) => updateItem(i, 'unit', e.target.value)}
                         className="flex-1 px-3 py-2 rounded-lg border text-sm outline-none"
-                        style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+                        style={{ borderColor: 'hsl(var(--border))' }}
                       >
                         {BASE_UNITS.map((u) => (
                           <option key={u.value} value={u.value}>{u.value}</option>
@@ -283,7 +283,7 @@ export function RecipeForm({
                       {cost > 0 && (
                         <span
                           className="flex items-center text-xs px-2 whitespace-nowrap"
-                          style={{ color: 'hsl(32, 95%, 40%)' }}
+                          style={{ color: 'hsl(var(--primary))' }}
                         >
                           {formatCurrency(cost)}
                         </span>
@@ -294,7 +294,7 @@ export function RecipeForm({
                     type="button"
                     onClick={() => removeItem(i)}
                     className="p-2 rounded-lg hover:bg-red-50 transition-colors shrink-0"
-                    style={{ color: 'hsl(0, 70%, 50%)' }}
+                    style={{ color: 'hsl(var(--danger))' }}
                   >
                     <Trash2 size={15} />
                   </button>
@@ -307,12 +307,12 @@ export function RecipeForm({
         {items.length > 0 && (
           <div
             className="mt-4 pt-4 border-t flex justify-between"
-            style={{ borderColor: 'hsl(36, 20%, 92%)' }}
+            style={{ borderColor: 'hsl(var(--border))' }}
           >
-            <span className="text-sm font-medium" style={{ color: 'hsl(25, 30%, 20%)' }}>
+            <span className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
               Total Biaya Bahan
             </span>
-            <span className="text-sm font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+            <span className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
               {formatCurrency(totalCost)}
             </span>
           </div>
@@ -324,14 +324,14 @@ export function RecipeForm({
           type="submit"
           disabled={isPending}
           className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-          style={{ background: 'hsl(32, 95%, 44%)' }}
+          style={{ background: 'hsl(var(--primary))' }}
         >
           {isPending ? 'Menyimpan...' : recipe ? 'Simpan Resep' : 'Buat Resep'}
         </button>
         <Link
           href={cancelHref}
           className="px-6 py-2.5 rounded-lg text-sm font-medium border"
-          style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+          style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
         >
           Batal
         </Link>

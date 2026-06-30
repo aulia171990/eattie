@@ -19,7 +19,7 @@ export function ProductGrid({ products }: ProductGridProps) {
   if (products.length === 0) {
     return (
       <div className="flex-1 flex items-center justify-center">
-        <p className="text-sm" style={{ color: 'hsl(25, 15%, 55%)' }}>Tidak ada produk ditemukan</p>
+        <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>Tidak ada produk ditemukan</p>
       </div>
     )
   }
@@ -40,7 +40,7 @@ export function ProductGrid({ products }: ProductGridProps) {
               disabled={outOfStock}
               className="relative flex flex-col rounded-xl border text-left transition-all active:scale-95 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 overflow-hidden"
               style={{
-                borderColor: outOfStock ? 'hsl(0, 40%, 85%)' : inCart ? 'hsl(32, 95%, 44%)' : 'hsl(36, 20%, 88%)',
+                borderColor: outOfStock ? 'hsl(0, 40%, 85%)' : inCart ? 'hsl(var(--primary))' : 'hsl(var(--border))',
                 background: outOfStock ? 'hsl(0, 30%, 97%)' : inCart ? 'hsl(36, 80%, 97%)' : 'white',
               }}
             >
@@ -48,7 +48,7 @@ export function ProductGrid({ products }: ProductGridProps) {
               {inCart && !outOfStock && (
                 <div
                   className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white z-10"
-                  style={{ background: 'hsl(32, 95%, 44%)' }}
+                  style={{ background: 'hsl(var(--primary))' }}
                 >
                   {inCart.quantity}
                 </div>
@@ -58,7 +58,7 @@ export function ProductGrid({ products }: ProductGridProps) {
               {outOfStock && (
                 <div
                   className="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-full text-white z-10 font-bold"
-                  style={{ background: 'hsl(0, 70%, 50%)', fontSize: '9px' }}
+                  style={{ background: 'hsl(var(--danger))', fontSize: '9px' }}
                 >
                   Habis
                 </div>
@@ -69,7 +69,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                 className="relative w-full"
                 style={{
                   paddingTop: '70%',
-                  background: outOfStock ? 'hsl(0, 20%, 92%)' : inCart ? 'hsl(32, 60%, 90%)' : 'hsl(36, 80%, 93%)'
+                  background: outOfStock ? 'hsl(0, 20%, 92%)' : inCart ? 'hsl(32, 60%, 90%)' : 'hsl(var(--primary-subtle))'
                 }}
               >
                 {p.image_url ? (
@@ -90,14 +90,14 @@ export function ProductGrid({ products }: ProductGridProps) {
               {/* Info */}
               <div className="p-2 flex flex-col gap-0.5">
                 <p className="text-xs font-semibold leading-tight line-clamp-2"
-                  style={{ color: outOfStock ? 'hsl(25, 10%, 55%)' : 'hsl(25, 30%, 15%)' }}>
+                  style={{ color: outOfStock ? 'hsl(25, 10%, 55%)' : 'hsl(var(--foreground))' }}>
                   {p.name}
                 </p>
                 <p className="text-sm font-bold"
-                  style={{ color: outOfStock ? 'hsl(25, 10%, 60%)' : 'hsl(32, 95%, 40%)' }}>
+                  style={{ color: outOfStock ? 'hsl(25, 10%, 60%)' : 'hsl(var(--primary))' }}>
                   {formatCurrency(p.selling_price)}
                 </p>
-                <p className="text-xs" style={{ color: outOfStock ? 'hsl(0, 60%, 55%)' : 'hsl(142, 50%, 40%)' }}>
+                <p className="text-xs" style={{ color: outOfStock ? 'hsl(var(--danger))' : 'hsl(142, 50%, 40%)' }}>
                   {outOfStock ? 'Stok habis' : `Stok: ${p.current_stock}`}
                 </p>
               </div>

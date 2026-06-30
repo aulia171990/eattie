@@ -26,7 +26,7 @@ export default async function PurchasesPage() {
           <Link
             href="/dashboard/inventory/purchases/new"
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}
+            style={{ background: 'hsl(var(--primary))' }}
           >
             <Plus size={16} /> Buat PO
           </Link>
@@ -39,9 +39,9 @@ export default async function PurchasesPage() {
           { label: 'Belum Diterima', value: pending },
           { label: 'Total Nilai', value: formatCurrency(total) },
         ].map((s) => (
-          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{s.label}</p>
-            <p className="text-xl font-bold mt-1" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
+          <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
+            <p className="text-xl font-bold mt-1" style={{ color: 'hsl(var(--foreground))' }}>{s.value}</p>
           </div>
         ))}
       </div>
@@ -54,13 +54,13 @@ export default async function PurchasesPage() {
           actionHref="/dashboard/inventory/purchases/new"
         />
       ) : (
-        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+                <tr style={{ background: 'hsl(var(--surface-raised))' }}>
                   {['No. PO', 'Supplier', 'Tanggal', 'Total', 'Pembayaran', 'Status', 'Aksi'].map((h) => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
                       {h}
                     </th>
                   ))}
@@ -68,17 +68,17 @@ export default async function PurchasesPage() {
               </thead>
               <tbody>
                 {purchases.map((po) => (
-                  <tr key={po.id} className="border-t hover:bg-gray-50/50" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-                    <td className="px-4 py-3 text-xs font-mono font-medium" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                  <tr key={po.id} className="border-t hover:bg-gray-50/50" style={{ borderColor: 'hsl(var(--border))' }}>
+                    <td className="px-4 py-3 text-xs font-mono font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
                       {po.purchase_number}
                     </td>
-                    <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                    <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                       {po.suppliers?.name ?? '—'}
                     </td>
-                    <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                    <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                       {formatDate(po.purchase_date)}
                     </td>
-                    <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                    <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                       {formatCurrency(po.total_amount)}
                     </td>
                     <td className="px-4 py-3">
@@ -92,7 +92,7 @@ export default async function PurchasesPage() {
                         <Link
                           href={`/dashboard/inventory/purchases/${po.id}`}
                           className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
-                          style={{ color: 'hsl(210, 70%, 45%)' }}
+                          style={{ color: 'hsl(var(--info))' }}
                         >
                           Detail
                         </Link>
@@ -100,7 +100,7 @@ export default async function PurchasesPage() {
                           <Link
                             href={`/dashboard/inventory/purchases/${po.id}/receive`}
                             className="text-xs px-2 py-1 rounded-md hover:bg-green-50"
-                            style={{ color: 'hsl(142, 60%, 35%)' }}
+                            style={{ color: 'hsl(var(--success))' }}
                           >
                             Terima
                           </Link>

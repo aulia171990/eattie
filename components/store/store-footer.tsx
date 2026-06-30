@@ -14,7 +14,7 @@ export function StoreFooter() {
           <div className="col-span-2 lg:col-span-1 space-y-3">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-                style={{ background: 'hsl(32, 90%, 44%)' }}>
+                style={{ background: 'hsl(var(--primary))' }}>
                 {BRANDING.logoEmoji}
               </div>
               <span style={{

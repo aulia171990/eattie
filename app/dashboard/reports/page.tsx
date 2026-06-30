@@ -11,10 +11,10 @@ export default function ReportsPage() {
           { href: '/dashboard/reports/production', icon: '🏭', title: 'Laporan Produksi', desc: 'Output batch dan efisiensi' },
           { href: '/dashboard/reports/financial', icon: '💰', title: 'Laporan Keuangan', desc: 'P&L, pengeluaran, margin' },
         ].map(r => (
-          <Link key={r.href} href={r.href} className="bg-white rounded-xl border p-5 hover:shadow-sm transition-all" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+          <Link key={r.href} href={r.href} className="bg-white rounded-xl border p-5 hover:shadow-sm transition-all" style={{ borderColor: 'hsl(var(--border))' }}>
             <div className="text-3xl mb-3">{r.icon}</div>
-            <h3 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>{r.title}</h3>
-            <p className="text-xs mt-1" style={{ color: 'hsl(25, 15%, 55%)' }}>{r.desc}</p>
+            <h3 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>{r.title}</h3>
+            <p className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>{r.desc}</p>
           </Link>
         ))}
       </div>

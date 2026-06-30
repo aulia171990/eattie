@@ -40,7 +40,7 @@ export default async function PurchaseDetailPage({
               <Link
                 href={`/dashboard/inventory/purchases/${id}/receive`}
                 className="px-3 py-1.5 rounded-lg text-xs font-medium text-white"
-                style={{ background: 'hsl(142, 60%, 40%)' }}
+                style={{ background: 'hsl(var(--success))' }}
               >
                 Terima Stok
               </Link>
@@ -51,7 +51,7 @@ export default async function PurchaseDetailPage({
 
       <div
         className="bg-white rounded-xl border p-5 mb-4"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+        style={{ borderColor: 'hsl(var(--border))' }}
       >
         <dl className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[
@@ -62,15 +62,15 @@ export default async function PurchaseDetailPage({
             { label: 'Status Bayar', value: <StatusBadge status={po.payment_status} type="payment" /> },
           ].map((row) => (
             <div key={row.label}>
-              <dt className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{row.label}</dt>
-              <dd className="text-sm font-medium mt-0.5" style={{ color: 'hsl(25, 30%, 15%)' }}>
+              <dt className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{row.label}</dt>
+              <dd className="text-sm font-medium mt-0.5" style={{ color: 'hsl(var(--foreground))' }}>
                 {row.value}
               </dd>
             </div>
           ))}
         </dl>
         {po.notes && (
-          <p className="mt-3 pt-3 border-t text-sm" style={{ borderColor: 'hsl(36, 20%, 92%)', color: 'hsl(25, 15%, 50%)' }}>
+          <p className="mt-3 pt-3 border-t text-sm" style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             {po.notes}
           </p>
         )}
@@ -83,18 +83,18 @@ export default async function PurchaseDetailPage({
 
       <div
         className="bg-white rounded-xl border overflow-hidden"
-        style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+        style={{ borderColor: 'hsl(var(--border))' }}
       >
-        <div className="px-5 py-4 border-b" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-          <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>
+        <div className="px-5 py-4 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+          <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
             Item Pembelian
           </h2>
         </div>
         <table className="w-full">
           <thead>
-            <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+            <tr style={{ background: 'hsl(var(--surface-raised))' }}>
               {['Bahan', 'Dipesan', 'Diterima', 'Satuan', 'Harga/Unit', 'Subtotal'].map((h) => (
-                <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <th key={h} className="text-left px-4 py-3 text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
                   {h}
                 </th>
               ))}
@@ -102,11 +102,11 @@ export default async function PurchaseDetailPage({
           </thead>
           <tbody>
             {po.stock_purchase_items.map((item) => (
-              <tr key={item.id} className="border-t" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+              <tr key={item.id} className="border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                   {item.ingredients?.name ?? '—'}
                 </td>
-                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>
                   {item.quantity_ordered}
                 </td>
                 <td
@@ -114,30 +114,30 @@ export default async function PurchaseDetailPage({
                   style={{
                     color:
                       item.quantity_received >= item.quantity_ordered
-                        ? 'hsl(142, 60%, 35%)'
-                        : 'hsl(25, 30%, 20%)',
+                        ? 'hsl(var(--success))'
+                        : 'hsl(var(--text-secondary))',
                   }}
                 >
                   {item.quantity_received}
                 </td>
-                <td className="px-4 py-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+                <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                   {item.unit}
                 </td>
-                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>
                   {formatCurrency(item.unit_price)}
                 </td>
-                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(32, 95%, 40%)' }}>
+                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(var(--primary))' }}>
                   {formatCurrency(item.subtotal)}
                 </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr className="border-t" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-              <td colSpan={5} className="px-4 py-3 text-sm font-semibold text-right" style={{ color: 'hsl(25, 30%, 15%)' }}>
+            <tr className="border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+              <td colSpan={5} className="px-4 py-3 text-sm font-semibold text-right" style={{ color: 'hsl(var(--foreground))' }}>
                 Total
               </td>
-              <td className="px-4 py-3 text-sm font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+              <td className="px-4 py-3 text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
                 {formatCurrency(po.total_amount)}
               </td>
             </tr>

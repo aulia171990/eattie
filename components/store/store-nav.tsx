@@ -25,14 +25,14 @@ export function StoreNav() {
         {/* Logo */}
         <Link href="/store" className="flex items-center gap-2 shrink-0" style={{ textDecoration: 'none' }}>
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
-            style={{ background: 'hsl(32, 90%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             {BRANDING.logoEmoji}
           </div>
           <span style={{
             fontFamily: "'Playfair Display', serif",
             fontWeight: 700,
             fontSize: '1.1rem',
-            color: 'hsl(25, 30%, 12%)',
+            color: 'hsl(var(--foreground))',
             letterSpacing: '-0.3px',
           }}>
             {BRANDING.shortName}
@@ -50,7 +50,7 @@ export function StoreNav() {
               textDecoration: 'none',
               fontSize: '0.875rem',
               fontWeight: 500,
-              color: pathname === href ? 'hsl(32, 90%, 44%)' : 'hsl(25, 20%, 40%)',
+              color: pathname === href ? 'hsl(var(--primary))' : 'hsl(var(--text-secondary))',
               transition: 'color 0.15s',
             }}>
               {label}
@@ -69,8 +69,8 @@ export function StoreNav() {
           <Link href="/store/checkout"
             className="relative flex items-center gap-2 px-3 py-2 rounded-xl font-medium text-sm transition-all"
             style={{
-              background: itemCount > 0 ? 'hsl(32, 90%, 44%)' : 'hsl(36, 30%, 93%)',
-              color: itemCount > 0 ? 'white' : 'hsl(25, 20%, 45%)',
+              background: itemCount > 0 ? 'hsl(var(--primary))' : 'hsl(var(--surface-raised))',
+              color: itemCount > 0 ? 'white' : 'hsl(var(--text-muted))',
             }}>
             <ShoppingBag size={15} />
             <span className="hidden sm:inline text-xs font-semibold">Keranjang</span>

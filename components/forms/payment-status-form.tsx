@@ -14,24 +14,24 @@ const OPTIONS = [
   {
     value: 'unpaid',
     label: 'Belum Bayar',
-    activeStyle: { background: 'hsl(0, 80%, 95%)', color: 'hsl(0, 70%, 40%)', borderColor: 'hsl(0, 70%, 40%)' },
+    activeStyle: { background: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))', borderColor: 'hsl(var(--danger))' },
   },
   {
     value: 'partial',
     label: 'Sebagian',
-    activeStyle: { background: 'hsl(36, 80%, 90%)', color: 'hsl(32, 95%, 38%)', borderColor: 'hsl(32, 95%, 38%)' },
+    activeStyle: { background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary-hover))', borderColor: 'hsl(var(--primary-hover))' },
   },
   {
     value: 'paid',
     label: 'Lunas',
-    activeStyle: { background: 'hsl(142, 50%, 90%)', color: 'hsl(142, 60%, 28%)', borderColor: 'hsl(142, 60%, 28%)' },
+    activeStyle: { background: 'hsl(var(--success-bg))', color: 'hsl(var(--success))', borderColor: 'hsl(var(--success))' },
   },
 ]
 
 const inactiveStyle = {
   background: 'white',
-  color: 'hsl(25, 15%, 50%)',
-  borderColor: 'hsl(36, 20%, 85%)',
+  color: 'hsl(var(--text-muted))',
+  borderColor: 'hsl(var(--border))',
 }
 
 export function PaymentStatusForm({ action, currentStatus }: PaymentStatusFormProps) {
@@ -40,9 +40,9 @@ export function PaymentStatusForm({ action, currentStatus }: PaymentStatusFormPr
   return (
     <div
       className="bg-white rounded-xl border p-5 mb-4"
-      style={{ borderColor: 'hsl(36, 20%, 88%)' }}
+      style={{ borderColor: 'hsl(var(--border))' }}
     >
-      <p className="text-xs font-semibold mb-3" style={{ color: 'hsl(25, 15%, 45%)' }}>
+      <p className="text-xs font-semibold mb-3" style={{ color: 'hsl(var(--text-muted))' }}>
         STATUS PEMBAYARAN
       </p>
 
@@ -75,7 +75,7 @@ export function PaymentStatusForm({ action, currentStatus }: PaymentStatusFormPr
           )
         })}
         {isPending && (
-          <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+          <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
             Menyimpan...
           </span>
         )}

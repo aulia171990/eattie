@@ -48,7 +48,7 @@ export function OrderActionButtons({
               type="submit"
               disabled={anyPending}
               className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60"
-              style={{ background: 'hsl(142, 60%, 40%)' }}
+              style={{ background: 'hsl(var(--success))' }}
               onClick={e => {
                 if (!confirm('Konfirmasi pembayaran order ini?\nOrder akan masuk ke Penjualan dan tidak bisa dibatalkan.')) {
                   e.preventDefault()
@@ -86,7 +86,7 @@ export function OrderActionButtons({
             type="submit"
             disabled={anyPending}
             className="w-full py-2.5 rounded-xl text-sm font-medium border disabled:opacity-60"
-            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(0, 70%, 45%)' }}
+            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
             onClick={e => {
               if (!confirm('Batalkan pesanan ini?\nTindakan ini tidak dapat dibatalkan.')) e.preventDefault()
             }}
@@ -116,7 +116,7 @@ export function MarkPaidButton({ markPaidAction }: MarkPaidButtonProps) {
           type="submit"
           disabled={isPending}
           className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60"
-          style={{ background: 'hsl(142, 60%, 40%)' }}
+          style={{ background: 'hsl(var(--success))' }}
           onClick={e => {
             if (!confirm('Tandai pesanan ini sebagai sudah dibayar (lunas)?')) {
               e.preventDefault()

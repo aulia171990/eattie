@@ -13,8 +13,8 @@ export function CustomCakeButton() {
         onClick={() => setOpen(true)}
         className="flex items-center gap-2 px-6 py-3 rounded-full text-sm font-semibold border-2 transition-all hover:-translate-y-0.5 hover:shadow-lg"
         style={{
-          borderColor: 'hsl(32, 90%, 44%)',
-          color: 'hsl(32, 90%, 40%)',
+          borderColor: 'hsl(var(--primary))',
+          color: 'hsl(var(--primary))',
           background: 'hsl(36, 80%, 97%)',
         }}>
         <Sparkles size={15} />

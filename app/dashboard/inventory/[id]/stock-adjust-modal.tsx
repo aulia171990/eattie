@@ -37,7 +37,7 @@ export function StockAdjustmentModal({ ingredientId, ingredientName, unit }: Pro
       <button
         onClick={() => setOpen(true)}
         className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-white transition-colors"
-        style={{ background: 'hsl(32, 95%, 44%)' }}
+        style={{ background: 'hsl(var(--primary))' }}
       >
         <SlidersHorizontal size={15} />
         Sesuaikan Stok
@@ -49,8 +49,8 @@ export function StockAdjustmentModal({ ingredientId, ingredientName, unit }: Pro
           <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h2 className="font-semibold" style={{ color: 'hsl(25, 30%, 12%)' }}>Penyesuaian Stok</h2>
-                <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 55%)' }}>{ingredientName}</p>
+                <h2 className="font-semibold" style={{ color: 'hsl(var(--foreground))' }}>Penyesuaian Stok</h2>
+                <p className="text-xs mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>{ingredientName}</p>
               </div>
               <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100">
                 <X size={16} />
@@ -63,12 +63,12 @@ export function StockAdjustmentModal({ ingredientId, ingredientName, unit }: Pro
               )}
 
               <div className="space-y-1">
-                <label className="text-xs font-medium block" style={{ color: 'hsl(25, 30%, 25%)' }}>
+                <label className="text-xs font-medium block" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Tipe Penyesuaian <span className="text-red-500">*</span>
                 </label>
                 <select name="movement_type" required
                   className="w-full px-3 py-2 rounded-lg border text-sm bg-white outline-none focus:border-amber-500"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)' }}>
+                  style={{ borderColor: 'hsl(var(--border))' }}>
                   <option value="adjustment_in">Tambah Stok (Penyesuaian +)</option>
                   <option value="adjustment_out">Kurang Stok (Penyesuaian -)</option>
                   <option value="waste">Terbuang / Kadaluarsa</option>
@@ -76,34 +76,34 @@ export function StockAdjustmentModal({ ingredientId, ingredientName, unit }: Pro
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium block" style={{ color: 'hsl(25, 30%, 25%)' }}>
+                <label className="text-xs font-medium block" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Jumlah ({unit}) <span className="text-red-500">*</span>
                 </label>
                 <input type="number" name="quantity" min="0.001" step="0.001" required
                   className="w-full px-3 py-2 rounded-lg border text-sm outline-none focus:border-amber-500"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))' }} />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium block" style={{ color: 'hsl(25, 30%, 25%)' }}>
+                <label className="text-xs font-medium block" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Alasan <span className="text-red-500">*</span>
                 </label>
                 <input type="text" name="reason" required placeholder="Contoh: Stok opname, barang rusak..."
                   className="w-full px-3 py-2 rounded-lg border text-sm outline-none focus:border-amber-500"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))' }} />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium block" style={{ color: 'hsl(25, 30%, 25%)' }}>Catatan</label>
+                <label className="text-xs font-medium block" style={{ color: 'hsl(var(--text-secondary))' }}>Catatan</label>
                 <textarea name="notes" rows={2} placeholder="Opsional..."
                   className="w-full px-3 py-2 rounded-lg border text-sm outline-none resize-none focus:border-amber-500"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))' }} />
               </div>
 
               <div className="flex gap-3 pt-2">
                 <button type="button" onClick={() => setOpen(false)}
                   className="flex-1 px-4 py-2 rounded-lg border text-sm font-medium hover:bg-gray-50"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}>
+                  style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
                   Batal
                 </button>
                 <SubmitButton loading={isPending} className="flex-1 justify-center">

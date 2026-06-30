@@ -29,33 +29,33 @@ export default async function ProfilePage() {
           { label: 'Profil' },
         ]}
       />
-      <div className="bg-white rounded-xl border p-6 space-y-5" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+      <div className="bg-white rounded-xl border p-6 space-y-5" style={{ borderColor: 'hsl(var(--border))' }}>
         <div className="flex items-center gap-4">
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold"
-            style={{ background: 'hsl(32, 80%, 90%)', color: 'hsl(32, 95%, 35%)' }}
+            style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
           >
             {profile.full_name.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h2 className="font-bold text-base" style={{ color: 'hsl(25, 30%, 12%)' }}>
+            <h2 className="font-bold text-base" style={{ color: 'hsl(var(--foreground))' }}>
               {profile.full_name}
             </h2>
-            <p className="text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>{user.email}</p>
+            <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>{user.email}</p>
             <span
               className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium mt-1"
-              style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(32, 95%, 35%)' }}
+              style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(var(--primary))' }}
             >
               {ROLE_LABELS.id[profile.role] ?? profile.role}
             </span>
           </div>
         </div>
-        <div className="pt-4 border-t" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
+        <div className="pt-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
           <form action={logout}>
             <button
               type="submit"
               className="w-full py-2.5 rounded-lg text-sm font-medium border transition-all hover:bg-red-50"
-              style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(0, 70%, 50%)' }}
+              style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
             >
               Keluar dari Akun
             </button>

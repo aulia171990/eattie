@@ -19,7 +19,7 @@ export default async function OrdersPage() {
         action={
           <Link href="/store" target="_blank"
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors hover:bg-gray-50"
-            style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 35%)' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
             <ShoppingBag size={14} />
             Buka Portal
           </Link>

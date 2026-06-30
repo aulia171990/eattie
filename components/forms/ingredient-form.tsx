@@ -36,17 +36,17 @@ export function IngredientForm({
         </div>
       )}
 
-      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Informasi Dasar</h2>
+      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Informasi Dasar</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Nama Bahan (Indonesia)*" name="name" defaultValue={ingredient?.name} required />
           <Field label="Nama (English)" name="name_en" defaultValue={ingredient?.name_en ?? ''} />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Kategori</label>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Kategori</label>
             <select name="category_id" defaultValue={ingredient?.category_id ?? ''}
-              className="w-full px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(36, 20%, 85%)' }}>
+              className="w-full px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(var(--border))' }}>
               <option value="">-- Pilih Kategori --</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
@@ -57,13 +57,13 @@ export function IngredientForm({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Satuan & Stok</h2>
+      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Satuan & Stok</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Satuan Dasar*</label>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Satuan Dasar*</label>
             <select name="base_unit" defaultValue={ingredient?.base_unit ?? 'kg'} required
-              className="w-full px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(36, 20%, 85%)' }}>
+              className="w-full px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(var(--border))' }}>
               {BASE_UNITS.map((u) => (
                 <option key={u.value} value={u.value}>{u.label}</option>
               ))}
@@ -85,8 +85,8 @@ export function IngredientForm({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Harga & Supplier</h2>
+      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(var(--border))' }}>
+        <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Harga & Supplier</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Field label="Harga per Satuan (Rp)" name="price_per_unit" type="number"
             defaultValue={String(ingredient?.price_per_unit ?? 0)} min="0" />
@@ -96,9 +96,9 @@ export function IngredientForm({
         <Field label="Lokasi Penyimpanan" name="storage_location"
           defaultValue={ingredient?.storage_location ?? ''} placeholder="Gudang A, Rak 1..." />
         <div>
-          <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Supplier Utama</label>
+          <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Supplier Utama</label>
           <select name="preferred_supplier_id" defaultValue={ingredient?.preferred_supplier_id ?? ''}
-            className="w-full px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(36, 20%, 85%)' }}>
+            className="w-full px-3 py-2 rounded-lg border text-sm outline-none" style={{ borderColor: 'hsl(var(--border))' }}>
             <option value="">-- Pilih Supplier --</option>
             {suppliers.map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
@@ -110,12 +110,12 @@ export function IngredientForm({
       <div className="flex gap-3">
         <button type="submit" disabled={isPending}
           className="flex-1 sm:flex-none px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-          style={{ background: 'hsl(32, 95%, 44%)' }}>
+          style={{ background: 'hsl(var(--primary))' }}>
           {isPending ? 'Menyimpan...' : ingredient ? 'Simpan Perubahan' : 'Tambah Bahan'}
         </button>
         <Link href={cancelHref}
           className="px-6 py-2.5 rounded-lg text-sm font-medium border"
-          style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}>
+          style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
           Batal
         </Link>
       </div>
@@ -137,7 +137,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>
+      <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
         {label}
       </label>
       <input
@@ -149,7 +149,7 @@ function Field({
         min={min}
         step={step}
         className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-        style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 15%)' }}
+        style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--foreground))' }}
       />
     </div>
   )

@@ -20,10 +20,10 @@ export default async function SaleDetailPage({
   }
 
   const statusStyle: Record<string, { label: string; bg: string; text: string }> = {
-    completed: { label: 'Selesai',    bg: 'hsl(142, 50%, 90%)', text: 'hsl(142, 60%, 28%)' },
-    cancelled: { label: 'Dibatalkan', bg: 'hsl(0, 60%, 93%)',   text: 'hsl(0, 70%, 40%)' },
+    completed: { label: 'Selesai',    bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
+    cancelled: { label: 'Dibatalkan', bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
     refunded:  { label: 'Refund',     bg: 'hsl(210, 60%, 93%)', text: 'hsl(210, 60%, 35%)' },
-    pending:   { label: 'Pending',    bg: 'hsl(36, 80%, 90%)',  text: 'hsl(32, 95%, 38%)' },
+    pending:   { label: 'Pending',    bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
   }
   const ss = statusStyle[sale.status] ?? {
     label: sale.status,
@@ -97,7 +97,7 @@ export default async function SaleDetailPage({
       />
 
       {/* Info */}
-      <div className="bg-white rounded-xl border p-5 mb-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+      <div className="bg-white rounded-xl border p-5 mb-4" style={{ borderColor: 'hsl(var(--border))' }}>
         <dl className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[
             { label: 'Kasir', value: sale.profiles?.full_name ?? '—' },
@@ -107,30 +107,30 @@ export default async function SaleDetailPage({
             { label: 'Kembalian', value: formatCurrency(sale.change_amount ?? 0) },
           ].map((row) => (
             <div key={row.label}>
-              <dt className="text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>{row.label}</dt>
-              <dd className="text-sm font-medium mt-0.5" style={{ color: 'hsl(25, 30%, 15%)' }}>
+              <dt className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{row.label}</dt>
+              <dd className="text-sm font-medium mt-0.5" style={{ color: 'hsl(var(--foreground))' }}>
                 {row.value}
               </dd>
             </div>
           ))}
         </dl>
         {sale.notes && (
-          <p className="mt-3 pt-3 border-t text-sm" style={{ borderColor: 'hsl(36, 20%, 92%)', color: 'hsl(25, 15%, 50%)' }}>
+          <p className="mt-3 pt-3 border-t text-sm" style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             {sale.notes}
           </p>
         )}
       </div>
 
       {/* Items */}
-      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <div className="px-5 py-4 border-b" style={{ borderColor: 'hsl(36, 20%, 92%)' }}>
-          <h2 className="font-semibold text-sm" style={{ color: 'hsl(25, 30%, 15%)' }}>Item Pembelian</h2>
+      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
+        <div className="px-5 py-4 border-b" style={{ borderColor: 'hsl(var(--border))' }}>
+          <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Item Pembelian</h2>
         </div>
         <table className="w-full">
           <thead>
-            <tr style={{ background: 'hsl(36, 20%, 97%)' }}>
+            <tr style={{ background: 'hsl(var(--surface-raised))' }}>
               {['Produk', 'Qty', 'Harga', 'Subtotal'].map((h) => (
-                <th key={h} className="text-left px-4 py-2.5 text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>
+                <th key={h} className="text-left px-4 py-2.5 text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
                   {h}
                 </th>
               ))}
@@ -138,46 +138,46 @@ export default async function SaleDetailPage({
           </thead>
           <tbody>
             {sale.sale_items.map((item) => (
-              <tr key={item.id} className="border-t" style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
-                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(25, 30%, 15%)' }}>
+              <tr key={item.id} className="border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+                <td className="px-4 py-3 text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>
                   {item.product_name}
                 </td>
-                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>
                   {item.quantity} pcs
                 </td>
-                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>
                   {formatCurrency(item.unit_price)}
                 </td>
-                <td className="px-4 py-3 text-sm font-semibold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+                <td className="px-4 py-3 text-sm font-semibold" style={{ color: 'hsl(var(--primary))' }}>
                   {formatCurrency(item.subtotal)}
                 </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr className="border-t" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-              <td colSpan={3} className="px-4 py-2.5 text-xs text-right" style={{ color: 'hsl(25, 15%, 50%)' }}>
+            <tr className="border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+              <td colSpan={3} className="px-4 py-2.5 text-xs text-right" style={{ color: 'hsl(var(--text-muted))' }}>
                 Subtotal
               </td>
-              <td className="px-4 py-2.5 text-sm" style={{ color: 'hsl(25, 30%, 20%)' }}>
+              <td className="px-4 py-2.5 text-sm" style={{ color: 'hsl(var(--text-secondary))' }}>
                 {formatCurrency(sale.subtotal)}
               </td>
             </tr>
             {sale.discount_amount > 0 && (
               <tr>
-                <td colSpan={3} className="px-4 py-2 text-xs text-right" style={{ color: 'hsl(142, 60%, 35%)' }}>
+                <td colSpan={3} className="px-4 py-2 text-xs text-right" style={{ color: 'hsl(var(--success))' }}>
                   Diskon
                 </td>
-                <td className="px-4 py-2 text-sm" style={{ color: 'hsl(142, 60%, 35%)' }}>
+                <td className="px-4 py-2 text-sm" style={{ color: 'hsl(var(--success))' }}>
                   -{formatCurrency(sale.discount_amount)}
                 </td>
               </tr>
             )}
-            <tr className="border-t" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-              <td colSpan={3} className="px-4 py-3 text-sm font-bold text-right" style={{ color: 'hsl(25, 30%, 15%)' }}>
+            <tr className="border-t" style={{ borderColor: 'hsl(var(--border))' }}>
+              <td colSpan={3} className="px-4 py-3 text-sm font-bold text-right" style={{ color: 'hsl(var(--foreground))' }}>
                 TOTAL
               </td>
-              <td className="px-4 py-3 text-base font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>
+              <td className="px-4 py-3 text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>
                 {formatCurrency(sale.total)}
               </td>
             </tr>

@@ -32,10 +32,10 @@ export function SupplierForm({ action, supplier, cancelHref }: SupplierFormProps
         </div>
       )}
 
-      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+      <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(var(--border))' }}>
         {fields.map((f) => (
           <div key={f.name}>
-            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
               {f.label}
             </label>
             <input
@@ -44,13 +44,13 @@ export function SupplierForm({ action, supplier, cancelHref }: SupplierFormProps
               type={'type' in f ? f.type : 'text'}
               required={'required' in f ? f.required : false}
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+              style={{ borderColor: 'hsl(var(--border))' }}
             />
           </div>
         ))}
 
         <div>
-          <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>
+          <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
             Catatan
           </label>
           <textarea
@@ -58,7 +58,7 @@ export function SupplierForm({ action, supplier, cancelHref }: SupplierFormProps
             defaultValue={supplier?.notes ?? ''}
             rows={3}
             className="w-full px-3 py-2 rounded-lg border text-sm outline-none resize-none"
-            style={{ borderColor: 'hsl(36, 20%, 85%)' }}
+            style={{ borderColor: 'hsl(var(--border))' }}
           />
         </div>
       </div>
@@ -68,14 +68,14 @@ export function SupplierForm({ action, supplier, cancelHref }: SupplierFormProps
           type="submit"
           disabled={isPending}
           className="px-6 py-2.5 rounded-lg text-sm font-medium text-white disabled:opacity-60"
-          style={{ background: 'hsl(32, 95%, 44%)' }}
+          style={{ background: 'hsl(var(--primary))' }}
         >
           {isPending ? 'Menyimpan...' : supplier ? 'Simpan' : 'Tambah Supplier'}
         </button>
         <Link
           href={cancelHref}
           className="px-6 py-2.5 rounded-lg text-sm font-medium border"
-          style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+          style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
         >
           Batal
         </Link>

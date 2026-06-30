@@ -17,14 +17,14 @@ export function Field({ label, error, hint, required, children, className }: Fie
   return (
     <div className={cn('space-y-1', className)}>
       {label && (
-        <label className="text-xs font-medium block" style={{ color: 'hsl(25, 30%, 25%)' }}>
+        <label className="text-xs font-medium block" style={{ color: 'hsl(var(--text-secondary))' }}>
           {label}
           {required && <span className="text-red-500 ml-0.5">*</span>}
         </label>
       )}
       {children}
       {hint && !error && (
-        <p className="text-xs" style={{ color: 'hsl(25, 15%, 60%)' }}>{hint}</p>
+        <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{hint}</p>
       )}
       {error && (
         <p className="text-xs text-red-600">{error}</p>
@@ -126,7 +126,7 @@ export function FormSection({ title, children, className }: {
     <div className={cn('space-y-4', className)}>
       {title && (
         <h3 className="text-xs font-semibold uppercase tracking-wide"
-          style={{ color: 'hsl(25, 15%, 50%)' }}>
+          style={{ color: 'hsl(var(--text-muted))' }}>
           {title}
         </h3>
       )}

@@ -81,14 +81,14 @@ export default async function CustomerDetailPage({
         <div className="h-20 w-full" style={{ background: tier.gradient }} />
         {/* Profile */}
         <div className="bg-white border border-t-0 rounded-b-2xl px-5 pb-5"
-          style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
+          style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-end gap-4 -mt-7 mb-4">
             <div className="w-14 h-14 rounded-2xl border-4 border-white flex items-center justify-center text-xl font-bold shadow-sm"
               style={{ background: tier.bg, color: tier.color }}>
               {customer.name.charAt(0).toUpperCase()}
             </div>
             <div className="pb-1 flex-1 min-w-0">
-              <h1 className="text-lg font-bold truncate" style={{ color: 'hsl(25, 30%, 12%)' }}>
+              <h1 className="text-lg font-bold truncate" style={{ color: 'hsl(var(--foreground))' }}>
                 {customer.name}
               </h1>
               <div className="flex items-center gap-1.5">
@@ -101,7 +101,7 @@ export default async function CustomerDetailPage({
           </div>
 
           {/* Contact row */}
-          <div className="flex flex-wrap gap-3 text-xs" style={{ color: 'hsl(25, 15%, 50%)' }}>
+          <div className="flex flex-wrap gap-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
             <a href={`tel:${customer.phone}`} className="flex items-center gap-1.5 hover:opacity-70">
               <Phone size={12} /> {customer.phone}
             </a>
@@ -124,7 +124,7 @@ export default async function CustomerDetailPage({
 
           {customer.notes && (
             <div className="mt-3 p-3 rounded-xl text-xs italic"
-              style={{ background: 'hsl(36, 20%, 97%)', color: 'hsl(25, 20%, 45%)' }}>
+              style={{ background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }}>
               💬 {customer.notes}
             </div>
           )}
@@ -139,28 +139,28 @@ export default async function CustomerDetailPage({
           { label: 'Rata-rata', value: formatCompact(avgOrder), sub: 'per order' },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-2xl border p-3 text-center"
-            style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
-            <p className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 12%)' }}>{s.value}</p>
-            <p className="text-[10px] font-medium" style={{ color: 'hsl(25, 15%, 55%)' }}>{s.label}</p>
-            <p className="text-[9px] mt-0.5" style={{ color: 'hsl(25, 15%, 68%)' }}>{s.sub}</p>
+            style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>{s.value}</p>
+            <p className="text-[10px] font-medium" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
+            <p className="text-[9px] mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>{s.sub}</p>
           </div>
         ))}
       </div>
 
       {/* Tier progress */}
       {nextTier && (
-        <div className="bg-white rounded-2xl border p-4" style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
+        <div className="bg-white rounded-2xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center"
                 style={{ background: tier.bg, color: tier.color }}>
                 {tier.icon}
               </div>
-              <span className="text-xs font-semibold" style={{ color: 'hsl(25, 30%, 20%)' }}>
+              <span className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                 {tier.label}
               </span>
             </div>
-            <div className="flex items-center gap-1.5 text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+            <div className="flex items-center gap-1.5 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
               <span>Kurang</span>
               <span className="font-semibold" style={{ color: nextTier.color }}>
                 {formatCompact(remaining)}
@@ -172,15 +172,15 @@ export default async function CustomerDetailPage({
               </div>
             </div>
           </div>
-          <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'hsl(36, 20%, 93%)' }}>
+          <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'hsl(var(--border))' }}>
             <div className="h-full rounded-full transition-all"
               style={{ width: `${progressPct}%`, background: tier.gradient }} />
           </div>
           <div className="flex justify-between mt-1.5">
-            <span className="text-[10px]" style={{ color: 'hsl(25, 15%, 60%)' }}>
+            <span className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>
               {formatCompact(customer.total_spending)}
             </span>
-            <span className="text-[10px]" style={{ color: 'hsl(25, 15%, 60%)' }}>
+            <span className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>
               {formatCompact(tier.threshold)}
             </span>
           </div>
@@ -188,25 +188,25 @@ export default async function CustomerDetailPage({
       )}
 
       {/* Order history */}
-      <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 90%)' }}>
+      <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
         <div className="px-4 py-3 flex items-center justify-between border-b"
-          style={{ borderColor: 'hsl(36, 20%, 93%)' }}>
+          style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="flex items-center gap-2">
-            <ShoppingBag size={14} style={{ color: 'hsl(32, 95%, 44%)' }} />
-            <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+            <ShoppingBag size={14} style={{ color: 'hsl(var(--primary))' }} />
+            <p className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
               Riwayat Order
             </p>
           </div>
           <span className="text-xs px-2 py-0.5 rounded-full"
-            style={{ background: 'hsl(36, 20%, 93%)', color: 'hsl(25, 15%, 50%)' }}>
+            style={{ background: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             {orders.length} order
           </span>
         </div>
 
         {orders.length === 0 ? (
           <div className="py-10 text-center space-y-1">
-            <ShoppingBag size={24} className="mx-auto opacity-20" style={{ color: 'hsl(25, 30%, 30%)' }} />
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Belum ada riwayat order</p>
+            <ShoppingBag size={24} className="mx-auto opacity-20" style={{ color: 'hsl(var(--text-secondary))' }} />
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Belum ada riwayat order</p>
           </div>
         ) : (
           orders.map((o, idx) => {
@@ -214,13 +214,13 @@ export default async function CustomerDetailPage({
             return (
               <a key={o.id} href={`/dashboard/orders/${o.id}`}
                 className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors group ${idx > 0 ? 'border-t' : ''}`}
-                style={{ borderColor: 'hsl(36, 20%, 95%)' }}>
+                style={{ borderColor: 'hsl(var(--border))' }}>
                 <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
                   style={{ background: sc.bg, color: sc.color }}>
                   <ShoppingBag size={13} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold font-mono" style={{ color: 'hsl(32, 95%, 40%)' }}>
+                  <p className="text-sm font-semibold font-mono" style={{ color: 'hsl(var(--primary))' }}>
                     {o.order_number}
                   </p>
                   <div className="flex items-center gap-2 mt-0.5">
@@ -228,17 +228,17 @@ export default async function CustomerDetailPage({
                       style={{ background: sc.bg, color: sc.color }}>
                       {sc.label}
                     </span>
-                    <span className="text-[10px]" style={{ color: 'hsl(25, 15%, 60%)' }}>
+                    <span className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>
                       {formatDateTime(o.created_at)}
                     </span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <p className="text-sm font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+                  <p className="text-sm font-bold" style={{ color: 'hsl(var(--foreground))' }}>
                     {formatCompact(o.total_amount)}
                   </p>
                   <ChevronRight size={14} className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ color: 'hsl(25, 15%, 55%)' }} />
+                    style={{ color: 'hsl(var(--text-muted))' }} />
                 </div>
               </a>
             )

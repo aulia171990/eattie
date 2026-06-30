@@ -37,8 +37,8 @@ export default function StoreCheckout() {
     return (
       <div className="py-16 text-center space-y-4">
         <p className="text-4xl">🛒</p>
-        <p className="font-semibold" style={{ color: 'hsl(25, 30%, 20%)' }}>Keranjang kosong</p>
-        <Link href="/store" className="inline-block px-5 py-2.5 rounded-xl text-sm font-medium text-white" style={{ background: 'hsl(32, 95%, 44%)' }}>
+        <p className="font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>Keranjang kosong</p>
+        <Link href="/store" className="inline-block px-5 py-2.5 rounded-xl text-sm font-medium text-white" style={{ background: 'hsl(var(--primary))' }}>
           Kembali Belanja
         </Link>
       </div>
@@ -101,21 +101,21 @@ export default function StoreCheckout() {
     return (
       <div className="py-10 max-w-sm mx-auto text-center space-y-5">
         <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-3xl"
-          style={{ background: 'hsl(142, 50%, 90%)' }}>✅</div>
+          style={{ background: 'hsl(var(--success-bg))' }}>✅</div>
         <div className="space-y-1">
-          <h1 className="text-xl font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>Pesanan Diterima!</h1>
-          <p className="text-sm" style={{ color: 'hsl(25, 15%, 50%)' }}>
+          <h1 className="text-xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Pesanan Diterima!</h1>
+          <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
             Kami akan segera memproses pesanan Anda.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl border p-4 text-left space-y-2" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-2xl border p-4 text-left space-y-2" style={{ borderColor: 'hsl(var(--border))' }}>
           <div className="flex justify-between items-center">
-            <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Nomor Order</span>
-            <span className="font-bold text-sm" style={{ color: 'hsl(32, 95%, 40%)' }}>{orderNumber}</span>
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Nomor Order</span>
+            <span className="font-bold text-sm" style={{ color: 'hsl(var(--primary))' }}>{orderNumber}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Total</span>
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Total</span>
             <span className="font-semibold text-sm">{formatCurrency(orderTotal)}</span>
           </div>
         </div>
@@ -124,19 +124,19 @@ export default function StoreCheckout() {
           {waLink && (
             <a href={waLink} target="_blank" rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold text-white"
-              style={{ background: 'hsl(142, 60%, 40%)' }}>
+              style={{ background: 'hsl(var(--success))' }}>
               <span>💬</span> Konfirmasi via WhatsApp
               <ExternalLink size={14} />
             </a>
           )}
           <Link href={`/store/track?order=${orderNumber}&phone=${form.customer_phone}`}
             className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border"
-            style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 25%)' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
             Lacak Pesanan
           </Link>
           <Link href="/store"
             className="block w-full py-3 rounded-xl text-sm font-medium text-center"
-            style={{ color: 'hsl(25, 15%, 55%)' }}>
+            style={{ color: 'hsl(var(--text-muted))' }}>
             Kembali ke Toko
           </Link>
         </div>
@@ -150,13 +150,13 @@ export default function StoreCheckout() {
       return (
         <div className="pt-6 max-w-lg mx-auto space-y-4 text-center py-12">
           <p className="text-4xl">🛒</p>
-          <h1 className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>Keranjang Kosong</h1>
-          <p className="text-sm" style={{ color: 'hsl(25, 15%, 55%)' }}>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Keranjang Kosong</h1>
+          <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
             Belum ada produk di keranjang Anda.
           </p>
           <Link href="/store"
             className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold text-white"
-            style={{ background: 'hsl(32, 95%, 44%)' }}>
+            style={{ background: 'hsl(var(--primary))' }}>
             Lihat Katalog
           </Link>
         </div>
@@ -167,18 +167,18 @@ export default function StoreCheckout() {
       <div className="pt-6 max-w-lg mx-auto space-y-4">
         <div className="flex items-center gap-3">
           <Link href="/store" className="p-1.5 rounded-lg hover:bg-white transition-colors">
-            <ArrowLeft size={18} style={{ color: 'hsl(25, 30%, 30%)' }} />
+            <ArrowLeft size={18} style={{ color: 'hsl(var(--text-secondary))' }} />
           </Link>
-          <h1 className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>Keranjang</h1>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Keranjang</h1>
         </div>
 
-        <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           {items.map((item, idx) => (
             <div key={item.product.id} className={`flex items-center gap-3 px-4 py-3 ${idx > 0 ? 'border-t' : ''}`}
-              style={{ borderColor: 'hsl(36, 20%, 94%)' }}>
+              style={{ borderColor: 'hsl(var(--border))' }}>
               {/* Product image */}
               <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 overflow-hidden"
-                style={{ background: 'hsl(36, 40%, 95%)' }}>
+                style={{ background: 'hsl(var(--surface-raised))' }}>
                 {item.product.image_url ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={item.product.image_url} alt={item.product.name}
@@ -187,52 +187,52 @@ export default function StoreCheckout() {
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate" style={{ color: 'hsl(25, 30%, 15%)' }}>{item.product.name}</p>
-                <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>{formatCurrency(item.product.selling_price)}</p>
+                <p className="text-sm font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>{item.product.name}</p>
+                <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{formatCurrency(item.product.selling_price)}</p>
 
                 {/* Quantity controls */}
                 <div className="flex items-center gap-2 mt-1.5">
                   <button
                     onClick={() => updateQty(item.product.id, item.quantity - 1)}
                     className="w-6 h-6 rounded-full flex items-center justify-center border"
-                    style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}
+                    style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
                   >
                     <Minus size={12} />
                   </button>
-                  <span className="text-sm font-medium w-6 text-center" style={{ color: 'hsl(25, 30%, 20%)' }}>
+                  <span className="text-sm font-medium w-6 text-center" style={{ color: 'hsl(var(--text-secondary))' }}>
                     {item.quantity}
                   </span>
                   <button
                     onClick={() => updateQty(item.product.id, item.quantity + 1)}
                     className="w-6 h-6 rounded-full flex items-center justify-center"
-                    style={{ background: 'hsl(32, 95%, 44%)', color: 'white' }}
+                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
                   >
                     <Plus size={12} />
                   </button>
                   <button
                     onClick={() => removeItem(item.product.id)}
                     className="ml-1 p-1 rounded-lg"
-                    style={{ color: 'hsl(0, 60%, 55%)' }}
+                    style={{ color: 'hsl(var(--danger))' }}
                   >
                     <Trash2 size={14} />
                   </button>
                 </div>
               </div>
 
-              <p className="text-sm font-bold shrink-0" style={{ color: 'hsl(32, 95%, 40%)' }}>
+              <p className="text-sm font-bold shrink-0" style={{ color: 'hsl(var(--primary))' }}>
                 {formatCurrency(item.product.selling_price * item.quantity)}
               </p>
             </div>
           ))}
-          <div className="flex justify-between items-center px-4 py-3 border-t" style={{ borderColor: 'hsl(36, 20%, 90%)', background: 'hsl(36, 20%, 98%)' }}>
+          <div className="flex justify-between items-center px-4 py-3 border-t" style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }}>
             <span className="text-sm font-semibold">Total</span>
-            <span className="text-base font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(total)}</span>
+            <span className="text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(total)}</span>
           </div>
         </div>
 
         <button onClick={() => setStep('form')}
           className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold text-white"
-          style={{ background: 'hsl(32, 95%, 44%)' }}>
+          style={{ background: 'hsl(var(--primary))' }}>
           Lanjut ke Data Pemesan <ChevronRight size={16} />
         </button>
       </div>
@@ -248,35 +248,35 @@ export default function StoreCheckout() {
       <div className="pt-6 max-w-lg mx-auto space-y-4">
         <div className="flex items-center gap-3">
           <button onClick={() => setStep('cart')} className="p-1.5 rounded-lg hover:bg-white transition-colors">
-            <ArrowLeft size={18} style={{ color: 'hsl(25, 30%, 30%)' }} />
+            <ArrowLeft size={18} style={{ color: 'hsl(var(--text-secondary))' }} />
           </button>
-          <h1 className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>Data Pemesan</h1>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Data Pemesan</h1>
         </div>
 
-        <div className="bg-white rounded-2xl border p-4 space-y-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+        <div className="bg-white rounded-2xl border p-4 space-y-3" style={{ borderColor: 'hsl(var(--border))' }}>
           {[
             { label: 'Nama Lengkap*', key: 'customer_name', type: 'text', placeholder: 'Masukkan nama Anda' },
             { label: 'Nomor HP / WhatsApp*', key: 'customer_phone', type: 'tel', placeholder: '08xxxxxxxxxx' },
           ].map(({ label, key, type, placeholder }) => (
             <div key={key}>
-              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>{label}</label>
+              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>{label}</label>
               <input type={type} placeholder={placeholder} value={form[key as keyof typeof form]}
                 onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
                 className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                style={{ borderColor: 'hsl(var(--border))' }} />
             </div>
           ))}
 
           <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Metode Pengambilan</label>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Metode Pengambilan</label>
             <div className="grid grid-cols-2 gap-2">
               {(['pickup', 'delivery'] as const).map(type => (
                 <button key={type} type="button"
                   onClick={() => setForm(f => ({ ...f, order_type: type }))}
                   className="py-2.5 rounded-xl text-xs font-semibold border-2 transition-all"
                   style={form.order_type === type
-                    ? { borderColor: 'hsl(32, 95%, 44%)', background: 'hsl(32, 80%, 95%)', color: 'hsl(32, 95%, 35%)' }
-                    : { borderColor: 'hsl(36, 20%, 88%)', background: 'white', color: 'hsl(25, 15%, 50%)' }}>
+                    ? { borderColor: 'hsl(var(--primary))', background: 'hsl(32, 80%, 95%)', color: 'hsl(var(--primary))' }
+                    : { borderColor: 'hsl(var(--border))', background: 'white', color: 'hsl(var(--text-muted))' }}>
                   {type === 'pickup' ? '🏪 Ambil di Toko' : '🛵 Dikirim'}
                 </button>
               ))}
@@ -286,47 +286,47 @@ export default function StoreCheckout() {
           {form.order_type === 'pickup' && (
             <div className="grid grid-cols-2 gap-2">
               <div>
-                <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Tanggal Ambil</label>
+                <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Tanggal Ambil</label>
                 <input type="date" value={form.pickup_date}
                   onChange={e => setForm(f => ({ ...f, pickup_date: e.target.value }))}
                   min={new Date().toISOString().split('T')[0]}
                   className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))' }} />
               </div>
               <div>
-                <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Jam Ambil</label>
+                <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Jam Ambil</label>
                 <input type="time" value={form.pickup_time}
                   onChange={e => setForm(f => ({ ...f, pickup_time: e.target.value }))}
                   className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-                  style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))' }} />
               </div>
             </div>
           )}
 
           {form.order_type === 'delivery' && (
             <div>
-              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Alamat Pengiriman*</label>
+              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Alamat Pengiriman*</label>
               <textarea rows={2} value={form.delivery_address}
                 onChange={e => setForm(f => ({ ...f, delivery_address: e.target.value }))}
                 placeholder="Jl. Contoh No. 123, RT/RW, Kelurahan, Kota"
                 className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none resize-none"
-                style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+                style={{ borderColor: 'hsl(var(--border))' }} />
             </div>
           )}
 
           <div>
-            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(25, 30%, 25%)' }}>Catatan (opsional)</label>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Catatan (opsional)</label>
             <textarea rows={2} value={form.notes}
               onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
               placeholder="Permintaan khusus, dll."
               className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none resize-none"
-              style={{ borderColor: 'hsl(36, 20%, 85%)' }} />
+              style={{ borderColor: 'hsl(var(--border))' }} />
           </div>
         </div>
 
         <button onClick={() => setStep('payment')} disabled={!isValid}
           className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold text-white disabled:opacity-50"
-          style={{ background: 'hsl(32, 95%, 44%)' }}>
+          style={{ background: 'hsl(var(--primary))' }}>
           Lanjut ke Pembayaran <ChevronRight size={16} />
         </button>
       </div>
@@ -338,29 +338,29 @@ export default function StoreCheckout() {
     <div className="pt-6 max-w-lg mx-auto space-y-4">
       <div className="flex items-center gap-3">
         <button onClick={() => setStep('form')} className="p-1.5 rounded-lg hover:bg-white transition-colors">
-          <ArrowLeft size={18} style={{ color: 'hsl(25, 30%, 30%)' }} />
+          <ArrowLeft size={18} style={{ color: 'hsl(var(--text-secondary))' }} />
         </button>
-        <h1 className="text-lg font-bold" style={{ color: 'hsl(25, 30%, 15%)' }}>Pembayaran</h1>
+        <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Pembayaran</h1>
       </div>
 
       {/* Order summary */}
-      <div className="bg-white rounded-2xl border p-4" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
+      <div className="bg-white rounded-2xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Total Pembayaran</p>
-            <p className="text-2xl font-bold" style={{ color: 'hsl(32, 95%, 40%)' }}>{formatCurrency(total)}</p>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>{itemCount} produk</p>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Total Pembayaran</p>
+            <p className="text-2xl font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(total)}</p>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{itemCount} produk</p>
           </div>
           <div className="text-right">
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>Nama</p>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Nama</p>
             <p className="text-sm font-medium">{form.customer_name}</p>
           </div>
         </div>
       </div>
 
       {/* QRIS */}
-      <div className="bg-white rounded-2xl border p-4 flex flex-col items-center gap-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <p className="text-xs font-semibold" style={{ color: 'hsl(25, 15%, 45%)' }}>SCAN QRIS UNTUK MEMBAYAR</p>
+      <div className="bg-white rounded-2xl border p-4 flex flex-col items-center gap-3" style={{ borderColor: 'hsl(var(--border))' }}>
+        <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>SCAN QRIS UNTUK MEMBAYAR</p>
         {QRIS_URL ? (
           <div className="rounded-2xl p-3 border-2" style={{ borderColor: 'hsl(210, 70%, 75%)', background: 'hsl(210, 60%, 97%)' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -369,26 +369,26 @@ export default function StoreCheckout() {
         ) : (
           <div className="w-48 h-48 rounded-2xl border-2 border-dashed flex items-center justify-center text-center p-4"
             style={{ borderColor: 'hsl(210, 40%, 75%)' }}>
-            <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>QR belum dikonfigurasi</p>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>QR belum dikonfigurasi</p>
           </div>
         )}
-        <p className="text-xs text-center" style={{ color: 'hsl(25, 15%, 55%)' }}>
+        <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
           GoPay · OVO · Dana · ShopeePay · semua m-banking
         </p>
       </div>
 
       {/* Upload proof */}
-      <div className="bg-white rounded-2xl border p-4 space-y-3" style={{ borderColor: 'hsl(36, 20%, 88%)' }}>
-        <p className="text-sm font-semibold" style={{ color: 'hsl(25, 30%, 15%)' }}>
+      <div className="bg-white rounded-2xl border p-4 space-y-3" style={{ borderColor: 'hsl(var(--border))' }}>
+        <p className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
           Upload Bukti Pembayaran
         </p>
-        <p className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+        <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
           Opsional — Anda juga bisa konfirmasi via WhatsApp setelah checkout.
         </p>
 
         {proofUrl ? (
-          <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'hsl(142, 50%, 95%)' }}>
-            <Check size={16} style={{ color: 'hsl(142, 60%, 35%)' }} />
+          <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'hsl(var(--success-subtle))' }}>
+            <Check size={16} style={{ color: 'hsl(var(--success))' }} />
             <span className="text-xs font-medium" style={{ color: 'hsl(142, 60%, 30%)' }}>Bukti berhasil diupload</span>
           </div>
         ) : (
@@ -397,9 +397,9 @@ export default function StoreCheckout() {
             <input type="file" accept="image/*" className="hidden"
               onChange={e => e.target.files?.[0] && handleUploadProof(e.target.files[0])} />
             {uploadingProof
-              ? <Loader size={15} className="animate-spin" style={{ color: 'hsl(25, 15%, 55%)' }} />
-              : <Upload size={15} style={{ color: 'hsl(25, 15%, 55%)' }} />}
-            <span className="text-xs" style={{ color: 'hsl(25, 15%, 55%)' }}>
+              ? <Loader size={15} className="animate-spin" style={{ color: 'hsl(var(--text-muted))' }} />
+              : <Upload size={15} style={{ color: 'hsl(var(--text-muted))' }} />}
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
               {uploadingProof ? 'Mengupload...' : 'Pilih foto bukti bayar'}
             </span>
           </label>
@@ -414,14 +414,14 @@ export default function StoreCheckout() {
         onClick={handleSubmit}
         disabled={loading}
         className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold text-white disabled:opacity-60"
-        style={{ background: 'hsl(142, 60%, 40%)' }}
+        style={{ background: 'hsl(var(--success))' }}
       >
         {loading
           ? <><Loader size={16} className="animate-spin" /> Memproses...</>
           : <><Check size={16} /> Konfirmasi Pesanan</>}
       </button>
 
-      <p className="text-xs text-center" style={{ color: 'hsl(25, 15%, 55%)' }}>
+      <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
         Dengan menekan konfirmasi, Anda menyetujui bahwa pembayaran telah dilakukan.
       </p>
     </div>

@@ -78,29 +78,29 @@ export function SaleDetailClient({ saleId, saleStatus, sale }: SaleDetailClientP
 
       <button onClick={handlePrint}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:bg-gray-50"
-        style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 30%, 30%)' }}>
+        style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
         <Printer size={14} /> Print Struk
       </button>
 
       {saleStatus === 'completed' && (
         confirmVoid ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs" style={{ color: 'hsl(0, 70%, 45%)' }}>Batalkan transaksi ini?</span>
+            <span className="text-xs" style={{ color: 'hsl(var(--danger))' }}>Batalkan transaksi ini?</span>
             <button onClick={handleVoid} disabled={voiding}
               className="px-2 py-1 rounded-lg text-xs font-medium text-white disabled:opacity-60"
-              style={{ background: 'hsl(0, 70%, 50%)' }}>
+              style={{ background: 'hsl(var(--danger))' }}>
               {voiding ? '...' : 'Ya, Batalkan'}
             </button>
             <button onClick={() => setConfirmVoid(false)}
               className="px-2 py-1 rounded-lg text-xs border"
-              style={{ borderColor: 'hsl(36, 20%, 85%)', color: 'hsl(25, 15%, 50%)' }}>
+              style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
               Tidak
             </button>
           </div>
         ) : (
           <button onClick={() => setConfirmVoid(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
-            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(0, 70%, 50%)' }}>
+            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}>
             <XCircle size={14} /> Void
           </button>
         )
