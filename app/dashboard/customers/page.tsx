@@ -9,9 +9,9 @@ const TIER = {
   BRONZE: {
     label: 'Bronze',
     gradient: 'linear-gradient(135deg, #c8956a 0%, #e8b48a 100%)',
-    bg: 'hsl(var(--text-muted))',
-    border: 'hsl(var(--text-muted))',
-    color: 'hsl(var(--text-muted))',
+    bg: 'hsl(25, 40%, 95%)',
+    border: 'hsl(25, 40%, 85%)',
+    color: 'hsl(25, 55%, 35%)',
     icon: <Medal size={14} />,
     min: 0,
     max: 500000,
@@ -19,9 +19,9 @@ const TIER = {
   SILVER: {
     label: 'Silver',
     gradient: 'linear-gradient(135deg, #7a8fa6 0%, #a8bed4 100%)',
-    bg: 'hsl(var(--info-bg))',
-    border: 'hsl(var(--info-bg))',
-    color: 'hsl(var(--info))',
+    bg: 'hsl(210, 20%, 95%)',
+    border: 'hsl(210, 20%, 82%)',
+    color: 'hsl(210, 25%, 35%)',
     icon: <Award size={14} />,
     min: 500000,
     max: 1500000,
@@ -29,9 +29,9 @@ const TIER = {
   GOLD: {
     label: 'Gold',
     gradient: 'linear-gradient(135deg, #c9960a 0%, #f0bf40 100%)',
-    bg: 'hsl(var(--primary-subtle))',
-    border: 'hsl(var(--text-muted))',
-    color: 'hsl(var(--text-muted))',
+    bg: 'hsl(45, 90%, 94%)',
+    border: 'hsl(45, 80%, 75%)',
+    color: 'hsl(40, 85%, 28%)',
     icon: <Star size={14} />,
     min: 1500000,
     max: 5000000,
@@ -39,9 +39,9 @@ const TIER = {
   PLATINUM: {
     label: 'Platinum',
     gradient: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
-    bg: 'hsl(var(--tier-platinum-bg))',
-    border: 'hsl(var(--tier-platinum-bg))',
-    color: 'hsl(var(--tier-platinum))',
+    bg: 'hsl(270, 40%, 95%)',
+    border: 'hsl(270, 40%, 80%)',
+    color: 'hsl(270, 55%, 40%)',
     icon: <Crown size={14} />,
     min: 5000000,
     max: Infinity,
@@ -83,7 +83,7 @@ export default async function CustomersPage({
 
       {/* Total revenue hero card */}
       <div className="rounded-2xl p-5 text-white relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, hsl(var(--sidebar-bg)) 0%, hsl(25,30%,22%) 100%)' }}>
+        style={{ background: 'linear-gradient(135deg, hsl(25,30%,15%) 0%, hsl(25,30%,22%) 100%)' }}>
         <div className="absolute top-0 right-0 w-48 h-48 rounded-full opacity-10"
           style={{ background: 'hsl(var(--primary))', transform: 'translate(30%, -30%)' }} />
         <p className="text-xs font-medium opacity-60 uppercase tracking-widest mb-1">Total Nilai Pelanggan</p>
@@ -156,7 +156,7 @@ export default async function CustomersPage({
         {activeTier && (
           <Link href="/dashboard/customers"
             className="flex items-center gap-1.5 px-3 py-2.5 rounded-xl border text-xs font-medium transition-colors hover:bg-gray-50"
-            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(25, 30%, 40%)' }}>
             ✕ {TIER[activeTier].label}
           </Link>
         )}
@@ -252,7 +252,7 @@ export default async function CustomersPage({
           {page > 1 && (
             <Link href={`/dashboard/customers?page=${page - 1}${activeTier ? `&tier=${activeTier}` : ''}`}
               className="px-3 py-1.5 rounded-lg text-xs border transition-colors hover:bg-gray-50"
-              style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
+              style={{ borderColor: 'hsl(36,20%,88%)', color: 'hsl(25,30%,30%)' }}>
               ‹ Sebelumnya
             </Link>
           )}
@@ -263,7 +263,7 @@ export default async function CustomersPage({
           {page < totalPages && (
             <Link href={`/dashboard/customers?page=${page + 1}${activeTier ? `&tier=${activeTier}` : ''}`}
               className="px-3 py-1.5 rounded-lg text-xs border transition-colors hover:bg-gray-50"
-              style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
+              style={{ borderColor: 'hsl(36,20%,88%)', color: 'hsl(25,30%,30%)' }}>
               Berikutnya ›
             </Link>
           )}

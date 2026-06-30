@@ -66,7 +66,7 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
           <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
           <div className="min-w-0">
             <div className="text-white font-semibold text-sm truncate">Bakery Manager</div>
-            <div className="text-xs truncate" style={{ color: 'hsl(var(--text-muted))' }}>Manajemen Toko Roti</div>
+            <div className="text-xs truncate" style={{ color: 'hsl(36, 20%, 50%)' }}>Manajemen Toko Roti</div>
           </div>
         </div>
         {onClose && (
@@ -79,7 +79,7 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
       {lowStockCount > 0 && user.role === 'owner' && (
         <Link href="/dashboard/inventory?filter=low_stock" onClick={onClose}
           className="flex items-center gap-2 mx-3 mt-3 px-3 py-2 rounded-lg text-xs"
-          style={{ background: 'hsl(var(--text-muted))', color: 'hsl(var(--text-muted))' }}>
+          style={{ background: 'hsl(32, 80%, 25%)', color: 'hsl(32, 95%, 70%)' }}>
           <AlertTriangle size={14} />
           <span className="flex-1">{lowStockCount} bahan stok rendah</span>
           <span className="font-bold">{lowStockCount}</span>
@@ -101,8 +101,8 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
                     <Link key={child.href} href={child.href} onClick={onClose}
                       className="block px-3 py-1.5 rounded-md text-xs transition-all"
                       style={{
-                        color: pathname === child.href ? 'white' : 'hsl(var(--text-muted))',
-                        background: pathname === child.href ? 'hsl(var(--foreground))' : 'transparent',
+                        color: pathname === child.href ? 'white' : 'hsl(36, 15%, 55%)',
+                        background: pathname === child.href ? 'hsl(25, 20%, 22%)' : 'transparent',
                       }}>
                       {child.title}
                     </Link>
@@ -128,12 +128,12 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
       <div className="px-3 pb-4 pt-2 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-            style={{ background: 'hsl(var(--text-muted))', color: 'hsl(var(--text-muted))' }}>
+            style={{ background: 'hsl(32, 60%, 30%)', color: 'hsl(32, 95%, 70%)' }}>
             {user.full_name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-white text-xs font-medium truncate">{user.full_name}</div>
-            <div className="text-xs truncate capitalize" style={{ color: 'hsl(var(--text-muted))' }}>
+            <div className="text-xs truncate capitalize" style={{ color: 'hsl(36, 15%, 50%)' }}>
               {user.role === 'owner' ? 'Pemilik' : user.role === 'cashier' ? 'Kasir' : 'Baker'}
             </div>
           </div>

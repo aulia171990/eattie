@@ -65,7 +65,7 @@ export default async function SalesReportPage({ searchParams }: { searchParams: 
             {[
               { label: 'Total Pendapatan', value: formatCurrency(data.totalRevenue), color: 'hsl(var(--primary))', bg: 'hsl(var(--primary-subtle))' },
               { label: 'Jumlah Transaksi', value: formatNumber(data.totalTransactions), color: 'hsl(var(--info))', bg: 'hsl(var(--info-bg))' },
-              { label: 'Rata-rata Order', value: formatCurrency(data.avgOrder), color: 'hsl(var(--success))', bg: 'hsl(var(--success-bg))' },
+              { label: 'Rata-rata Order', value: formatCurrency(data.avgOrder), color: 'hsl(var(--success))', bg: 'hsl(142, 50%, 92%)' },
               { label: 'Total Diskon', value: formatCurrency(data.totalDiscount), color: 'hsl(var(--danger))', bg: 'hsl(var(--danger-bg))' },
             ].map(s => (
               <div key={s.label} className="bg-white rounded-xl border p-5" style={{ borderColor: 'hsl(var(--border))' }}>

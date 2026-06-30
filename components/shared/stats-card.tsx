@@ -8,10 +8,10 @@ interface StatsCardProps {
 
 const colorMap = {
   amber: { bg: 'hsl(var(--primary-subtle))', icon: 'hsl(var(--primary))' },
-  green: { bg: 'hsl(var(--success-bg))', icon: 'hsl(var(--success))' },
-  red:   { bg: 'hsl(var(--danger-bg))',   icon: 'hsl(var(--danger))' },
+  green: { bg: 'hsl(142, 50%, 92%)', icon: 'hsl(var(--success))' },
+  red:   { bg: 'hsl(var(--danger-bg))',   icon: 'hsl(0, 70%, 48%)' },
   blue:  { bg: 'hsl(var(--info-bg))', icon: 'hsl(var(--info))' },
-  gray:  { bg: 'hsl(var(--info-bg))', icon: 'hsl(var(--info))' },
+  gray:  { bg: 'hsl(210, 10%, 93%)', icon: 'hsl(210, 10%, 50%)' },
 }
 
 export function StatsCard({ label, value, sub, icon, color = 'amber' }: StatsCardProps) {

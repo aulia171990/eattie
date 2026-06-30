@@ -118,7 +118,7 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
                       </div>
                       <div className="w-full h-1.5 rounded-full" style={{ background: 'hsl(var(--border))' }}>
                         <div className="h-1.5 rounded-full"
-                          style={{ width: `${pct}%`, background: 'hsl(var(--danger))' }} />
+                          style={{ width: `${pct}%`, background: 'hsl(0, 70%, 55%)' }} />
                       </div>
                     </div>
                   )

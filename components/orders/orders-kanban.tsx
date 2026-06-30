@@ -11,41 +11,41 @@ const COLUMNS = [
     key: 'NEW',
     label: 'Menunggu',
     icon: <Clock size={14} />,
-    bg: 'hsl(var(--primary-subtle))',
-    color: 'hsl(var(--primary))',
+    bg: 'hsl(36,80%,92%)',
+    color: 'hsl(32,95%,35%)',
     headerBg: 'hsl(var(--primary))',
   },
   {
     key: 'IN_PRODUCTION',
     label: 'Produksi',
     icon: <ChefHat size={14} />,
-    bg: 'hsl(var(--tier-platinum-bg))',
-    color: 'hsl(var(--tier-platinum))',
-    headerBg: 'hsl(var(--tier-platinum))',
+    bg: 'hsl(270,50%,95%)',
+    color: 'hsl(270,50%,35%)',
+    headerBg: 'hsl(270,50%,50%)',
   },
   {
     key: 'READY_FOR_PICKUP',
     label: 'Siap Ambil',
     icon: <PackageCheck size={14} />,
-    bg: 'hsl(var(--info-bg))',
-    color: 'hsl(var(--info))',
-    headerBg: 'hsl(var(--info))',
+    bg: 'hsl(210,70%,95%)',
+    color: 'hsl(210,70%,35%)',
+    headerBg: 'hsl(210,70%,45%)',
   },
   {
     key: 'COMPLETED',
     label: 'Selesai',
     icon: <CheckCircle2 size={14} />,
-    bg: 'hsl(var(--success-bg))',
-    color: 'hsl(var(--success))',
-    headerBg: 'hsl(var(--success))',
+    bg: 'hsl(142,50%,95%)',
+    color: 'hsl(142,60%,28%)',
+    headerBg: 'hsl(142,60%,38%)',
   },
   {
     key: 'CANCELLED',
     label: 'Dibatalkan',
     icon: <XCircle size={14} />,
-    bg: 'hsl(var(--danger-bg))',
-    color: 'hsl(var(--danger))',
-    headerBg: 'hsl(var(--danger))',
+    bg: 'hsl(0,60%,96%)',
+    color: 'hsl(0,70%,40%)',
+    headerBg: 'hsl(0,60%,50%)',
   },
 ]
 
@@ -65,7 +65,7 @@ function OrderCard({ order }: { order: OrderWithItems }) {
           {order.order_number}
         </span>
         <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${isPaid ? 'text-green-700' : 'text-amber-700'}`}
-          style={{ background: isPaid ? 'hsl(var(--success-bg))' : 'hsl(var(--primary-subtle))' }}>
+          style={{ background: isPaid ? 'hsl(142,50%,90%)' : 'hsl(36,80%,90%)' }}>
           {isPaid ? '✓ Lunas' : 'Belum Bayar'}
         </span>
       </div>
@@ -121,9 +121,9 @@ export function OrdersKanban({ orders }: { orders: OrderWithItems[] }) {
       {/* Stats row */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: 'Order Aktif',   value: totalActive,               icon: <Clock size={15} />,         bg: 'hsl(var(--primary-subtle))',  ic: 'hsl(var(--primary))' },
-          { label: 'Order Hari Ini', value: totalToday,               icon: <CreditCard size={15} />,    bg: 'hsl(var(--info-bg))', ic: 'hsl(var(--info))' },
-          { label: 'Total Selesai', value: formatCurrency(totalRevenue), icon: <CheckCircle2 size={15} />, bg: 'hsl(var(--success-bg))', ic: 'hsl(var(--success))' },
+          { label: 'Order Aktif',   value: totalActive,               icon: <Clock size={15} />,         bg: 'hsl(32,80%,92%)',  ic: 'hsl(32,95%,40%)' },
+          { label: 'Order Hari Ini', value: totalToday,               icon: <CreditCard size={15} />,    bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)' },
+          { label: 'Total Selesai', value: formatCurrency(totalRevenue), icon: <CheckCircle2 size={15} />, bg: 'hsl(142,50%,90%)', ic: 'hsl(142,60%,35%)' },
         ].map(s => (
           <div key={s.label} className="bg-white rounded-xl border p-3" style={{ borderColor: 'hsl(var(--border))' }}>
             <div className="flex items-center justify-between mb-1">

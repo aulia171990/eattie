@@ -115,7 +115,7 @@ export function Cart({ onCheckout }: CartProps) {
                   </p>
                   <button onClick={() => removeItem(item.product.id)}
                     className="mt-0.5 hover:opacity-70 transition-opacity"
-                    style={{ color: 'hsl(var(--danger))' }}>
+                    style={{ color: 'hsl(0, 70%, 60%)' }}>
                     <Trash2 size={12} />
                   </button>
                 </div>

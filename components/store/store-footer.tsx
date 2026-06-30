@@ -3,7 +3,7 @@ import { BRANDING } from '@/config/branding'
 
 export function StoreFooter() {
   return (
-    <footer style={{ background: 'hsl(var(--foreground))', color: 'hsl(var(--border-strong))' }}>
+    <footer style={{ background: 'hsl(25, 30%, 10%)', color: 'hsl(36, 15%, 65%)' }}>
       <div style={{ maxWidth: '1024px', margin: '0 auto', padding: '2.5rem 1rem 1.5rem' }}>
 
         {/* Top grid */}
@@ -35,11 +35,11 @@ export function StoreFooter() {
           {/* Produk */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider mb-3"
-              style={{ color: 'hsl(var(--border-strong))' }}>Produk</p>
+              style={{ color: 'hsl(36, 30%, 70%)' }}>Produk</p>
             {['Semua Katalog', 'Paling Laris', 'Kue Custom', 'Hampers'].map(l => (
               <Link key={l} href="/store#katalog"
                 className="block text-xs mb-2 hover:opacity-80 transition-opacity"
-                style={{ color: 'hsl(var(--border-strong))', textDecoration: 'none' }}>
+                style={{ color: 'hsl(36, 15%, 60%)', textDecoration: 'none' }}>
                 {l}
               </Link>
             ))}
@@ -48,7 +48,7 @@ export function StoreFooter() {
           {/* Layanan */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider mb-3"
-              style={{ color: 'hsl(var(--border-strong))' }}>Layanan</p>
+              style={{ color: 'hsl(36, 30%, 70%)' }}>Layanan</p>
             {[
               { label: 'Lacak Pesanan', href: '/store/track' },
               { label: 'Cara Pesan', href: '/store' },
@@ -56,7 +56,7 @@ export function StoreFooter() {
             ].map(({ label, href }) => (
               <Link key={label} href={href}
                 className="block text-xs mb-2 hover:opacity-80 transition-opacity"
-                style={{ color: 'hsl(var(--border-strong))', textDecoration: 'none' }}>
+                style={{ color: 'hsl(36, 15%, 60%)', textDecoration: 'none' }}>
                 {label}
               </Link>
             ))}
@@ -65,7 +65,7 @@ export function StoreFooter() {
           {/* Pembayaran */}
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider mb-3"
-              style={{ color: 'hsl(var(--border-strong))' }}>Metode Bayar</p>
+              style={{ color: 'hsl(36, 30%, 70%)' }}>Metode Bayar</p>
             <div className="space-y-1.5">
               {[
                 { icon: '💳', label: 'QRIS' },
@@ -73,7 +73,7 @@ export function StoreFooter() {
                 { icon: '💰', label: 'Bayar di Toko' },
               ].map(p => (
                 <div key={p.label} className="flex items-center gap-2 text-xs"
-                  style={{ color: 'hsl(var(--border-strong))' }}>
+                  style={{ color: 'hsl(36, 15%, 60%)' }}>
                   <span>{p.icon}</span>
                   <span>{p.label}</span>
                 </div>
@@ -84,14 +84,14 @@ export function StoreFooter() {
 
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4">
-          <p style={{ fontSize: '0.7rem', color: 'hsl(var(--text-muted))' }}>
+          <p style={{ fontSize: '0.7rem', color: 'hsl(36, 10%, 45%)' }}>
             © {new Date().getFullYear()} {BRANDING.companyName}. Semua hak dilindungi.
           </p>
           <div className="flex items-center gap-3">
             {['Instagram', 'WhatsApp'].map(s => (
               <a key={s} href="#"
                 className="text-xs hover:opacity-80 transition-opacity"
-                style={{ color: 'hsl(var(--text-muted))', textDecoration: 'none' }}>
+                style={{ color: 'hsl(36, 15%, 50%)', textDecoration: 'none' }}>
                 {s}
               </a>
             ))}

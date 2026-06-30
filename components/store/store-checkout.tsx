@@ -275,7 +275,7 @@ export default function StoreCheckout() {
                   onClick={() => setForm(f => ({ ...f, order_type: type }))}
                   className="py-2.5 rounded-xl text-xs font-semibold border-2 transition-all"
                   style={form.order_type === type
-                    ? { borderColor: 'hsl(var(--primary))', background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }
+                    ? { borderColor: 'hsl(var(--primary))', background: 'hsl(32, 80%, 95%)', color: 'hsl(var(--primary))' }
                     : { borderColor: 'hsl(var(--border))', background: 'white', color: 'hsl(var(--text-muted))' }}>
                   {type === 'pickup' ? '🏪 Ambil di Toko' : '🛵 Dikirim'}
                 </button>
@@ -362,13 +362,13 @@ export default function StoreCheckout() {
       <div className="bg-white rounded-2xl border p-4 flex flex-col items-center gap-3" style={{ borderColor: 'hsl(var(--border))' }}>
         <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>SCAN QRIS UNTUK MEMBAYAR</p>
         {QRIS_URL ? (
-          <div className="rounded-2xl p-3 border-2" style={{ borderColor: 'hsl(var(--info-bg))', background: 'hsl(var(--info-bg))' }}>
+          <div className="rounded-2xl p-3 border-2" style={{ borderColor: 'hsl(210, 70%, 75%)', background: 'hsl(210, 60%, 97%)' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={QRIS_URL} alt="QRIS" className="w-48 h-48 object-contain" />
           </div>
         ) : (
           <div className="w-48 h-48 rounded-2xl border-2 border-dashed flex items-center justify-center text-center p-4"
-            style={{ borderColor: 'hsl(var(--info-bg))' }}>
+            style={{ borderColor: 'hsl(210, 40%, 75%)' }}>
             <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>QR belum dikonfigurasi</p>
           </div>
         )}
@@ -389,11 +389,11 @@ export default function StoreCheckout() {
         {proofUrl ? (
           <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'hsl(var(--success-subtle))' }}>
             <Check size={16} style={{ color: 'hsl(var(--success))' }} />
-            <span className="text-xs font-medium" style={{ color: 'hsl(var(--success))' }}>Bukti berhasil diupload</span>
+            <span className="text-xs font-medium" style={{ color: 'hsl(142, 60%, 30%)' }}>Bukti berhasil diupload</span>
           </div>
         ) : (
           <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-colors hover:bg-gray-50"
-            style={{ borderColor: 'hsl(var(--border))' }}>
+            style={{ borderColor: 'hsl(36, 20%, 82%)' }}>
             <input type="file" accept="image/*" className="hidden"
               onChange={e => e.target.files?.[0] && handleUploadProof(e.target.files[0])} />
             {uploadingProof

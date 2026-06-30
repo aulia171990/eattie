@@ -109,15 +109,15 @@ export function PosInterface({ products, cashierName }: PosInterfaceProps) {
           <span className="text-white font-semibold text-sm">Bakery POS</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
+        <div className="flex items-center gap-1.5 text-xs" style={{ color: 'hsl(32, 80%, 70%)' }}>
           <Clock size={13} />
           <span>{time.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
-          <span className="hidden sm:inline ml-1" style={{ color: 'hsl(var(--text-muted))' }}>| {cashierName}</span>
+          <span className="hidden sm:inline ml-1" style={{ color: 'hsl(36, 20%, 55%)' }}>| {cashierName}</span>
         </div>
 
         <Link href="/dashboard"
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
-          style={{ background: 'hsl(var(--foreground))', color: 'hsl(var(--border))' }}>
+          style={{ background: 'hsl(25, 20%, 22%)', color: 'hsl(36, 20%, 75%)' }}>
           <ArrowLeft size={13} />
           <span className="hidden sm:inline">Dashboard</span>
         </Link>

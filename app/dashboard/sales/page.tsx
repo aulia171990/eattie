@@ -25,7 +25,7 @@ const statusStyle: Record<string, { label: string; bg: string; text: string }> =
   completed: { label: 'Selesai',    bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
   pending:   { label: 'Pending',    bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
   cancelled: { label: 'Dibatalkan', bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
-  refunded:  { label: 'Refund',     bg: 'hsl(var(--info-bg))', text: 'hsl(var(--info))' },
+  refunded:  { label: 'Refund',     bg: 'hsl(210, 60%, 93%)', text: 'hsl(210, 60%, 35%)' },
 }
 
 export default async function SalesPage({
@@ -77,10 +77,10 @@ export default async function SalesPage({
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { label: 'Total Transaksi',  value: completed.length,          icon: <Receipt size={18} />,     bg: 'hsl(var(--info-bg))', ic: 'hsl(var(--info))', ownerOnly: false },
+          { label: 'Total Transaksi',  value: completed.length,          icon: <Receipt size={18} />,     bg: 'hsl(210,70%,93%)', ic: 'hsl(210,70%,40%)', ownerOnly: false },
           { label: 'Total Pendapatan', value: formatCurrency(totalRevenue), icon: <TrendingUp size={18} />,  bg: 'hsl(var(--primary-subtle))',  ic: 'hsl(var(--primary))',  ownerOnly: true },
-          { label: 'Rata-rata Order',  value: formatCurrency(avgOrder),    icon: <ShoppingCart size={18} />, bg: 'hsl(var(--success-bg))', ic: 'hsl(var(--success))', ownerOnly: true },
-          { label: 'Dibatalkan',       value: sales.filter((s) => s.status === 'cancelled').length, icon: <Ban size={18} />, bg: 'hsl(var(--danger-bg))', ic: 'hsl(var(--danger))', ownerOnly: false },
+          { label: 'Rata-rata Order',  value: formatCurrency(avgOrder),    icon: <ShoppingCart size={18} />, bg: 'hsl(142,50%,92%)', ic: 'hsl(142,60%,35%)', ownerOnly: true },
+          { label: 'Dibatalkan',       value: sales.filter((s) => s.status === 'cancelled').length, icon: <Ban size={18} />, bg: 'hsl(0,80%,95%)', ic: 'hsl(0,70%,48%)', ownerOnly: false },
         ].filter(s => !s.ownerOnly || isOwner).map((s) => (
           <div key={s.label} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
             <div className="flex items-center justify-between mb-2">
@@ -152,8 +152,8 @@ export default async function SalesPage({
                 {sales.map((sale) => {
                   const ss = statusStyle[sale.status] ?? {
                     label: sale.status,
-                    bg: 'hsl(var(--info-bg))',
-                    text: 'hsl(var(--info))',
+                    bg: 'hsl(210,10%,93%)',
+                    text: 'hsl(210,10%,40%)',
                   }
                   return (
                     <tr key={sale.id} className="border-t hover:bg-gray-50/50 transition-colors"
