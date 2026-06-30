@@ -13,7 +13,7 @@ export const BRANDING = {
   companyName: 'Eattie Bakery',
 
   /** Short name — used in navbar, sidebar, title */
-  shortName: 'Eattie',
+  shortName: 'eattie',
 
   /** Tagline */
   tagline: 'Roti & Kue Segar, Dipesan, Dibuat, Diantar',
@@ -27,7 +27,7 @@ export const BRANDING = {
   favicon: '/branding/favicon.ico',
 
   /** Emoji fallback — used until SVG logos are ready */
-  logoEmoji: '🍞',
+  logoEmoji: 'logo',
 
   /** Brand colors (mirrors CSS variables — for use in JS/TS) */
   colors: {
