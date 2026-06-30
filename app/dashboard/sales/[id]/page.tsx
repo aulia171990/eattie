@@ -22,13 +22,13 @@ export default async function SaleDetailPage({
   const statusStyle: Record<string, { label: string; bg: string; text: string }> = {
     completed: { label: 'Selesai',    bg: 'hsl(var(--success-bg))', text: 'hsl(var(--success))' },
     cancelled: { label: 'Dibatalkan', bg: 'hsl(var(--danger-bg))',   text: 'hsl(var(--danger))' },
-    refunded:  { label: 'Refund',     bg: 'hsl(210, 60%, 93%)', text: 'hsl(210, 60%, 35%)' },
+    refunded:  { label: 'Refund',     bg: 'hsl(var(--info-bg))', text: 'hsl(var(--info))' },
     pending:   { label: 'Pending',    bg: 'hsl(var(--primary-subtle))',  text: 'hsl(var(--primary-hover))' },
   }
   const ss = statusStyle[sale.status] ?? {
     label: sale.status,
-    bg: 'hsl(210,10%,93%)',
-    text: 'hsl(210,10%,40%)',
+    bg: 'hsl(var(--info-bg))',
+    text: 'hsl(var(--info))',
   }
 
   const paymentLabel: Record<string, string> = {

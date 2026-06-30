@@ -61,9 +61,9 @@ export default async function ProductionReportPage({
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {[
               { label: 'Total Batch',     value: data.totalBatches,                              color: 'hsl(var(--info))', bg: 'hsl(var(--info-bg))' },
-              { label: 'Total Diproduksi',value: `${formatNumber(data.totalProduced)} pcs`,       color: 'hsl(var(--success))', bg: 'hsl(142, 50%, 92%)' },
+              { label: 'Total Diproduksi',value: `${formatNumber(data.totalProduced)} pcs`,       color: 'hsl(var(--success))', bg: 'hsl(var(--success-bg))' },
               { label: 'Tingkat Sukses',  value: `${data.successRate.toFixed(1)}%`,               color: data.successRate >= 90 ? 'hsl(var(--success))' : 'hsl(var(--primary))', bg: 'hsl(var(--primary-subtle))' },
-              { label: 'Defect Rate',     value: `${data.defectRate.toFixed(1)}%`,                color: data.defectRate > 5  ? 'hsl(var(--danger))'     : 'hsl(var(--success))', bg: data.defectRate > 5 ? 'hsl(var(--danger-bg))' : 'hsl(142, 50%, 92%)' },
+              { label: 'Defect Rate',     value: `${data.defectRate.toFixed(1)}%`,                color: data.defectRate > 5  ? 'hsl(var(--danger))'     : 'hsl(var(--success))', bg: data.defectRate > 5 ? 'hsl(var(--danger-bg))' : 'hsl(var(--success-bg))' },
             ].map((s) => (
               <div key={s.label} className="bg-white rounded-xl border p-5"
                 style={{ borderColor: 'hsl(var(--border))' }}>

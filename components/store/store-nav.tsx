@@ -18,7 +18,7 @@ export function StoreNav() {
         background: 'rgba(255,255,255,0.92)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid hsl(36,25%,91%)',
+        borderBottom: '1px solid hsl(var(--surface-raised))',
       }}>
       <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
 
@@ -62,7 +62,7 @@ export function StoreNav() {
         <div className="flex items-center gap-2">
           <Link href="/store/track"
             className="md:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-colors hover:bg-orange-50"
-            style={{ color: 'hsl(25, 20%, 50%)' }}>
+            style={{ color: 'hsl(var(--text-muted))' }}>
             <MapPin size={17} />
           </Link>
 

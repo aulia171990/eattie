@@ -100,7 +100,7 @@ export function SaleDetailClient({ saleId, saleStatus, sale }: SaleDetailClientP
         ) : (
           <button onClick={() => setConfirmVoid(true)}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
-            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}>
+            style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}>
             <XCircle size={14} /> Void
           </button>
         )

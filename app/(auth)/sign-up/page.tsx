@@ -52,7 +52,7 @@ export default function SignUpPage() {
               </label>
               <input name={f.name} type={f.type} required placeholder={f.placeholder}
                 className="w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white' }}
+                style={{ borderColor: 'hsl(var(--border-strong))', background: 'white' }}
               />
             </div>
           ))}
@@ -63,7 +63,7 @@ export default function SignUpPage() {
             </label>
             <select name="role" required
               className="w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none"
-              style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white' }}>
+              style={{ borderColor: 'hsl(var(--border-strong))', background: 'white' }}>
               <option value="owner">Pemilik (Owner)</option>
               <option value="cashier">Kasir (Cashier)</option>
               <option value="baker">Baker</option>

@@ -178,7 +178,7 @@ export default async function IngredientDetailPage({
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
                     style={{
-                      background: isIn ? 'hsl(142, 50%, 92%)' : 'hsl(var(--danger-bg))',
+                      background: isIn ? 'hsl(var(--success-bg))' : 'hsl(var(--danger-bg))',
                       color: isIn ? 'hsl(var(--success))' : 'hsl(var(--danger))',
                     }}
                   >

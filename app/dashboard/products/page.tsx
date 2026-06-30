@@ -84,7 +84,7 @@ function ProductCard({ product }: { product: ProductCardType }) {
   return (
     <div className="bg-white rounded-xl border overflow-hidden hover:shadow-sm transition-all" style={{ borderColor: 'hsl(var(--border))' }}>
       {/* Gambar produk */}
-      <div className="relative w-full h-36" style={{ background: 'hsl(36, 50%, 96%)' }}>
+      <div className="relative w-full h-36" style={{ background: 'hsl(var(--text-muted))' }}>
         {p.image_url ? (
           <Image
             src={p.image_url}
