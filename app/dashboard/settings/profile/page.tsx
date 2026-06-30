@@ -44,7 +44,7 @@ export default async function ProfilePage() {
             <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>{user.email}</p>
             <span
               className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium mt-1"
-              style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
+              style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(var(--primary))' }}
             >
               {ROLE_LABELS.id[profile.role] ?? profile.role}
             </span>
@@ -55,7 +55,7 @@ export default async function ProfilePage() {
             <button
               type="submit"
               className="w-full py-2.5 rounded-lg text-sm font-medium border transition-all hover:bg-red-50"
-              style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}
+              style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
             >
               Keluar dari Akun
             </button>

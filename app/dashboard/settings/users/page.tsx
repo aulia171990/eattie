@@ -71,7 +71,7 @@ export default async function UsersPage() {
                 </td>
                 <td className="px-4 py-3">
                   <span className="text-xs px-2.5 py-0.5 rounded-full"
-                    style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}>
+                    style={{ background: 'hsl(32, 80%, 93%)', color: 'hsl(var(--primary))' }}>
                     {ROLE_LABELS.id[u.role] ?? u.role}
                   </span>
                 </td>

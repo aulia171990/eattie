@@ -65,7 +65,7 @@ export function EditCustomerForm({ customer }: { customer: Customer }) {
           type="submit"
           disabled={deletePending}
           className="w-full py-2.5 rounded-xl text-sm font-medium border disabled:opacity-60"
-          style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}
+          style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
           onClick={e => {
             if (!confirm(`Hapus data pelanggan "${customer.name}"? Riwayat order tetap ada tapi tidak lagi terhubung ke profil ini.`)) {
               e.preventDefault()

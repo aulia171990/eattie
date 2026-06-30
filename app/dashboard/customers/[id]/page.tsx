@@ -10,25 +10,25 @@ const TIER = {
   BRONZE: {
     label: 'Bronze',
     gradient: 'linear-gradient(135deg, #c8956a 0%, #e8b48a 100%)',
-    bg: 'hsl(var(--text-muted))', border: 'hsl(var(--text-muted))', color: 'hsl(var(--text-muted))',
+    bg: 'hsl(25, 40%, 95%)', border: 'hsl(25, 40%, 85%)', color: 'hsl(25, 55%, 35%)',
     icon: <Medal size={15} />, next: 'SILVER', threshold: 500000,
   },
   SILVER: {
     label: 'Silver',
     gradient: 'linear-gradient(135deg, #7a8fa6 0%, #a8bed4 100%)',
-    bg: 'hsl(var(--info-bg))', border: 'hsl(var(--info-bg))', color: 'hsl(var(--info))',
+    bg: 'hsl(210, 20%, 95%)', border: 'hsl(210, 20%, 82%)', color: 'hsl(210, 25%, 35%)',
     icon: <Award size={15} />, next: 'GOLD', threshold: 1500000,
   },
   GOLD: {
     label: 'Gold',
     gradient: 'linear-gradient(135deg, #c9960a 0%, #f0bf40 100%)',
-    bg: 'hsl(var(--primary-subtle))', border: 'hsl(var(--text-muted))', color: 'hsl(var(--text-muted))',
+    bg: 'hsl(45, 90%, 94%)', border: 'hsl(45, 80%, 75%)', color: 'hsl(40, 85%, 28%)',
     icon: <Star size={15} />, next: 'PLATINUM', threshold: 5000000,
   },
   PLATINUM: {
     label: 'Platinum',
     gradient: 'linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)',
-    bg: 'hsl(var(--tier-platinum-bg))', border: 'hsl(var(--tier-platinum-bg))', color: 'hsl(var(--tier-platinum))',
+    bg: 'hsl(270, 40%, 95%)', border: 'hsl(270, 40%, 80%)', color: 'hsl(270, 55%, 40%)',
     icon: <Crown size={15} />, next: null, threshold: 0,
   },
 } as const
@@ -36,13 +36,13 @@ const TIER = {
 type TierKey = keyof typeof TIER
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  NEW:             { label: 'Menunggu',   bg: 'hsl(var(--primary-subtle))',  color: 'hsl(var(--primary))' },
-  PAID:            { label: 'Dibayar',    bg: 'hsl(var(--info-bg))', color: 'hsl(var(--info))' },
-  IN_PRODUCTION:   { label: 'Produksi',   bg: 'hsl(var(--tier-platinum-bg))', color: 'hsl(var(--tier-platinum))' },
-  READY_FOR_PICKUP:{ label: 'Siap Ambil', bg: 'hsl(var(--success-bg))', color: 'hsl(var(--success))' },
-  DELIVERED:       { label: 'Dikirim',    bg: 'hsl(var(--info-bg))', color: 'hsl(var(--info))' },
-  COMPLETED:       { label: 'Selesai',    bg: 'hsl(var(--success-bg))', color: 'hsl(var(--success))' },
-  CANCELLED:       { label: 'Dibatalkan', bg: 'hsl(var(--danger-bg))',   color: 'hsl(var(--danger))' },
+  NEW:             { label: 'Menunggu',   bg: 'hsl(36,80%,92%)',  color: 'hsl(32,95%,35%)' },
+  PAID:            { label: 'Dibayar',    bg: 'hsl(210,70%,93%)', color: 'hsl(210,70%,35%)' },
+  IN_PRODUCTION:   { label: 'Produksi',   bg: 'hsl(270,50%,93%)', color: 'hsl(270,50%,35%)' },
+  READY_FOR_PICKUP:{ label: 'Siap Ambil', bg: 'hsl(142,50%,90%)', color: 'hsl(142,60%,28%)' },
+  DELIVERED:       { label: 'Dikirim',    bg: 'hsl(210,60%,90%)', color: 'hsl(210,60%,30%)' },
+  COMPLETED:       { label: 'Selesai',    bg: 'hsl(142,50%,90%)', color: 'hsl(142,60%,28%)' },
+  CANCELLED:       { label: 'Dibatalkan', bg: 'hsl(0,80%,95%)',   color: 'hsl(0,70%,40%)' },
 }
 
 export default async function CustomerDetailPage({
@@ -71,7 +71,7 @@ export default async function CustomerDetailPage({
       {/* Back */}
       <Link href="/dashboard/customers"
         className="inline-flex items-center gap-1.5 text-xs font-medium hover:opacity-70 transition-opacity"
-        style={{ color: 'hsl(var(--text-muted))' }}>
+        style={{ color: 'hsl(25, 30%, 40%)' }}>
         <ArrowLeft size={13} /> Semua Pelanggan
       </Link>
 

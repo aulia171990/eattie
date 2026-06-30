@@ -9,9 +9,9 @@ interface ProductionReportChartsProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  planned: 'hsl(var(--info))',
-  in_progress: 'hsl(var(--warning))',
-  completed: 'hsl(var(--success))',
+  planned: 'hsl(210, 60%, 55%)',
+  in_progress: 'hsl(32, 95%, 50%)',
+  completed: 'hsl(142, 60%, 45%)',
   cancelled: 'hsl(var(--danger))',
 }
 const STATUS_LABELS: Record<string, string> = {
@@ -22,7 +22,7 @@ export function ProductionReportCharts({ byProduct, statusBreakdown }: Productio
   const pieData = statusBreakdown.filter(s => s.count > 0).map(s => ({
     name: STATUS_LABELS[s.status] ?? s.status,
     value: s.count,
-    color: STATUS_COLORS[s.status] ?? 'hsl(var(--info))',
+    color: STATUS_COLORS[s.status] ?? 'hsl(210, 10%, 55%)',
   }))
 
   return (

@@ -197,7 +197,7 @@ export function StoreTracker({ searchParams }: StoreTrackerProps) {
                     </div>
                     <p className="flex-1 text-sm"
                       style={{
-                        color: isCurrent ? 'hsl(var(--foreground))' : isDone ? 'hsl(var(--text-muted))' : 'hsl(var(--text-muted))',
+                        color: isCurrent ? 'hsl(var(--foreground))' : isDone ? 'hsl(25, 15%, 40%)' : 'hsl(var(--text-muted))',
                         fontWeight: isCurrent ? '700' : '500',
                       }}>
                       {step.label}
@@ -268,7 +268,7 @@ export function StoreTracker({ searchParams }: StoreTrackerProps) {
                         className="transition-transform hover:scale-110">
                         <Star size={28}
                           fill={(reviewHover || reviewRating) >= star ? 'hsl(var(--primary))' : 'none'}
-                          style={{ color: (reviewHover || reviewRating) >= star ? 'hsl(var(--primary))' : 'hsl(var(--border-strong))' }} />
+                          style={{ color: (reviewHover || reviewRating) >= star ? 'hsl(var(--primary))' : 'hsl(36, 20%, 80%)' }} />
                       </button>
                     ))}
                   </div>

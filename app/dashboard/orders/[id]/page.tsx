@@ -6,13 +6,13 @@ import { notFound } from 'next/navigation'
 import { OrderActionButtons, MarkPaidButton } from '@/components/forms/order-action-buttons'
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  NEW:             { label: 'Menunggu',    bg: 'hsl(var(--primary-subtle))',  color: 'hsl(var(--primary))' },
-  PAID:            { label: 'Sudah Bayar', bg: 'hsl(var(--info-bg))', color: 'hsl(var(--info))' },
-  IN_PRODUCTION:   { label: 'Produksi',   bg: 'hsl(var(--tier-platinum-bg))', color: 'hsl(var(--tier-platinum))' },
-  READY_FOR_PICKUP:{ label: 'Siap Ambil', bg: 'hsl(var(--success-bg))', color: 'hsl(var(--success))' },
-  DELIVERED:       { label: 'Dikirim',    bg: 'hsl(var(--info-bg))', color: 'hsl(var(--info))' },
-  COMPLETED:       { label: 'Selesai',    bg: 'hsl(var(--success-bg))', color: 'hsl(var(--success))' },
-  CANCELLED:       { label: 'Dibatalkan', bg: 'hsl(var(--danger-bg))',   color: 'hsl(var(--danger))' },
+  NEW:             { label: 'Menunggu',    bg: 'hsl(36,80%,90%)',  color: 'hsl(32,95%,35%)' },
+  PAID:            { label: 'Sudah Bayar', bg: 'hsl(210,70%,93%)', color: 'hsl(210,70%,35%)' },
+  IN_PRODUCTION:   { label: 'Produksi',   bg: 'hsl(270,50%,93%)', color: 'hsl(270,50%,35%)' },
+  READY_FOR_PICKUP:{ label: 'Siap Ambil', bg: 'hsl(142,50%,90%)', color: 'hsl(142,60%,28%)' },
+  DELIVERED:       { label: 'Dikirim',    bg: 'hsl(210,60%,90%)', color: 'hsl(210,60%,30%)' },
+  COMPLETED:       { label: 'Selesai',    bg: 'hsl(142,50%,90%)', color: 'hsl(142,60%,28%)' },
+  CANCELLED:       { label: 'Dibatalkan', bg: 'hsl(0,80%,95%)',   color: 'hsl(0,70%,40%)' },
 }
 
 export default async function OrderDetailPage({
@@ -124,7 +124,7 @@ export default async function OrderDetailPage({
       {/* Sale link */}
       {order.sale_id && (
         <div className="p-3 rounded-xl text-sm"
-          style={{ background: 'hsl(var(--success-subtle))', color: 'hsl(var(--success))' }}>
+          style={{ background: 'hsl(var(--success-subtle))', color: 'hsl(142, 60%, 30%)' }}>
           ✓ Order sudah dikonfirmasi dan masuk sebagai sale.
         </div>
       )}

@@ -47,14 +47,14 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
         onClick={() => setOpen(o => !o)}>
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
-            style={{ background: 'hsl(var(--surface-raised))' }}>🎂</div>
+            style={{ background: 'hsl(36, 40%, 93%)' }}>🎂</div>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>
                 {req.customer_name}
               </span>
               <span className="font-mono text-[10px] px-2 py-0.5 rounded"
-                style={{ background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-muted))' }}>
+                style={{ background: 'hsl(36, 40%, 93%)', color: 'hsl(var(--text-muted))' }}>
                 {req.req_number}
               </span>
             </div>
@@ -77,7 +77,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
 
       {/* Expanded Detail */}
       {open && (
-        <div className="border-t px-5 py-5 space-y-5" style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }}>
+        <div className="border-t px-5 py-5 space-y-5" style={{ borderColor: 'hsl(36, 25%, 90%)', background: 'hsl(36, 40%, 98%)' }}>
           {/* Info Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
             <div className="space-y-3">
@@ -117,7 +117,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
                   <StickyNote size={14} className="mt-0.5 shrink-0" style={{ color: 'hsl(var(--primary))' }} />
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-wider mb-0.5" style={{ color: 'hsl(var(--text-muted))' }}>Catatan Khusus</p>
-                    <p className="text-xs leading-relaxed" style={{ color: 'hsl(var(--text-secondary))' }}>{req.special_notes}</p>
+                    <p className="text-xs leading-relaxed" style={{ color: 'hsl(25, 25%, 30%)' }}>{req.special_notes}</p>
                   </div>
                 </div>
               )}
@@ -130,7 +130,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={req.reference_image_url} alt="Referensi"
                         className="w-32 h-24 object-cover rounded-xl border hover:opacity-90 transition-opacity"
-                        style={{ borderColor: 'hsl(var(--border))' }} />
+                        style={{ borderColor: 'hsl(36, 25%, 85%)' }} />
                     </a>
                   </div>
                 </div>
@@ -147,7 +147,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
               </label>
               <select value={status} onChange={e => setStatus(e.target.value as CustomCakeStatus)}
                 className="w-full px-3 py-2 rounded-xl border text-sm outline-none"
-                style={{ borderColor: 'hsl(var(--border))', background: 'white' }}>
+                style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'white' }}>
                 {ALL_STATUSES.map(s => (
                   <option key={s} value={s}>{CUSTOM_CAKE_STATUS_LABEL[s]}</option>
                 ))}
@@ -162,13 +162,13 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
               <input type="number" value={price} onChange={e => setPrice(e.target.value)}
                 placeholder="Cth: 250000"
                 className="w-full px-3 py-2 rounded-xl border text-sm outline-none"
-                style={{ borderColor: 'hsl(var(--border))', background: 'white' }} />
+                style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'white' }} />
             </div>
 
             {/* Save Button */}
             <button onClick={handleSave} disabled={saving || !isDirty}
               className="px-5 py-2 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-50 flex items-center gap-2"
-              style={{ background: saved ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}>
+              style={{ background: saved ? 'hsl(142, 55%, 42%)' : 'hsl(var(--primary))' }}>
               {saving
                 ? <><Loader2 size={14} className="animate-spin" /> Menyimpan...</>
                 : saved
@@ -187,7 +187,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
               )}`}
                 target="_blank" rel="noopener noreferrer"
                 className="px-5 py-2 rounded-xl text-sm font-semibold border transition-all hover:bg-green-50 flex items-center gap-2"
-                style={{ borderColor: 'hsl(var(--success))', color: 'hsl(var(--success))' }}>
+                style={{ borderColor: 'hsl(142, 40%, 70%)', color: 'hsl(142, 55%, 35%)' }}>
                 💬 WA Customer
               </a>
             )}
@@ -235,7 +235,7 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
             style={{
               background: 'white',
               borderColor: filterStatus === s ? 'hsl(var(--primary))' : 'hsl(var(--border))',
-              boxShadow: filterStatus === s ? '0 0 0 2px hsl(var(--primary))' : 'none',
+              boxShadow: filterStatus === s ? '0 0 0 2px hsl(32, 90%, 44%)' : 'none',
             }}>
             <p className="text-2xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>
               {counts[s] ?? 0}
@@ -254,7 +254,7 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
           className="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
           style={filterStatus === 'all'
             ? { background: 'hsl(var(--primary))', color: 'white' }
-            : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(var(--border))' }}>
+            : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(36,25%,85%)' }}>
           Semua ({requests.length})
         </button>
         {ALL_STATUSES.map(s => (
@@ -262,7 +262,7 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
             className="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
             style={filterStatus === s
               ? { background: 'hsl(var(--primary))', color: 'white' }
-              : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(var(--border))' }}>
+              : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(36,25%,85%)' }}>
             {CUSTOM_CAKE_STATUS_LABEL[s]} {counts[s] ? `(${counts[s]})` : ''}
           </button>
         ))}
@@ -272,7 +272,7 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
       {filtered.length === 0 ? (
         <div className="py-20 text-center space-y-3">
           <div className="text-5xl">🎂</div>
-          <p className="font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
+          <p className="font-semibold" style={{ color: 'hsl(25, 25%, 40%)' }}>
             {filterStatus === 'all' ? 'Belum ada permintaan custom cake' : 'Tidak ada permintaan dengan status ini'}
           </p>
         </div>

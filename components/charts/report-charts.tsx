@@ -55,7 +55,7 @@ export function TransactionChart({ data, height = 180 }: TxnChartProps) {
         <XAxis dataKey={key} tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} />
         <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} allowDecimals={false} />
         <Tooltip contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
-        <Bar dataKey="transactions" name="Transaksi" fill="hsl(var(--info))" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="transactions" name="Transaksi" fill="hsl(210, 70%, 55%)" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )
@@ -78,9 +78,9 @@ export function PnlChart({ data, height = 240 }: PnlChartProps) {
         <Tooltip formatter={(v: number) => formatCurrency(v)}
           contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
-        <Bar dataKey="revenue" name="Pendapatan" fill="hsl(var(--warning))" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="expenses" name="Pengeluaran" fill="hsl(var(--danger))" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="profit" name="Laba Bersih" fill="hsl(var(--success))" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="revenue" name="Pendapatan" fill="hsl(32, 95%, 50%)" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="expenses" name="Pengeluaran" fill="hsl(0, 70%, 60%)" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="profit" name="Laba Bersih" fill="hsl(142, 60%, 45%)" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )
@@ -88,10 +88,10 @@ export function PnlChart({ data, height = 240 }: PnlChartProps) {
 
 // ─── Payment Method Pie ──────────────────────────────────────────
 const PIE_COLORS = [
-  'hsl(var(--success))',
-  'hsl(var(--info))',
-  'hsl(var(--tier-platinum))',
-  'hsl(var(--warning))',
+  'hsl(142, 60%, 45%)',
+  'hsl(210, 70%, 55%)',
+  'hsl(262, 60%, 55%)',
+  'hsl(32, 95%, 50%)',
 ]
 
 interface PaymentPieProps {
@@ -137,8 +137,8 @@ export function ProductionChart({ data, height = 220 }: ProductionChartProps) {
         <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: 'hsl(var(--text-muted))' }} axisLine={false} tickLine={false} width={90} />
         <Tooltip contentStyle={{ borderRadius: '10px', border: '1px solid hsl(var(--border))', fontSize: 12 }} />
         <Legend iconSize={10} wrapperStyle={{ fontSize: 12 }} />
-        <Bar dataKey="produced" name="Berhasil" fill="hsl(var(--success))" radius={[0, 4, 4, 0]} stackId="a" />
-        <Bar dataKey="defect" name="Defect" fill="hsl(var(--danger))" radius={[0, 4, 4, 0]} stackId="a" />
+        <Bar dataKey="produced" name="Berhasil" fill="hsl(142, 60%, 45%)" radius={[0, 4, 4, 0]} stackId="a" />
+        <Bar dataKey="defect" name="Defect" fill="hsl(0, 70%, 60%)" radius={[0, 4, 4, 0]} stackId="a" />
       </BarChart>
     </ResponsiveContainer>
   )

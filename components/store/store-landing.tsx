@@ -54,7 +54,7 @@ function ProductCard({ product }: { product: StoreProduct }) {
       {/* Info */}
       <div className="p-3 flex flex-col flex-1 gap-2">
         <div className="flex-1">
-          <p className="text-xs font-medium mb-0.5" style={{ color: 'hsl(var(--warning))' }}>
+          <p className="text-xs font-medium mb-0.5" style={{ color: 'hsl(32, 70%, 50%)' }}>
             {product.category ?? 'Produk'}
           </p>
           <p className="text-sm font-bold leading-snug line-clamp-2"
@@ -124,13 +124,13 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(175deg, hsl(var(--sidebar-bg)) 0%, hsl(25,25%,18%) 100%)' }}>
+        style={{ background: 'linear-gradient(175deg, hsl(25,30%,12%) 0%, hsl(25,25%,18%) 100%)' }}>
 
         {/* Decorative circles */}
         <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
-          style={{ background: 'hsl(var(--warning))', transform: 'translate(40%, -40%)' }} />
+          style={{ background: 'hsl(32,90%,55%)', transform: 'translate(40%, -40%)' }} />
         <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-5 pointer-events-none"
-          style={{ background: 'hsl(var(--text-muted))', transform: 'translate(-30%, 30%)' }} />
+          style={{ background: 'hsl(36,60%,70%)', transform: 'translate(-30%, 30%)' }} />
 
         <div className="max-w-5xl mx-auto px-4 pt-10 pb-0">
           <div className="flex flex-col lg:flex-row items-end gap-6 lg:gap-10">
@@ -138,7 +138,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
             {/* Text */}
             <div className="flex-1 space-y-4 pb-8 lg:pb-12">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest"
-                style={{ background: 'rgba(255,255,255,0.1)', color: 'hsl(var(--text-muted))' }}>
+                style={{ background: 'rgba(255,255,255,0.1)', color: 'hsl(36, 60%, 78%)' }}>
                 ✨ Artisanal Bakery
               </span>
 
@@ -154,7 +154,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               </h1>
 
               <p className="text-sm leading-relaxed max-w-sm"
-                style={{ color: 'hsl(var(--text-muted))' }}>
+                style={{ color: 'hsl(36, 20%, 65%)' }}>
                 Bahan premium, tanpa pengawet, langsung dari dapur kami ke tangan Anda.
               </p>
 
@@ -181,7 +181,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
                 ].map(s => (
                   <div key={s.label}>
                     <p className="text-base font-bold" style={{ color: 'white' }}>{s.val}</p>
-                    <p className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
+                    <p className="text-[10px]" style={{ color: 'hsl(36, 20%, 55%)' }}>{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -234,7 +234,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               { icon: '🎂', title: 'Custom Cake', desc: 'Desain sesuai keinginan' },
             ].map(f => (
               <div key={f.title} className="flex items-center gap-2.5 shrink-0 px-4 py-2.5 rounded-xl"
-                style={{ background: 'hsl(var(--surface-raised))', border: '1px solid hsl(var(--surface-raised))' }}>
+                style={{ background: 'hsl(var(--surface-raised))', border: '1px solid hsl(36,20%,92%)' }}>
                 <span className="text-xl">{f.icon}</span>
                 <div>
                   <p className="text-xs font-semibold whitespace-nowrap" style={{ color: 'hsl(var(--foreground))' }}>{f.title}</p>
@@ -318,7 +318,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
                 className="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all"
                 style={activeCategory === cat
                   ? { background: 'hsl(var(--primary))', color: 'white' }
-                  : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(var(--border))' }
+                  : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(36,20%,88%)' }
                 }>
                 {cat === 'all' ? '🧁 Semua' : `${CAT_EMOJI[cat] ?? '•'} ${cat}`}
               </button>
@@ -351,15 +351,15 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
         <div className="max-w-lg mx-auto px-4 text-center">
           <div className="flex justify-center gap-0.5 mb-3">
             {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} fill="hsl(var(--text-muted))" style={{ color: 'hsl(var(--text-muted))' }} />
+              <Star key={i} size={14} fill="hsl(36, 80%, 60%)" style={{ color: 'hsl(36, 80%, 60%)' }} />
             ))}
           </div>
           <p className="text-sm leading-relaxed italic mb-3"
-            style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--border-strong))' }}>
+            style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(36, 20%, 80%)' }}>
             "Kualitasnya luar biasa! Setiap kali pesan selalu tepat waktu dan rasanya tidak pernah mengecewakan.
             Eattie sudah jadi pilihan utama keluarga kami."
           </p>
-          <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
+          <p className="text-xs font-semibold" style={{ color: 'hsl(36, 50%, 60%)' }}>
             — Sari, Jakarta
           </p>
         </div>
@@ -378,14 +378,14 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               </div>
               <div>
                 <p className="text-xs font-semibold text-white">{itemCount} item</p>
-                <p className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>Tap untuk checkout</p>
+                <p className="text-[10px]" style={{ color: 'hsl(36, 20%, 55%)' }}>Tap untuk checkout</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
                 {formatCurrency(total)}
               </span>
-              <ChevronRight size={15} style={{ color: 'hsl(var(--text-muted))' }} />
+              <ChevronRight size={15} style={{ color: 'hsl(36, 20%, 55%)' }} />
             </div>
           </Link>
         </div>

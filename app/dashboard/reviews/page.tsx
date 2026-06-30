@@ -32,7 +32,7 @@ function StarRating({ rating }: { rating: number }) {
       {[1,2,3,4,5].map(s => (
         <Star key={s} size={12}
           fill={s <= rating ? 'hsl(var(--primary))' : 'none'}
-          style={{ color: s <= rating ? 'hsl(var(--primary))' : 'hsl(var(--border-strong))' }} />
+          style={{ color: s <= rating ? 'hsl(var(--primary))' : 'hsl(36, 20%, 80%)' }} />
       ))}
     </div>
   )
@@ -89,7 +89,7 @@ export default async function ReviewsPage() {
           {byStar.map(({ star, count, pct }) => (
             <div key={star} className="flex items-center gap-2">
               <span className="text-xs w-4 text-right" style={{ color: 'hsl(var(--text-muted))' }}>{star}</span>
-              <Star size={10} fill="hsl(var(--warning))" style={{ color: 'hsl(var(--primary))' }} />
+              <Star size={10} fill="hsl(36, 90%, 50%)" style={{ color: 'hsl(var(--primary))' }} />
               <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: 'hsl(var(--border))' }}>
                 <div className="h-full rounded-full" style={{ width: `${pct}%`, background: 'hsl(var(--primary))' }} />
               </div>
