@@ -31,9 +31,9 @@ export default function LoginPage() {
           <div>
             <h1 className="text-4xl font-bold text-white leading-tight">
               Kelola Toko Roti<br />
-              <span style={{ color: 'hsl(32, 95%, 60%)' }}>dengan Mudah</span>
+              <span style={{ color: 'hsl(var(--primary))' }}>dengan Mudah</span>
             </h1>
-            <p className="mt-4 text-lg" style={{ color: 'hsl(36, 20%, 65%)' }}>
+            <p className="mt-4 text-lg" style={{ color: 'hsl(var(--text-muted))' }}>
               Sistem manajemen lengkap untuk inventory, produksi, penjualan, dan laporan keuangan.
             </p>
           </div>
@@ -47,13 +47,13 @@ export default function LoginPage() {
               <div key={item.label} className="rounded-xl p-4" style={{ background: 'hsl(var(--sidebar-hover))' }}>
                 <div className="text-2xl mb-2">{item.emoji}</div>
                 <div className="text-white font-medium text-sm">{item.label}</div>
-                <div className="text-xs mt-1" style={{ color: 'hsl(36, 15%, 55%)' }}>{item.desc}</div>
+                <div className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>{item.desc}</div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="relative z-10 text-sm" style={{ color: 'hsl(36, 15%, 45%)' }}>
+        <div className="relative z-10 text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
           © 2025 Bakery Management System
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function LoginPage() {
               <input id="email" name="email" type="email" autoComplete="email" required
                 placeholder="nama@email.com"
                 className="w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white', color: 'hsl(var(--foreground))' }}
+                style={{ borderColor: 'hsl(var(--border-strong))', background: 'white', color: 'hsl(var(--foreground))' }}
               />
             </div>
 
@@ -102,7 +102,7 @@ export default function LoginPage() {
               <input id="password" name="password" type="password" autoComplete="current-password" required
                 placeholder="••••••••"
                 className="w-full px-3.5 py-2.5 rounded-lg border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 20%, 80%)', background: 'white', color: 'hsl(var(--foreground))' }}
+                style={{ borderColor: 'hsl(var(--border-strong))', background: 'white', color: 'hsl(var(--foreground))' }}
               />
             </div>
 

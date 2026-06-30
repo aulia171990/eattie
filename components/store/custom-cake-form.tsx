@@ -79,7 +79,7 @@ export function CustomCakeForm({ onClose }: Props) {
   }
 
   const inputCls = `w-full px-4 py-2.5 rounded-xl border text-sm outline-none transition-all focus:border-orange-400 focus:ring-2 focus:ring-orange-100`
-  const inputStyle = { borderColor: 'hsl(36, 25%, 82%)', background: 'hsl(36, 40%, 98%)' }
+  const inputStyle = { borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }
 
   if (step === 'success') {
     return (
@@ -116,13 +116,13 @@ export function CustomCakeForm({ onClose }: Props) {
           <h3 className="text-xl font-bold" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
             Pesan Custom Cake
           </h3>
-          <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 52%)' }}>
+          <p className="text-xs mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>
             Ceritakan kue impian Anda, kami akan menghubungi untuk konfirmasi harga.
           </p>
         </div>
         <button onClick={onClose}
           className="p-1.5 rounded-full hover:bg-orange-50 transition-colors"
-          style={{ color: 'hsl(25, 20%, 50%)' }}>
+          style={{ color: 'hsl(var(--text-muted))' }}>
           <X size={18} />
         </button>
       </div>
@@ -172,14 +172,14 @@ export function CustomCakeForm({ onClose }: Props) {
 
         <div className="space-y-1">
           <label className="text-xs font-semibold uppercase tracking-wide"
-            style={{ color: 'hsl(var(--text-secondary))' }}>Tema Warna <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(opsional)</span></label>
+            style={{ color: 'hsl(var(--text-secondary))' }}>Tema Warna <span className="font-normal normal-case" style={{ color: 'hsl(var(--border-strong))' }}>(opsional)</span></label>
           <input name="color_theme" type="text" placeholder="Contoh: Pastel pink, Gold, Navy blue"
             className={inputCls} style={inputStyle} />
         </div>
 
         <div className="space-y-1">
           <label className="text-xs font-semibold uppercase tracking-wide"
-            style={{ color: 'hsl(var(--text-secondary))' }}>Catatan Khusus <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(tulisan di kue, dll)</span></label>
+            style={{ color: 'hsl(var(--text-secondary))' }}>Catatan Khusus <span className="font-normal normal-case" style={{ color: 'hsl(var(--border-strong))' }}>(tulisan di kue, dll)</span></label>
           <textarea name="special_notes" rows={3}
             placeholder="Contoh: Tulisan 'Happy Birthday Budi', lilin angka 25, dekorasi mawar merah..."
             className={inputCls} style={{ ...inputStyle, resize: 'none' }} />
@@ -188,11 +188,11 @@ export function CustomCakeForm({ onClose }: Props) {
         {/* Image Upload */}
         <div className="space-y-2">
           <label className="text-xs font-semibold uppercase tracking-wide"
-            style={{ color: 'hsl(var(--text-secondary))' }}>Gambar Referensi <span className="font-normal normal-case" style={{ color: 'hsl(25,15%,60%)' }}>(opsional)</span></label>
+            style={{ color: 'hsl(var(--text-secondary))' }}>Gambar Referensi <span className="font-normal normal-case" style={{ color: 'hsl(var(--border-strong))' }}>(opsional)</span></label>
 
           {imagePreview ? (
             <div className="relative w-full aspect-video rounded-xl overflow-hidden border"
-              style={{ borderColor: 'hsl(36, 25%, 82%)' }}>
+              style={{ borderColor: 'hsl(var(--border))' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={imagePreview} alt="Referensi" className="w-full h-full object-cover" />
               {uploading && (
@@ -209,7 +209,7 @@ export function CustomCakeForm({ onClose }: Props) {
           ) : (
             <button type="button" onClick={() => fileRef.current?.click()}
               className="w-full py-8 rounded-xl border-2 border-dashed flex flex-col items-center gap-2 transition-colors hover:bg-orange-50"
-              style={{ borderColor: 'hsl(36, 30%, 80%)', color: 'hsl(var(--text-muted))' }}>
+              style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
               <Upload size={22} />
               <span className="text-xs">Klik untuk upload foto referensi</span>
               <span className="text-[10px]">JPG / PNG, maks. 2MB</span>
@@ -222,7 +222,7 @@ export function CustomCakeForm({ onClose }: Props) {
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose}
             className="flex-1 py-2.5 rounded-full text-sm font-semibold border transition-colors"
-            style={{ borderColor: 'hsl(36, 25%, 82%)', color: 'hsl(25, 25%, 40%)' }}>
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             Batal
           </button>
           <button type="submit" disabled={loading || uploading}

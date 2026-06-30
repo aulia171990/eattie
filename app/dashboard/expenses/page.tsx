@@ -35,7 +35,7 @@ export default async function ExpensesPage() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-xl border p-4 col-span-2 lg:col-span-1" style={{ borderColor: 'hsl(var(--border))' }}>
           <p className="text-xs font-medium" style={{ color: 'hsl(var(--text-muted))' }}>Total Pengeluaran</p>
-          <p className="text-2xl font-bold mt-1" style={{ color: 'hsl(0, 70%, 48%)' }}>{formatCurrency(total)}</p>
+          <p className="text-2xl font-bold mt-1" style={{ color: 'hsl(var(--danger))' }}>{formatCurrency(total)}</p>
         </div>
         {byCat.slice(0, 3).map((c) => (
           <div key={c.value} className="bg-white rounded-xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
@@ -71,7 +71,7 @@ export default async function ExpensesPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm" style={{ color: 'hsl(var(--foreground))' }}>{exp.description}</td>
-                    <td className="px-4 py-3 text-sm font-semibold" style={{ color: 'hsl(0, 70%, 48%)' }}>{formatCurrency(exp.amount)}</td>
+                    <td className="px-4 py-3 text-sm font-semibold" style={{ color: 'hsl(var(--danger))' }}>{formatCurrency(exp.amount)}</td>
                     <td className="px-4 py-3 text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{exp.profiles?.full_name ?? '—'}</td>
                     <td className="px-4 py-3">
                       <Link href={`/dashboard/expenses/${exp.id}/edit`}
@@ -86,7 +86,7 @@ export default async function ExpensesPage() {
           </table>
           <div className="px-4 py-3 border-t text-xs flex justify-between" style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
             <span>{expenses.length} pengeluaran</span>
-            <span className="font-medium" style={{ color: 'hsl(0, 70%, 48%)' }}>Total: {formatCurrency(total)}</span>
+            <span className="font-medium" style={{ color: 'hsl(var(--danger))' }}>Total: {formatCurrency(total)}</span>
           </div>
         </div>
       )}
