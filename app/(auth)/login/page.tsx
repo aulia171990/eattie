@@ -23,7 +23,7 @@ export default function LoginPage() {
 
         <div className="relative z-10 flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl"
-            style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
+            style={{ background: BRANDING.colors.primary }}>{BRANDING.logo}</div>
           <span className="text-white text-xl font-semibold">Bakery Manager</span>
         </div>
 
