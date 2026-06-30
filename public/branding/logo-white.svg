@@ -1,13 +1,40 @@
-<svg width="180" height="32" viewBox="0 0 180 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Icon Base (Deep Magenta) -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 250">
+  <rect width="700" height="250" fill="#FCF8F3" />
+  
+  <g transform="translate(10, 5) scale(0.75)">
+    <ellipse cx="150" cy="40" rx="8" ry="18" fill="#C79A3B" />
+    <ellipse cx="125" cy="65" rx="8" ry="16" fill="#C79A3B" transform="rotate(-35 125 65)" />
+    <ellipse cx="175" cy="65" rx="8" ry="16" fill="#C79A3B" transform="rotate(35 175 65)" />
+    <ellipse cx="110" cy="95" rx="8" ry="16" fill="#C79A3B" transform="rotate(-55 110 95)" />
+    <ellipse cx="190" cy="95" rx="8" ry="16" fill="#C79A3B" transform="rotate(55 190 95)" />
+    <path d="M 100 170 C 90 130 120 120 130 125 C 140 100 160 100 170 125 C 180 120 210 130 200 170 C 210 210 170 220 150 220 C 130 220 90 210 100 170 Z" fill="none" stroke="#7A2438" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="150" y="200" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-weight="900" font-size="100" text-anchor="middle" fill="#7A2438">e</text>
+    <path d="M 85 250 Q 150 290 215 250" stroke="#C79A3B" stroke-width="10" fill="none" stroke-linecap="round"/>
+    <circle cx="150" cy="267" r="7" fill="#C79A3B" />
+  </g>
+  
+  <line x1="260" y1="50" x2="260" y2="200" stroke="#C79A3B" stroke-width="2"/>
+  
+  <text x="475" y="125" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-weight="900" font-size="95" text-anchor="middle" fill="#7A2438" letter-spacing="-3">eattie</text>
+  <line x1="335" y1="170" x2="405" y2="170" stroke="#C79A3B" stroke-width="3" stroke-linecap="round"/>
+  <text x="475" y="185" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-weight="700" font-size="36" text-anchor="middle" fill="#C79A3B">by Ana</text>
+  <line x1="545" y1="170" x2="615" y2="170" stroke="#C79A3B" stroke-width="3" stroke-linecap="round"/>
+  <text x="475" y="225" font-family="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" font-weight="700" font-size="12" text-anchor="middle" fill="#7A2438" letter-spacing="4">FRESH • PREMIUM • MADE WITH LOVE</text>
+</svg>
+
+
+
+
+<!--<svg width="180" height="32" viewBox="0 0 180 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon Base (Deep Magenta)
   <rect width="32" height="32" rx="8" fill="#B01E4B"/>
   
-  <!-- Icon Initial "e" (White) -->
+  <!-- Icon Initial "e" (White)
   <text x="16" y="22" font-family="Georgia, serif" font-size="20" font-weight="900" text-anchor="middle" fill="white">e</text>
   
-  <!-- Wordmark: eattie (White) -->
+  <!-- Wordmark: eattie (White)
   <text x="42" y="22" font-family="Georgia, serif" font-size="20" font-weight="900" fill="white" letter-spacing="-0.5">eattie</text>
   
-  <!-- Wordmark: by ana (Soft Pink) -->
+  <!-- Wordmark: by ana (Soft Pink)
   <text x="108" y="22" font-family="'Brush Script MT', cursive" font-size="16" font-style="italic" fill="#FFA6C9">by ana</text>
-</svg>
+</svg>--!>
