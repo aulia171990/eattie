@@ -15,7 +15,7 @@ export function CustomCakeButton() {
         style={{
           borderColor: 'hsl(var(--primary))',
           color: 'hsl(var(--primary))',
-          background: 'hsl(36, 80%, 97%)',
+          background: 'hsl(var(--primary-subtle))',
         }}>
         <Sparkles size={15} />
         Pesan Custom Cake

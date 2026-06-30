@@ -12,7 +12,7 @@ const QRIS_IMAGE_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? ''
 const PAYMENT_METHODS = [
   { id: 'cash', label: 'Tunai', icon: <Banknote size={20} />, color: 'hsl(var(--success))' },
   { id: 'qris', label: 'QRIS', icon: <Smartphone size={20} />, color: 'hsl(var(--info))' },
-  { id: 'transfer', label: 'Transfer', icon: <Building2 size={20} />, color: 'hsl(262, 60%, 50%)' },
+  { id: 'transfer', label: 'Transfer', icon: <Building2 size={20} />, color: 'hsl(var(--tier-platinum))' },
   { id: 'card', label: 'Kartu', icon: <CreditCard size={20} />, color: 'hsl(var(--primary))' },
 ] as const
 
@@ -114,8 +114,8 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
           <div className="p-6 text-center" style={{ background: 'hsl(var(--success-subtle))' }}>
             <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl mx-auto mb-3 text-white" style={{ background: 'hsl(var(--success))' }}>✓</div>
-            <h2 className="text-lg font-bold" style={{ color: 'hsl(142, 60%, 25%)' }}>Pembayaran Berhasil!</h2>
-            <p className="text-sm mt-1" style={{ color: 'hsl(142, 30%, 40%)' }}>{completedSale.invoiceNumber}</p>
+            <h2 className="text-lg font-bold" style={{ color: 'hsl(var(--success))' }}>Pembayaran Berhasil!</h2>
+            <p className="text-sm mt-1" style={{ color: 'hsl(var(--success))' }}>{completedSale.invoiceNumber}</p>
           </div>
           <div className="p-5 space-y-3">
             {[
@@ -175,7 +175,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
         </div>
 
         <div className="p-5 space-y-5 overflow-y-auto flex-1">
-          <div className="rounded-xl p-4 text-center" style={{ background: 'hsl(36, 80%, 95%)' }}>
+          <div className="rounded-xl p-4 text-center" style={{ background: 'hsl(var(--primary-subtle))' }}>
             <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>Total Pembayaran</p>
             <p className="text-3xl font-bold mt-1" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(total)}</p>
             <p className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>
@@ -208,7 +208,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
                 <>
                   <div
                     className="rounded-2xl p-3 border-2"
-                    style={{ borderColor: 'hsl(210, 70%, 75%)', background: 'hsl(210, 60%, 97%)' }}
+                    style={{ borderColor: 'hsl(var(--info-bg))', background: 'hsl(var(--info-bg))' }}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -230,7 +230,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
                   </div>
                   <div
                     className="w-full flex items-start gap-2 p-3 rounded-xl text-xs"
-                    style={{ background: 'hsl(210, 60%, 95%)', color: 'hsl(210, 50%, 35%)' }}
+                    style={{ background: 'hsl(var(--info-bg))', color: 'hsl(var(--info))' }}
                   >
                     <span>ℹ️</span>
                     <span>Setelah customer scan dan bayar, klik <strong>Konfirmasi</strong> di bawah.</span>
@@ -239,7 +239,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
               ) : (
                 <div
                   className="w-full p-5 rounded-2xl border-2 border-dashed text-center space-y-2"
-                  style={{ borderColor: 'hsl(210, 40%, 75%)', background: 'hsl(210, 30%, 97%)' }}
+                  style={{ borderColor: 'hsl(var(--info-bg))', background: 'hsl(var(--info-bg))' }}
                 >
                   <p className="text-3xl">📷</p>
                   <p className="text-sm font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
@@ -292,7 +292,7 @@ export function PaymentDialog({ onClose, onSuccess }: PaymentDialogProps) {
 
           <button onClick={handleConfirm} disabled={loading || !canPay}
             className="w-full py-3.5 rounded-xl font-bold text-white text-base disabled:opacity-50"
-            style={{ background: canPay ? 'hsl(var(--success))' : 'hsl(210, 10%, 70%)' }}>
+            style={{ background: canPay ? 'hsl(var(--success))' : 'hsl(var(--info))' }}>
             {loading ? 'Memproses...' : method === 'cash' && !canPay
               ? `Kurang ${formatCurrency(total - paymentAmount)}`
               : `✓ Konfirmasi ${PAYMENT_METHODS.find(p => p.id === method)?.label}`}

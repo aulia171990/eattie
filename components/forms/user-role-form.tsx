@@ -70,8 +70,8 @@ export function ToggleActiveForm({ isActive, action }: ToggleActiveFormProps) {
         disabled={isPending}
         className="text-xs px-3 py-1.5 rounded-lg font-medium border disabled:opacity-60 transition-all"
         style={isActive
-          ? { borderColor: 'hsl(0,70%,80%)', color: 'hsl(0,70%,45%)', background: 'white' }
-          : { borderColor: 'hsl(142,50%,70%)', color: 'hsl(142,60%,35%)', background: 'white' }
+          ? { borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))', background: 'white' }
+          : { borderColor: 'hsl(var(--success))', color: 'hsl(var(--success))', background: 'white' }
         }
         onClick={e => {
           const msg = isActive
