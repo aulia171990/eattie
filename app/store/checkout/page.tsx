@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-sm" style={{ color: 'hsl(25,15%,55%)' }}>Memuat...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-sm" style={{ color: 'hsl(var(--text-muted))' }}>Memuat...</div>}>
       <StoreCheckout />
     </Suspense>
   )

@@ -12,10 +12,10 @@ interface OrderActionButtonsProps {
 }
 
 const NEXT_STATUS: Record<string, { value: string; label: string; color: string }> = {
-  NEW:             { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(270,50%,45%)' },
-  PAID:            { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(270,50%,45%)' },
-  IN_PRODUCTION:   { value: 'READY_FOR_PICKUP',label: 'Tandai Siap Diambil', color: 'hsl(142,60%,40%)' },
-  READY_FOR_PICKUP:{ value: 'COMPLETED',       label: 'Selesai / Terambil',  color: 'hsl(142,60%,35%)' },
+  NEW:             { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(var(--tier-platinum))' },
+  PAID:            { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(var(--tier-platinum))' },
+  IN_PRODUCTION:   { value: 'READY_FOR_PICKUP',label: 'Tandai Siap Diambil', color: 'hsl(var(--success))' },
+  READY_FOR_PICKUP:{ value: 'COMPLETED',       label: 'Selesai / Terambil',  color: 'hsl(var(--success))' },
 }
 
 export function OrderActionButtons({
@@ -86,7 +86,7 @@ export function OrderActionButtons({
             type="submit"
             disabled={anyPending}
             className="w-full py-2.5 rounded-xl text-sm font-medium border disabled:opacity-60"
-            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
+            style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}
             onClick={e => {
               if (!confirm('Batalkan pesanan ini?\nTindakan ini tidak dapat dibatalkan.')) e.preventDefault()
             }}

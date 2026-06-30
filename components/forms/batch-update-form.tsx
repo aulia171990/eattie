@@ -124,7 +124,7 @@ export function BatchUpdateForm({
               handleCancel(fd)
             }}
             className="px-4 py-2.5 rounded-lg text-sm font-medium border disabled:opacity-60"
-            style={{ borderColor: 'hsl(0, 70%, 80%)', color: 'hsl(var(--danger))' }}
+            style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}
           >
             Batalkan
           </button>

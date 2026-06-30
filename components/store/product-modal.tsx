@@ -78,7 +78,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
         >
           {/* Drag handle (mobile) */}
           <div className="lg:hidden flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(36,20%,85%)' }} />
+            <div className="w-10 h-1 rounded-full" style={{ background: 'hsl(var(--border))' }} />
           </div>
 
           {/* Close button */}

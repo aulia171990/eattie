@@ -80,7 +80,7 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
           {/* Preview area */}
           <div
             className="relative w-28 h-28 rounded-xl border-2 border-dashed flex items-center justify-center overflow-hidden shrink-0 cursor-pointer"
-            style={{ borderColor: preview ? 'transparent' : 'hsl(36, 30%, 78%)', background: preview ? 'transparent' : 'hsl(36, 50%, 97%)' }}
+            style={{ borderColor: preview ? 'transparent' : 'hsl(var(--border))', background: preview ? 'transparent' : 'hsl(var(--text-muted))' }}
             onClick={() => !uploading && fileRef.current?.click()}
           >
             {preview ? (
@@ -96,7 +96,7 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
               </>
             ) : (
               <div className="flex flex-col items-center gap-1">
-                <ImagePlus size={22} style={{ color: 'hsl(32, 60%, 55%)' }} />
+                <ImagePlus size={22} style={{ color: 'hsl(var(--text-muted))' }} />
                 <span className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>Klik upload</span>
               </div>
             )}
@@ -203,7 +203,7 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
       <div className="bg-white rounded-xl border p-6 space-y-4" style={{ borderColor: 'hsl(var(--border))' }}>
         <h2 className="font-semibold text-sm" style={{ color: 'hsl(var(--foreground))' }}>Portal Online</h2>
 
-        <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'hsl(142, 30%, 97%)' }}>
+        <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'hsl(var(--success-bg))' }}>
           <div>
             <p className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>Tersedia di Toko Online</p>
             <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Tampil di eattie.vercel.app/store</p>

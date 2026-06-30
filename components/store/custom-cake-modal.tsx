@@ -91,12 +91,12 @@ export function CustomCakeModal({ open, onClose }: Props) {
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b"
-          style={{ borderColor: 'hsl(36, 25%, 90%)', background: 'hsl(36, 40%, 97%)' }}>
+          style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--text-muted))' }}>
           <div>
             <h3 className="font-bold text-lg" style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
               Pesan Custom Cake
             </h3>
-            <p className="text-xs mt-0.5" style={{ color: 'hsl(25, 15%, 52%)' }}>
+            <p className="text-xs mt-0.5" style={{ color: 'hsl(var(--text-muted))' }}>
               Kami akan menghubungi Anda dengan penawaran harga
             </p>
           </div>
@@ -111,7 +111,7 @@ export function CustomCakeModal({ open, onClose }: Props) {
         {success ? (
           <div className="px-6 py-10 text-center space-y-4">
             <div className="flex justify-center">
-              <CheckCircle size={52} style={{ color: 'hsl(142, 55%, 42%)' }} />
+              <CheckCircle size={52} style={{ color: 'hsl(var(--success))' }} />
             </div>
             <div>
               <p className="font-bold text-lg" style={{ color: 'hsl(var(--foreground))' }}>
@@ -145,44 +145,44 @@ export function CustomCakeModal({ open, onClose }: Props) {
             {/* Name & Phone */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+                <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Nama Lengkap <span className="text-red-500">*</span>
                 </label>
                 <input name="customer_name" required placeholder="Nama Anda"
                   className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none transition-all"
-                  style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'hsl(36, 40%, 98%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }} />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+                <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                   No. WhatsApp <span className="text-red-500">*</span>
                 </label>
                 <input name="customer_phone" required placeholder="08xxxxxxxxxx" type="tel"
                   className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none transition-all"
-                  style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'hsl(36, 40%, 98%)' }} />
+                  style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }} />
               </div>
             </div>
 
             {/* Size & Flavor */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+                <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Ukuran <span className="text-red-500">*</span>
                 </label>
                 <select name="size" required
                   className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-                  style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'hsl(36, 40%, 98%)' }}>
+                  style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }}>
                   {SIZES.map(s => (
                     <option key={s.value} value={s.value}>{s.label}</option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+                <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                   Rasa <span className="text-red-500">*</span>
                 </label>
                 <select name="flavor" required
                   className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-                  style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'hsl(36, 40%, 98%)' }}>
+                  style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }}>
                   {FLAVORS.map(f => (
                     <option key={f.value} value={f.value}>{f.label}</option>
                   ))}
@@ -192,35 +192,35 @@ export function CustomCakeModal({ open, onClose }: Props) {
 
             {/* Color Theme */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+              <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Tema Warna <span className="text-xs font-normal" style={{ color: 'hsl(var(--text-muted))' }}>(opsional)</span>
               </label>
               <input name="color_theme" placeholder="Cth: Pastel Pink, Emas & Putih, Biru Navy..."
                 className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
-                style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'hsl(36, 40%, 98%)' }} />
+                style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }} />
             </div>
 
             {/* Special Notes */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+              <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Catatan Khusus <span className="text-xs font-normal" style={{ color: 'hsl(var(--text-muted))' }}>(tulisan di kue, lilin, dll)</span>
               </label>
               <textarea name="special_notes" rows={3}
                 placeholder="Cth: Tulisan 'Happy Birthday Riska', tambahkan lilin angka 25, mau dikemas fancy..."
                 className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none resize-none"
-                style={{ borderColor: 'hsl(36, 25%, 85%)', background: 'hsl(36, 40%, 98%)' }} />
+                style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }} />
             </div>
 
             {/* Reference Image */}
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold" style={{ color: 'hsl(25, 25%, 35%)' }}>
+              <label className="text-xs font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>
                 Gambar Referensi <span className="text-xs font-normal" style={{ color: 'hsl(var(--text-muted))' }}>(opsional)</span>
               </label>
               <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
 
               {imagePreview ? (
                 <div className="relative rounded-xl overflow-hidden border aspect-video"
-                  style={{ borderColor: 'hsl(36, 25%, 85%)' }}>
+                  style={{ borderColor: 'hsl(var(--border))' }}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                   {uploading && (
@@ -237,7 +237,7 @@ export function CustomCakeModal({ open, onClose }: Props) {
               ) : (
                 <button type="button" onClick={() => fileRef.current?.click()}
                   className="w-full border-2 border-dashed rounded-xl py-6 flex flex-col items-center gap-2 transition-colors hover:bg-orange-50"
-                  style={{ borderColor: 'hsl(36, 30%, 82%)', color: 'hsl(var(--text-muted))' }}>
+                  style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
                   <Upload size={20} />
                   <span className="text-xs">Klik untuk upload gambar referensi</span>
                   <span className="text-[10px]">Maks. 2MB</span>
@@ -246,10 +246,10 @@ export function CustomCakeModal({ open, onClose }: Props) {
             </div>
 
             {/* Submit */}
-            <div className="flex gap-3 pt-2 border-t" style={{ borderColor: 'hsl(36, 25%, 90%)' }}>
+            <div className="flex gap-3 pt-2 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
               <button type="button" onClick={handleClose}
                 className="flex-1 py-2.5 rounded-full text-sm font-semibold border transition-colors hover:bg-gray-50"
-                style={{ borderColor: 'hsl(36, 25%, 85%)', color: 'hsl(var(--text-muted))' }}>
+                style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
                 Batal
               </button>
               <button type="submit" disabled={isPending || uploading}
