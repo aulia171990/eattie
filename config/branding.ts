@@ -10,7 +10,7 @@
 
 export const BRANDING = {
   /** Full company name */
-  companyName: 'Eattie Bakery',
+  companyName: 'eattie by Ana',
 
   /** Short name — used in navbar, sidebar, title */
   shortName: 'eattie',
