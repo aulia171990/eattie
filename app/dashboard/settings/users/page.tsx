@@ -43,8 +43,8 @@ export default async function UsersPage() {
         Hanya owner yang dapat mengubah role pengguna.
       </p>
 
-      <div className="bg-white rounded-xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
-        <table className="w-full">
+      <div className="bg-white rounded-xl border overflow-x-auto" style={{ borderColor: 'hsl(var(--border))' }}>
+        <table className="w-full min-w-[640px]">
           <thead>
             <tr style={{ background: 'hsl(var(--surface-raised))' }}>
               {['Nama', 'Role', 'Status', 'Ubah Role', 'Aksi'].map((h) => (
