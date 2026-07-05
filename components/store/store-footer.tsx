@@ -15,7 +15,8 @@ export function StoreFooter() {
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
                 style={{ background: 'hsl(var(--primary))' }}>
-                {BRANDING.logoEmoji}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={BRANDING.logoIconWhite} alt={BRANDING.shortName} width={28} height={28} style={{ objectFit: 'contain' }} />
               </div>
               <span style={{
                 fontFamily: '"Playfair Display", serif',

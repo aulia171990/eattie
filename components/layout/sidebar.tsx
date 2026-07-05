@@ -63,7 +63,10 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
     <aside className="sidebar flex flex-col h-full w-64 shrink-0">
       <div className="flex items-center justify-between px-5 py-5 border-b" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0" style={{ background: BRANDING.colors.primary }}>{BRANDING.logoEmoji}</div>
+          <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={BRANDING.logoIconWhite} alt={BRANDING.shortName} width={36} height={36} style={{ objectFit: 'contain' }} />
+            </div>
           <div className="min-w-0">
             <div className="text-white font-semibold text-sm truncate">Bakery Manager</div>
             <div className="text-xs truncate" style={{ color: 'hsl(var(--text-muted))' }}>Manajemen Toko Roti</div>

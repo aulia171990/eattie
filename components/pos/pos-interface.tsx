@@ -1,5 +1,7 @@
 'use client'
 
+import { BRANDING } from '@/config/branding'
+
 import { useState, useEffect } from 'react'
 import { ProductGrid } from './product-grid'
 import { Cart } from './cart'
@@ -105,7 +107,10 @@ export function PosInterface({ products, cashierName }: PosInterfaceProps) {
       >
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-base shrink-0"
-            style={{ background: 'hsl(var(--primary))' }}>🍞</div>
+            style={{ background: 'hsl(var(--primary))' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={BRANDING.logoIconWhite} alt={BRANDING.shortName} width={24} height={24} style={{ objectFit: 'contain' }} />
+            </div>
           <span className="text-white font-semibold text-sm">Bakery POS</span>
         </div>
 
