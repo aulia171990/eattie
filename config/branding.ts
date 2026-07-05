@@ -1,35 +1,33 @@
 /**
  * EATTIE DESIGN SYSTEM — BRANDING
- *
  * Single source of truth for brand identity.
- * Update this file to rebrand the entire application.
- *
- * Phase 1: Architecture prepared.
- * Phase 2: Replace emoji logos with SVG files in public/branding/
  */
 
 export const BRANDING = {
-  /** Full company name */
   companyName: 'Eattie Bakery',
+  shortName:   'Eattie',
+  tagline:     'Roti & Kue Segar, Dipesan, Dibuat, Diantar',
 
-  /** Short name — used in navbar, sidebar, title */
-  shortName: 'Eattie',
+  /** Square icon — use on light backgrounds (has maroon bg) */
+  logoIcon:      '/branding/logo-icon.svg',
 
-  /** Tagline */
-  tagline: 'Roti & Kue Segar, Dipesan, Dibuat, Diantar',
+  /** Square icon transparent — use on dark/colored backgrounds */
+  logoIconWhite: '/branding/logo-icon-white.svg',
 
-  /** Logo paths — replace emoji with SVG in Phase 2 */
-  logo:       '/branding/logo.svg',
-  logoWhite:  '/branding/logo-white.svg',
-  logoIcon:   '/branding/logo-icon.svg',
+  /** Square icon transparent — use on white/light backgrounds */
+  logoIconDark:  '/branding/logo-icon-dark.svg',
 
-  /** Favicon */
+  /** Horizontal wordmark — use where horizontal space available */
+  logo:          '/branding/logo.svg',
+
+  /** Horizontal wordmark with light background */
+  logoWhite:     '/branding/logo-white.svg',
+
   favicon: '/branding/favicon.ico',
 
-  /** Emoji fallback — used until SVG logos are ready */
+  /** Emoji fallback — used in receipt template (print) */
   logoEmoji: '🍞',
 
-  /** Brand colors (mirrors CSS variables — for use in JS/TS) */
   colors: {
     primary:    'hsl(32, 95%, 44%)',
     primaryHex: '#c87e1a',
@@ -37,10 +35,7 @@ export const BRANDING = {
     darkHex:    '#221409',
   },
 
-  /** Contact */
-  whatsapp: process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? '',
-
-  /** Social */
+  whatsapp:  process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? '',
   instagram: '',
   facebook:  '',
 } as const
