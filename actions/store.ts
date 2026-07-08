@@ -107,6 +107,64 @@ export async function submitOrder(
 ): Promise<{ success?: boolean; error?: string; orderNumber?: string }> {
   const supabase = await createClient()
 
+  if (!input.items || input.items.length === 0) {
+    return { error: 'Keranjang kosong' }
+  }
+
+  // ── SECURITY: never trust client-supplied prices ──────────────
+  // Re-fetch each product's real price from the database and
+  // recompute subtotal/total server-side. Ignore whatever price
+  // the client sent — it can be tampered with via devtools/direct
+  // API calls.
+  const productIds = input.items.map(i => i.product_id)
+  const { data: products, error: productsErr } = await supabase
+    .from('products')
+    .select('id, name, selling_price, is_available_online, is_active')
+    .in('id', productIds)
+
+  if (productsErr) return { error: 'Gagal memverifikasi produk' }
+
+  const productMap = new Map((products ?? []).map(p => [p.id, p]))
+
+  let verifiedSubtotal = 0
+  const verifiedItems: {
+    product_id: string
+    product_name: string
+    quantity: number
+    unit_price: number
+    subtotal: number
+    notes: string | null
+  }[] = []
+
+  for (const item of input.items) {
+    const product = productMap.get(item.product_id)
+
+    if (!product) {
+      return { error: `Produk tidak ditemukan: ${item.product_name}` }
+    }
+    if (!product.is_active || !product.is_available_online) {
+      return { error: `Produk sedang tidak tersedia: ${product.name}` }
+    }
+    if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+      return { error: `Jumlah tidak valid untuk: ${product.name}` }
+    }
+
+    const realUnitPrice = product.selling_price
+    const realSubtotal = realUnitPrice * item.quantity
+
+    verifiedSubtotal += realSubtotal
+    verifiedItems.push({
+      product_id:   product.id,
+      product_name: product.name,
+      quantity:     item.quantity,
+      unit_price:   realUnitPrice,
+      subtotal:     realSubtotal,
+      notes:        item.notes ?? null,
+    })
+  }
+
+  const verifiedTotal = verifiedSubtotal // adjust here if discounts/fees are added later
+
   // Generate order number via RPC
   const { data: orderNum, error: numErr } = await supabase
     .rpc('generate_order_number')
@@ -124,9 +182,9 @@ export async function submitOrder(
       pickup_time:      input.pickup_time ?? null,
       delivery_address: input.delivery_address ?? null,
       notes:            input.notes ?? null,
-      subtotal:         input.subtotal,
+      subtotal:         verifiedSubtotal,
       discount_amount:  0,
-      total_amount:     input.total_amount,
+      total_amount:     verifiedTotal,
       status:           'NEW',
       payment_status:   'UNPAID',
       payment_proof_url: input.payment_proof_url ?? null,
@@ -137,15 +195,10 @@ export async function submitOrder(
 
   if (orderErr) return { error: orderErr.message }
 
-  // Insert order items
-  const items = input.items.map((item) => ({
-    order_id:     order.id,
-    product_id:   item.product_id,
-    product_name: item.product_name,
-    quantity:     item.quantity,
-    unit_price:   item.unit_price,
-    subtotal:     item.subtotal,
-    notes:        item.notes ?? null,
+  // Insert order items — using server-verified prices, not client input
+  const items = verifiedItems.map((item) => ({
+    order_id: order.id,
+    ...item,
   }))
 
   const { error: itemsErr } = await supabase.from('order_items').insert(items)
