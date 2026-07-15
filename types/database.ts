@@ -63,6 +63,7 @@ export type Database = {
           customer_phone: string
           rating: number
           comment: string | null
+          is_featured: boolean
           created_at: string
         }
         Insert: {
@@ -73,10 +74,12 @@ export type Database = {
           customer_phone: string
           rating: number
           comment?: string | null
+          is_featured?: boolean
           created_at?: string
         }
         Update: {
           comment?: string | null
+          is_featured?: boolean
         }
         Relationships: [
           {

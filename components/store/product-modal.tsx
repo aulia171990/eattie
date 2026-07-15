@@ -5,6 +5,7 @@ import { useStoreCart } from '@/contexts/store-cart-context'
 import type { StoreProduct } from '@/actions/store'
 import { formatCurrency } from '@/lib/utils'
 import { X, Plus, Minus, ShoppingBag, Check } from 'lucide-react'
+import Image from 'next/image'
 
 const CAT_EMOJI: Record<string, string> = {
   Kue: '🎂', Roti: '🍞', Pastri: '🥐', Cookies: '🍪',
@@ -96,8 +97,8 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
             {/* Product image */}
             <div className="relative w-full" style={{ aspectRatio: '4/3', background: 'hsl(var(--surface-raised))' }}>
               {product.image_url
-                ? <img src={product.image_url} alt={product.name}
-                    className="w-full h-full object-cover" />
+                ? <Image src={product.image_url} alt={product.name}
+                    fill sizes="100vw" className="w-full h-full object-cover" />
                 : <div className="w-full h-full flex items-center justify-center text-8xl select-none">
                     {CAT_EMOJI[product.category ?? ''] ?? '🧁'}
                   </div>

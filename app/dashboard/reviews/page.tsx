@@ -3,12 +3,14 @@ import { redirect } from 'next/navigation'
 import { PageHeader } from '@/components/shared/page-header'
 import { formatDateTime } from '@/lib/utils'
 import { Star } from 'lucide-react'
+import { toggleReviewFeatured } from '@/actions/reviews'
 
 async function getReviews() {
   const supabase = await createClient()
   const { data: reviews } = await supabase
     .from('product_reviews')
     .select('*')
+    .order('is_featured', { ascending: false })
     .order('created_at', { ascending: false })
     .limit(100)
 
@@ -145,6 +147,23 @@ export default async function ReviewsPage() {
                   {r.comment}
                 </p>
               )}
+
+              {/* Curation toggle — controls what shows on the public store */}
+              <form action={toggleReviewFeatured} className="pt-1">
+                <input type="hidden" name="id" value={r.id} />
+                <input type="hidden" name="featured" value={(!r.is_featured).toString()} />
+                <button
+                  type="submit"
+                  className="w-full py-2 rounded-xl text-xs font-semibold transition-all"
+                  style={{
+                    background: r.is_featured ? 'hsl(var(--success))' : 'white',
+                    color: r.is_featured ? 'white' : 'hsl(var(--text-secondary))',
+                    border: r.is_featured ? 'none' : '1px solid hsl(var(--border))',
+                  }}
+                >
+                  {r.is_featured ? '★ Tampil di Toko' : 'Tampilkan di Toko'}
+                </button>
+              </form>
             </div>
           ))}
         </div>

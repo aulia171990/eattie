@@ -1,11 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useStoreCart } from '@/contexts/store-cart-context'
 import type { StoreProduct } from '@/actions/store'
 import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
-import { ShoppingBag, Star, Search, ChevronRight, Plus, Check, Truck, Leaf, Palette, X } from 'lucide-react'
+import Image from 'next/image'
+import { ShoppingBag, Star, Search, ChevronRight, Plus, Check, Truck, Leaf, Palette, X, ArrowUpDown } from 'lucide-react'
 import { CustomCakeModal } from '@/components/store/custom-cake-modal'
 import { ProductModal } from '@/components/store/product-modal'
 
@@ -36,8 +37,10 @@ function ProductCard({ product }: { product: StoreProduct }) {
       <div className="relative w-full overflow-hidden shrink-0"
         style={{ aspectRatio: '4/3', background: 'hsl(var(--surface-raised))' }}>
         {product.image_url
-          ? <img src={product.image_url} alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+          ? <Image src={product.image_url} alt={product.name}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105" />
           : <div className="w-full h-full flex items-center justify-center text-5xl select-none">
               {CAT_EMOJI[product.category ?? ''] ?? '🧁'}
             </div>
@@ -71,7 +74,7 @@ function ProductCard({ product }: { product: StoreProduct }) {
           {qty > 0 ? (
             <div className="flex items-center gap-1">
               <button
-                onClick={() => updateQty(product.id, qty - 1)}
+                onClick={(e) => { e.stopPropagation(); updateQty(product.id, qty - 1) }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition-colors"
                 style={{ background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-secondary))' }}>
                 −
@@ -79,14 +82,14 @@ function ProductCard({ product }: { product: StoreProduct }) {
               <span className="w-5 text-center text-sm font-bold"
                 style={{ color: 'hsl(var(--foreground))' }}>{qty}</span>
               <button
-                onClick={handleAdd}
+                onClick={(e) => { e.stopPropagation(); handleAdd() }}
                 className="w-7 h-7 rounded-lg flex items-center justify-center font-bold transition-colors"
                 style={{ background: 'hsl(var(--primary))', color: 'white' }}>
                 +
               </button>
             </div>
           ) : (
-            <button onClick={handleAdd}
+            <button onClick={(e) => { e.stopPropagation(); handleAdd() }}
               className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition-all"
               style={{ background: added ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}>
               {added ? <Check size={11} /> : <Plus size={11} />}
@@ -100,12 +103,24 @@ function ProductCard({ product }: { product: StoreProduct }) {
 }
 
 /* ─── Main ────────────────────────────────────────────────── */
-export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreProduct[]; allProducts: StoreProduct[] }) {
+export function StoreLanding({ bestsellers, allProducts, reviews }: {
+  bestsellers: StoreProduct[]
+  allProducts: StoreProduct[]
+  reviews: { id: string; customer_name: string; rating: number; comment: string | null }[]
+}) {
   const { itemCount, total } = useStoreCart()
+  const [searchInput, setSearchInput] = useState('')
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('all')
+  const [sort, setSort] = useState<'featured' | 'price_asc' | 'price_desc' | 'name_asc'>('featured')
   const [showCustomCake, setShowCustomCake] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(null)
+
+  // Debounce search input (200ms) so filtering doesn't run on every keystroke
+  useEffect(() => {
+    const t = setTimeout(() => setSearch(searchInput), 200)
+    return () => clearTimeout(t)
+  }, [searchInput])
 
   const categories = ['all', ...Array.from(new Set(allProducts.map(p => p.category).filter(Boolean)))] as string[]
   const filtered = allProducts.filter(p => {
@@ -115,6 +130,15 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
       || (p.online_description ?? p.description ?? '').toLowerCase().includes(q)
     const matchCat = activeCategory === 'all' || p.category === activeCategory
     return matchSearch && matchCat
+  })
+
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sort) {
+      case 'price_asc':  return a.selling_price - b.selling_price
+      case 'price_desc': return b.selling_price - a.selling_price
+      case 'name_asc':   return a.name.localeCompare(b.name)
+      default:           return 0 // featured = urutan asli (online_sort_order)
+    }
   })
 
   const hero = bestsellers[0] ?? allProducts[0]
@@ -193,7 +217,9 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
                 <div className="rounded-t-2xl overflow-hidden"
                   style={{ aspectRatio: '1/1', background: 'hsl(var(--border))' }}>
                   {hero.image_url
-                    ? <img src={hero.image_url} alt={hero.name} className="w-full h-full object-cover" />
+                    ? <Image src={hero.image_url} alt={hero.name} fill priority
+                        sizes="(max-width: 1024px) 100vw, 18rem"
+                        className="w-full h-full object-cover" />
                     : <div className="w-full h-full flex items-center justify-center text-7xl">
                         {CAT_EMOJI[hero.category ?? ''] ?? '🧁'}
                       </div>
@@ -282,33 +308,57 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
               Semua Produk
             </h2>
             <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
-              {filtered.length} produk
+              {sorted.length} produk
             </span>
           </div>
 
-          {/* Search */}
-          <div className="relative">
-            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2"
-              style={{ color: 'hsl(var(--text-muted))' }} />
-            <input
-              type="text"
-              placeholder="Cari produk..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-10 py-3 rounded-2xl border text-sm outline-none"
-              style={{
-                borderColor: 'hsl(var(--border))',
-                background: 'white',
-                color: 'hsl(var(--foreground))',
-              }}
-            />
-            {search && (
-              <button onClick={() => setSearch('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full"
-                style={{ color: 'hsl(var(--text-muted))' }}>
-                <X size={14} />
-              </button>
-            )}
+          {/* Search + Sort */}
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2"
+                style={{ color: 'hsl(var(--text-muted))' }} />
+              <input
+                type="text"
+                placeholder="Cari produk..."
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                className="w-full pl-9 pr-10 py-3 rounded-2xl border text-sm outline-none"
+                style={{
+                  borderColor: 'hsl(var(--border))',
+                  background: 'white',
+                  color: 'hsl(var(--foreground))',
+                }}
+              />
+              {searchInput && (
+                <button onClick={() => setSearchInput('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full"
+                  style={{ color: 'hsl(var(--text-muted))' }}>
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Sort dropdown */}
+            <div className="relative shrink-0">
+              <select
+                value={sort}
+                onChange={e => setSort(e.target.value as typeof sort)}
+                className="h-full pl-3 pr-8 py-3 rounded-2xl border text-sm font-medium outline-none appearance-none cursor-pointer"
+                style={{
+                  borderColor: 'hsl(var(--border))',
+                  background: 'white',
+                  color: 'hsl(var(--foreground))',
+                }}
+                aria-label="Urutkan produk"
+              >
+                <option value="featured">Unggulan</option>
+                <option value="price_asc">Harga Termurah</option>
+                <option value="price_desc">Harga Termahal</option>
+                <option value="name_asc">Nama A-Z</option>
+              </select>
+              <ArrowUpDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+                style={{ color: 'hsl(var(--text-muted))' }} />
+            </div>
           </div>
 
           {/* Category pills */}
@@ -326,7 +376,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
           </div>
 
           {/* Grid */}
-          {filtered.length === 0 ? (
+          {sorted.length === 0 ? (
             <div className="py-16 text-center space-y-2">
               <p className="text-3xl">🔍</p>
               <p className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
@@ -335,7 +385,7 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {filtered.map(p => (
+              {sorted.map(p => (
                 <div key={p.id} onClick={() => setSelectedProduct(p)} className="cursor-pointer">
                   <ProductCard product={p} />
                 </div>
@@ -345,29 +395,49 @@ export function StoreLanding({ bestsellers, allProducts }: { bestsellers: StoreP
         </div>
       </section>
 
-      {/* ── TESTIMONIAL ──────────────────────────────────── */}
-      <section className="py-10 mx-4 mb-4 rounded-3xl"
-        style={{ background: 'hsl(var(--foreground))' }}>
-        <div className="max-w-lg mx-auto px-4 text-center">
-          <div className="flex justify-center gap-0.5 mb-3">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} size={14} fill="hsl(var(--text-muted))" style={{ color: 'hsl(var(--text-muted))' }} />
-            ))}
+      {/* ── TESTIMONIAL (curated by admin via is_featured) ── */}
+      {reviews.length > 0 && (
+        <section className="py-10 mx-4 mb-4 rounded-3xl"
+          style={{ background: 'hsl(var(--foreground))' }}>
+          <div className="max-w-3xl mx-auto px-4">
+            <div className="flex justify-center gap-0.5 mb-5">
+              <Star size={14} fill="hsl(var(--warning))" style={{ color: 'hsl(var(--warning))' }} />
+              <span className="text-xs font-semibold ml-2" style={{ color: 'hsl(var(--text-muted))' }}>
+                Ulasan Pelanggan
+              </span>
+            </div>
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {reviews.map(rv => (
+                <div key={rv.id} className="text-left p-4 rounded-2xl"
+                  style={{ background: 'rgba(255,255,255,0.05)' }}>
+                  <div className="flex gap-0.5 mb-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={11}
+                        fill={i < rv.rating ? 'hsl(var(--warning))' : 'none'}
+                        style={{ color: i < rv.rating ? 'hsl(var(--warning))' : 'hsl(var(--text-muted))' }} />
+                    ))}
+                  </div>
+                  {rv.comment && (
+                    <p className="text-sm leading-relaxed"
+                      style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--border-strong))' }}>
+                      "{rv.comment}"
+                    </p>
+                  )}
+                  <p className="text-xs font-semibold mt-2" style={{ color: 'hsl(var(--text-muted))' }}>
+                    — {rv.customer_name}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="text-sm leading-relaxed italic mb-3"
-            style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--border-strong))' }}>
-            "Kualitasnya luar biasa! Setiap kali pesan selalu tepat waktu dan rasanya tidak pernah mengecewakan.
-            Eattie sudah jadi pilihan utama keluarga kami."
-          </p>
-          <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>
-            — Sari, Jakarta
-          </p>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ── FLOATING CART ────────────────────────────────── */}
       {itemCount > 0 && (
-        <div className="fixed bottom-4 inset-x-4 max-w-sm mx-auto z-50">
+        <div className="fixed bottom-4 inset-x-4 max-w-sm mx-auto z-50"
+          key={itemCount}
+          style={{ animation: 'cart-bump 300ms var(--ease-spring)' }}>
           <Link href="/store/checkout"
             className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl shadow-xl transition-all active:scale-[0.98]"
             style={{ background: 'hsl(var(--foreground))' }}>
