@@ -52,6 +52,65 @@ export async function createSale(
     return { error: 'Keranjang kosong' }
   }
 
+  // ── SECURITY: never trust client-supplied prices ──────────────
+  // Re-fetch each product's real selling_price from the database and
+  // recompute subtotal server-side. Ignore whatever price the client
+  // sent (cart-context.tsx) — it can be tampered with via devtools.
+  const productIds = input.items.map((i) => i.product_id)
+  const { data: products, error: productsErr } = await supabase
+    .from('products')
+    .select('id, name, selling_price, is_active')
+    .in('id', productIds)
+
+  if (productsErr) return { error: 'Gagal memverifikasi produk' }
+
+  const productMap = new Map((products ?? []).map((p) => [p.id, p]))
+
+  let verifiedSubtotal = 0
+  const verifiedItems: {
+    product_id: string
+    product_name: string
+    quantity: number
+    unit_price: number
+    subtotal: number
+    batch_id?: string
+  }[] = []
+
+  for (const item of input.items) {
+    const product = productMap.get(item.product_id)
+    if (!product) {
+      return { error: `Produk tidak ditemukan: ${item.product_name}` }
+    }
+    if (!product.is_active) {
+      return { error: `Produk sedang tidak tersedia: ${product.name}` }
+    }
+    if (!Number.isInteger(item.quantity) || item.quantity <= 0) {
+      return { error: `Jumlah tidak valid untuk: ${product.name}` }
+    }
+
+    const realUnitPrice = product.selling_price
+    const realSubtotal = realUnitPrice * item.quantity
+
+    verifiedSubtotal += realSubtotal
+    verifiedItems.push({
+      product_id: product.id,
+      product_name: product.name,
+      quantity: item.quantity,
+      unit_price: realUnitPrice,
+      subtotal: realSubtotal,
+      batch_id: item.batch_id || undefined,
+    })
+  }
+
+  // Discount/tax are cashier policy (legit), but recompute total from
+  // the verified subtotal so a tampered subtotal can't inflate the sale.
+  const verifiedTotal = Math.max(
+    0,
+    verifiedSubtotal - (input.discount_amount ?? 0) + (input.tax_amount ?? 0)
+  )
+  // Recompute change so it's always consistent with the verified total.
+  const verifiedChange = Math.max(0, (input.payment_amount ?? 0) - verifiedTotal)
+
   // Generate invoice number via DB function — race-condition safe
   const { data: invData, error: invErr } = await supabase
     .rpc('generate_invoice_number')
@@ -61,14 +120,14 @@ export async function createSale(
   // Step 1: Insert sale as 'pending' — RPC will mark it 'completed'
   const salePayload: TablesInsert<'sales'> = {
     invoice_number: invoiceNumber,
-    subtotal: input.subtotal,
+    subtotal: verifiedSubtotal,
     discount_amount: input.discount_amount,
     discount_percent: input.discount_percent,
     tax_amount: input.tax_amount,
-    total: input.total,
+    total: verifiedTotal,
     payment_method: input.payment_method,
     payment_amount: input.payment_amount,
-    change_amount: input.change_amount,
+    change_amount: verifiedChange,
     customer_name: input.customer_name || null,
     notes: input.notes || null,
     status: 'pending',    // RPC will set to 'completed'
@@ -82,8 +141,8 @@ export async function createSale(
     .single()
   if (saleErr) return { error: saleErr.message }
 
-  // Step 2: Insert sale items
-  const itemRows: TablesInsert<'sale_items'>[] = input.items.map((item) => ({
+  // Step 2: Insert sale items — using server-verified prices, not client input
+  const itemRows: TablesInsert<'sale_items'>[] = verifiedItems.map((item) => ({
     sale_id: sale.id,
     product_id: item.product_id,
     batch_id: item.batch_id || null,

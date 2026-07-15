@@ -52,6 +52,32 @@ export async function getStoreProducts(): Promise<StoreProduct[]> {
   return (data ?? []) as StoreProduct[]
 }
 
+export interface FeaturedReview {
+  id: string
+  customer_name: string
+  rating: number
+  comment: string | null
+  created_at: string
+}
+
+/**
+ * Public storefront testimonials, curated by an admin via is_featured.
+ * Uses the anon/public client path — RLS only exposes is_featured = true.
+ * Returns [] when none are curated or the table is unreachable.
+ */
+export async function getFeaturedReviews(limit = 3): Promise<FeaturedReview[]> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('product_reviews')
+    .select('id, customer_name, rating, comment, created_at')
+    .eq('is_featured', true)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error || !data) return []
+  return data as FeaturedReview[]
+}
+
 export async function getBestsellerProducts(limit = 6): Promise<StoreProduct[]> {
   const supabase = await createClient()
 

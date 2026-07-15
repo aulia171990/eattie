@@ -59,6 +59,8 @@ export default async function FinancialReportPage({ searchParams }: { searchPara
               {[
                 { label: 'Pendapatan Kotor', value: data.revenue, color: 'hsl(var(--success))', indent: false },
                 { label: 'Total Diskon', value: -data.totalDiscount, color: 'hsl(var(--danger))', indent: true },
+                { label: 'HPP (COGS)', value: -data.totalCogs, color: 'hsl(var(--danger))', indent: true },
+                { label: 'Laba Kotor', value: data.grossProfit, color: data.grossProfit >= 0 ? 'hsl(var(--success))' : 'hsl(var(--danger))', indent: true },
                 { label: 'Total Pengeluaran', value: -data.totalExpenses, color: 'hsl(var(--danger))', indent: false },
                 { label: 'Laba Bersih', value: data.netProfit, color: data.netProfit >= 0 ? 'hsl(var(--success))' : 'hsl(var(--danger))', indent: false, bold: true },
               ].map(row => (

@@ -89,6 +89,7 @@ export interface MonthlyTrend {
 export interface FinancialReportData {
   revenue: number
   totalDiscount: number
+  totalCogs: number
   totalExpenses: number
   grossProfit: number
   netProfit: number
@@ -252,7 +253,7 @@ export async function getFinancialReport(
 
   const { data: sales } = await supabase
     .from('sales')
-    .select('total, discount_amount, created_at')
+    .select('total, discount_amount, created_at, cogs')
     .eq('status', 'completed')
     .gte('created_at', `${dateFrom}T00:00:00`)
     .lte('created_at', `${dateTo}T23:59:59`)
@@ -265,8 +266,10 @@ export async function getFinancialReport(
 
   const revenue = (sales ?? []).reduce((s, t) => s + t.total, 0)
   const totalDiscount = (sales ?? []).reduce((s, t) => s + (t.discount_amount ?? 0), 0)
+  const totalCogs = (sales ?? []).reduce((s, t) => s + (t.cogs ?? 0), 0)
+  const grossProfit = revenue - totalCogs
   const totalExpenses = (expenses ?? []).reduce((s, e) => s + e.amount, 0)
-  const netProfit = revenue - totalExpenses
+  const netProfit = grossProfit - totalExpenses
   const profitMargin = revenue > 0 ? (netProfit / revenue) * 100 : 0
 
   const expByCat: Record<string, number> = {}
@@ -300,8 +303,9 @@ export async function getFinancialReport(
   return {
     revenue,
     totalDiscount,
+    totalCogs,
     totalExpenses,
-    grossProfit: revenue,
+    grossProfit,
     netProfit,
     profitMargin,
     expenseBreakdown,
