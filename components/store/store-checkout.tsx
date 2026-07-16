@@ -7,7 +7,6 @@ import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
 import { ArrowLeft, Upload, Check, ChevronRight, Loader, ExternalLink, Plus, Minus, Trash2 } from 'lucide-react'
 
-const QRIS_URL = process.env.NEXT_PUBLIC_QRIS_IMAGE_URL ?? ''
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? ''
 
 type Step = 'cart' | 'form' | 'payment' | 'success'
@@ -361,10 +360,14 @@ export default function StoreCheckout() {
       {/* QRIS */}
       <div className="bg-white rounded-2xl border p-4 flex flex-col items-center gap-3" style={{ borderColor: 'hsl(var(--border))' }}>
         <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>SCAN QRIS UNTUK MEMBAYAR</p>
-        {QRIS_URL ? (
+        {total > 0 ? (
           <div className="rounded-2xl p-3 border-2" style={{ borderColor: 'hsl(var(--info-bg))', background: 'hsl(var(--info-bg))' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={QRIS_URL} alt="QRIS" className="w-48 h-48 object-contain" />
+            <img
+              src={`/api/qris?amount=${total}`}
+              alt="QRIS"
+              className="w-48 h-48 object-contain"
+            />
           </div>
         ) : (
           <div className="w-48 h-48 rounded-2xl border-2 border-dashed flex items-center justify-center text-center p-4"
@@ -372,6 +375,9 @@ export default function StoreCheckout() {
             <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>QR belum dikonfigurasi</p>
           </div>
         )}
+        <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
+          Nominal <span className="font-semibold">{formatCurrency(total)}</span> sudah otomatis terisi — tinggal scan &amp; bayar
+        </p>
         <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
           GoPay · OVO · Dana · ShopeePay · semua m-banking
         </p>
