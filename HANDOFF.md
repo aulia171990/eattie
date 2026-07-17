@@ -1,6 +1,6 @@
 # Eattie — Dokumen Handoff (Terverifikasi)
 
-> **Catatan penting:** Dokumen ini mencakup semua modul yang sudah dicek langsung ke kodenya. Setiap modul diverifikasi secara manual — bukan ditulis dari nama file saja.
+> **Catatan penting:** Dokumen ini hanya mencakup modul yang sudah saya cek langsung ke kodenya. Modul lain (Customer/CRM, Push Notification) belum masuk — akan ditambahkan bertahap setelah masing-masing dicek, bukan ditebak dari nama file.
 
 ---
 
@@ -69,6 +69,16 @@
 | `app/dashboard/customers/page.tsx` | Daftar pelanggan dengan tier (Bronze/Silver/Gold/Platinum) |
 | `app/dashboard/customers/[id]/page.tsx` | Detail satu pelanggan + riwayat order |
 | `components/customers/add-customer-button.tsx` | Tombol + form tambah pelanggan manual |
+
+### Push Notification
+
+| File | Fungsi singkat |
+|---|---|
+| `lib/push/vapid.ts` | Konfigurasi VAPID key (identitas pengirim push notification) |
+| `lib/push/send-new-order-push.ts` | Kirim notifikasi ke semua device owner saat ada order baru |
+| `app/api/push/subscribe/route.ts` | Endpoint saat owner "Allow" notifikasi di browser — simpan device ke database |
+| `app/api/push/unsubscribe/route.ts` | Endpoint berhenti terima notifikasi |
+| `app/api/push/vapid-public-key/route.ts` | Kasih public key ke browser (untuk proses subscribe) |
 
 ### Customer / CRM
 
@@ -234,29 +244,39 @@ Hasil dikirim ke komponen chart untuk ditampilkan
 
 **Catatan penting:** Laporan ini **READ-ONLY** — tidak ada aksi tulis di modul ini. Kalau laporan tampilkan angka salah, cari bug di data sumber (tabel `sales`, `expenses`, `production_batches`), bukan di kode laporan itu sendiri. Satu pengecualian: **Bug 9** di bawah.
 
-### 2g. Customer / CRM
+### 2g. Push Notification
 
 ```
-Owner buka /dashboard/customers
+Owner buka dashboard pertama kali → browser minta izin notifikasi
         ↓
-getCustomers() — query tabel `customers`, filter/search/pagination
+Owner klik "Allow" → browser generate subscription (endpoint + keys)
         ↓
-Data ditampilkan dengan badge tier (Bronze/Silver/Gold/Platinum)
-        │  Tier dihitung dari total belanja pelanggan
+Data subscription dikirim ke /api/push/subscribe
+        │  Endpoint ini cek: harus login DAN harus role owner
         ↓
-Owner bisa: tambah manual (createCustomer), edit (updateCustomer),
-            hapus (deleteCustomer), atau lihat riwayat order
-            (getCustomerOrderHistory berdasarkan nomor HP)
+Subscription disimpan ke tabel push_subscriptions
+        ↓
+─────────────── nanti, saat ada order baru ───────────────
+        ↓
+submitOrder() berhasil (actions/store.ts)
+        ↓
+sendNewOrderPushNotification() dipanggil (fire-and-forget,
+        │  tidak menunggu/blocking proses checkout customer)
+        ↓
+Sistem pakai SERVICE ROLE (admin client) untuk baca SEMUA
+        │  subscription owner yang aktif — ini sengaja bypass RLS,
+        │  karena RLS normal cuma izinkan lihat subscription sendiri
+        ↓
+Kirim push notification ke semua device owner yang subscribe
+        ↓
+Kalau ada device yang subscription-nya sudah tidak valid
+        (404/410 dari browser push service) → otomatis dihapus
+        dari database, tidak perlu manual cleanup
 ```
 
-**Setiap fungsi tulis (`create`/`update`/`delete`) selalu cek dulu lewat helper `requireOwner()`** — ambil user login, cek role di tabel `profiles` langsung (bukan cuma andalkan RLS). Ini pola yang baik, konsisten di semua fungsi.
+**Modul ini paling bersih dari semua yang sudah diverifikasi** — tidak ada bug ditemukan. Auth check konsisten, RLS aktif dan benar (satu policy, tidak ada konflik), private key (`VAPID_PRIVATE_KEY`) tidak pakai prefix `NEXT_PUBLIC_` jadi tidak pernah ter-expose ke browser, dan kegagalan kirim push tidak akan mengganggu proses checkout utama.
 
-### 2g. Customer / CRM
-
-```
-Owner buka /dashboard/customers
-        ↓
-getCustomers() dipanggil — cek dulu requireOwner()
+### 2h. Customer / CRM
         │  ⚠️ Proteksi di sini HANYA di kode TypeScript (cek role
         │     lewat tabel profiles). TIDAK ADA RLS policy khusus
         │     untuk tabel customers (lihat Bug 10).
@@ -381,118 +401,25 @@ Halaman dashboard ditampilkan
 - Tambah policy di Supabase SQL Editor, contoh: hanya owner boleh SELECT/INSERT/UPDATE/DELETE
 - Simpan sebagai file migration baru di `supabase/migrations/`, jangan cuma dijalankan manual — supaya tercatat (lihat prinsip di Bug 4)
 
+### Ubah isi/tampilan notifikasi push
+- Edit `lib/push/send-new-order-push.ts` — bagian `pushPayload` (title, body, url)
+- **Jangan ubah cara `createAdminClient()` dipakai** — itu sengaja pakai service role supaya bisa kirim ke semua owner sekaligus
+- Aman tambah notifikasi baru (misal: "stok menipis") — bikin fungsi baru dengan pola yang sama, jangan taruh logic berbeda di fungsi yang sudah ada
+
+### Tambah jenis event baru yang perlu push notification
+1. Buat fungsi baru di `lib/push/` (contoh: `sendLowStockPush()`), copy pola dari `send-new-order-push.ts`
+2. Panggil fungsi itu dari action yang relevan, pakai `void functionName(...)` biar fire-and-forget (tidak blocking)
+3. **Jangan lupa** bungkus dengan try-catch di dalam fungsi push-nya sendiri — jangan biarkan error push notification bikin proses utama (misal submit order) gagal
+
 ### Hubungkan CRM dengan toko online (Bug 11 — kalau mau perbaiki gap fungsional ini)
 - Tambah logic di `submitOrder()` (`actions/store.ts`): setelah order berhasil dibuat, cek apakah `customer_phone` sudah ada di tabel `customers` — kalau belum, auto-insert; kalau sudah, bisa update statistik (total belanja, dll)
 - **Hati-hati:** ini nambah kompleksitas ke fungsi `submitOrder()` yang sudah punya validasi harga (Bug 1 fix) — jangan sampai logic baru ini mengganggu validasi yang sudah ada
 
 ---
 
-## 6. Yang BELUM masuk dokumen ini (menyusul)
+## Yang BELUM masuk dokumen ini (menyusul)
 
-- Tidak ada lagi — semua modul utama sudah diverifikasi dan ditambahkan ke dokumen ini.
+- QRIS Dinamis (`lib/qris/**`, `app/api/qris/route.ts`) — fitur baru, sudah divalidasi CRC checksum-nya secara matematis tapi belum diverifikasi end-to-end dengan scan aplikasi bank sungguhan
+- Katalog Produk sort/tampilan (`app/dashboard/products/page.tsx`, `components/products/product-list-controls.tsx`) — fitur baru, kemungkinan risiko rendah karena read-only/tampilan saja, belum dicek mendalam
 
----
-
-## 7. Modul Tambahan (Sudah Diverifikasi)
-
-### Push Notification (Web Push untuk pesanan baru)
-
-| File | Fungsi singkat |
-|---|---|
-| `lib/push/vapid.ts` | Konfigurasi VAPID keys untuk Web Push — ambil dari env var, setup library `web-push` |
-| `lib/push/send-new-order-push.ts` | Kirim notifikasi push ke semua device owner yang subscribe saat ada pesanan baru — panggil `sendNewOrderPushNotification()` dengan payload order ID, nomor order, nama customer, total amount |
-
-**Cara kerja:**
-```
-Pesanan baru masuk (submitOrder di actions/store.ts)
-        ↓
-Panggil sendNewOrderPushNotification() (fire-and-forget, tidak await)
-        ↓
-Query tabel profiles → cari semua user dengan role='owner' dan is_active=true
-        ↓
-Query tabel push_subscriptions → ambil endpoint, p256dh, auth key milik owner
-        ↓
-Kirim push notification ke setiap subscription
-        │  Kalau response 404/410 (subscription expired) → hapus dari database
-        │  Error lain → log ke console, tidak throw
-        ↓
-Selesai — notifikasi muncul di device owner (judul: "Pesanan Baru: [nomor order]")
-```
-
-**Catatan keamanan:**
-- Fungsi ini **aman** — hanya baca data owner yang aktif, tidak ada operasi tulis yang sensitif
-- Error handling robust — tidak pernah crash ke caller, selalu catch dan log
-- Stale subscription otomatis dibersihkan (yang return 404/410)
-- **Belum ada verifikasi RLS** untuk tabel `push_subscriptions` — perlu dicek apakah ada policy yang membatasi akses ke subscription milik sendiri saja
-
----
-
-### QRIS Dinamis (generate QR code dengan amount spesifik)
-
-| File | Fungsi singkat |
-|---|---|
-| `lib/qris/crc16.ts` | Hitung CRC16 checksum untuk validasi QRIS string (standar EMVCo) |
-| `lib/qris/parser.ts` | Parse TLV (Tag-Length-Value) structure dari QRIS string |
-| `lib/qris/types.ts` | Definisi tipe TypeScript untuk TLV element dan convert options |
-| `lib/qris/converter.ts` | **Inti fitur** — ubah QRIS statis jadi dinamis: inject amount, ubah Point of Initiation Method dari "11"→"12", insert fee (opsional), recalculate CRC16 |
-| `app/api/qris/route.ts` | API endpoint GET `/api/qris?amount=45000` — panggil converter, generate PNG QR code, return image buffer |
-
-**Cara kerja:**
-```
-Frontend request /api/qris?amount=45000
-        ↓
-Route handler baca QRIS_STATIC_STRING dari env var (server-only, TIDAK expose ke browser)
-        ↓
-Panggil convertQRIS(staticQris, { amount: 45000 })
-        │  Step 1: Parse TLV structure
-        │  Step 2: Ubah tag "01" (Point of Initiation Method) dari "11"→"12" (statis→dinamis)
-        │  Step 3: Inject tag "54" (Transaction Amount) dengan nilai 45000
-        │  Step 4: Recalculate CRC16 checksum
-        ↓
-Generate QR code PNG dari QRIS string yang sudah diubah
-        ↓
-Return image/png dengan Cache-Control: no-store (karena amount berubah tiap order)
-```
-
-**Catatan keamanan:**
-- ✅ **AMAN** — `QRIS_STATIC_STRING` disimpan di server (`process.env.QRIS_STATIC_STRING`, bukan `NEXT_PUBLIC_...`), tidak pernah terekspos ke browser
-- ✅ Input validation ketat — tolak request kalau `amount` tidak valid (bukan angka, negatif, atau nol)
-- ✅ Amount dibulatkan ke integer (sesuai spec EMVCo — field amount QRIS tidak boleh desimal)
-- ✅ Error handling baik — return error JSON dengan status code yang tepat (400/500)
-- ⚠️ **Belum ada autentikasi** di endpoint ini — siapa saja yang tahu URL `/api/qris` bisa generate QR code. Ini mungkin disengaja karena QRIS string sendiri tidak sensitif (hanya format pembayaran), tapi perlu dipertimbangkan kalau mau batasi hanya untuk logged-in user
-
----
-
-### Katalog Produk (tampilan & sort produk di dashboard)
-
-| File | Fungsi singkat |
-|---|---|
-| `app/dashboard/products/page.tsx` | Halaman daftar produk — tampilkan statistik (total, aktif, nonaktif, stok habis), render ProductListControls |
-| `components/products/product-list-controls.tsx` | Kontrol tampilan produk — sort (nama, harga, stok), view mode (tile/list), render card/row produk dengan info margin %, stok, tombol edit |
-
-**Cara kerja:**
-```
-Owner buka /dashboard/products
-        ↓
-Server component panggil getProducts() (actions/products.ts)
-        ↓
-Filter produk aktif vs nonaktif, hitung statistik
-        ↓
-Render ProductListControls (client component)
-        │  State lokal: sortKey (default: 'name'), viewMode (default: 'tile')
-        │  Sort logic: alphabetic, price asc/desc, stock asc/desc
-        │  Tampilan tile: grid 1-4 kolom (responsive), tampilkan gambar, nama, HPP, harga jual, margin %, stok
-        │  Tampilan list: table row, info lebih ringkas
-        ↓
-Setiap produk ada tombol "Edit" → link ke /dashboard/products/[id]/edit
-```
-
-**Catatan keamanan:**
-- ⚠️ **Halaman ini read-only** — tidak ada operasi tulis, hanya tampil data dari `getProducts()`
-- ⚠️ **Proteksi bergantung pada RLS** di tabel `products` — `getProducts()` tidak cek `requireOwner()` sendiri (lihat Bug 8 di Risk Map untuk pola serupa di production.ts)
-- ✅ Tampilan margin % dihitung client-side dari `cost_price` dan `selling_price` — tidak ada data sensitif tambahan yang bocor
-- ⚠️ **Produk nonaktif masih diambil dari database** (hanya difilter di TypeScript) — mungkin tidak efisien kalau banyak produk nonaktif, pertimbangkan filter di query `getProducts()`
-
----
-
-*Dokumen ini selesai dan siap untuk handoff.*
+Setiap modul ditambahkan setelah kodenya benar-benar dicek — bukan ditulis dari nama file.
