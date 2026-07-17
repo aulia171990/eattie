@@ -61,6 +61,23 @@
 | `app/dashboard/reports/financial/page.tsx` | Laporan keuangan — revenue, pengeluaran, gross profit |
 | `app/dashboard/reports/page.tsx` | Halaman ringkasan semua laporan |
 
+### Customer / CRM
+
+| File | Fungsi singkat |
+|---|---|
+| `actions/customers.ts` | CRUD data pelanggan — daftar, detail, tambah manual, ubah, hapus, statistik tier |
+| `app/dashboard/customers/page.tsx` | Daftar pelanggan dengan tier (Bronze/Silver/Gold/Platinum) |
+| `app/dashboard/customers/[id]/page.tsx` | Detail satu pelanggan + riwayat order |
+| `components/customers/add-customer-button.tsx` | Tombol + form tambah pelanggan manual |
+
+### Customer / CRM
+
+| File | Fungsi singkat |
+|---|---|
+| `actions/customers.ts` | CRUD pelanggan — daftar, detail, tambah manual, ubah, hapus. Semua fungsi dilindungi `requireOwner()` |
+| `app/dashboard/customers/page.tsx` | Daftar pelanggan — bisa cari, filter tier, sort |
+| `app/dashboard/customers/[id]/page.tsx` | Detail satu pelanggan — riwayat order, statistik belanja |
+
 ### Auth (login & keamanan akses)
 
 | File | Fungsi singkat |
@@ -217,6 +234,47 @@ Hasil dikirim ke komponen chart untuk ditampilkan
 
 **Catatan penting:** Laporan ini **READ-ONLY** — tidak ada aksi tulis di modul ini. Kalau laporan tampilkan angka salah, cari bug di data sumber (tabel `sales`, `expenses`, `production_batches`), bukan di kode laporan itu sendiri. Satu pengecualian: **Bug 9** di bawah.
 
+### 2g. Customer / CRM
+
+```
+Owner buka /dashboard/customers
+        ↓
+getCustomers() — query tabel `customers`, filter/search/pagination
+        ↓
+Data ditampilkan dengan badge tier (Bronze/Silver/Gold/Platinum)
+        │  Tier dihitung dari total belanja pelanggan
+        ↓
+Owner bisa: tambah manual (createCustomer), edit (updateCustomer),
+            hapus (deleteCustomer), atau lihat riwayat order
+            (getCustomerOrderHistory berdasarkan nomor HP)
+```
+
+**Setiap fungsi tulis (`create`/`update`/`delete`) selalu cek dulu lewat helper `requireOwner()`** — ambil user login, cek role di tabel `profiles` langsung (bukan cuma andalkan RLS). Ini pola yang baik, konsisten di semua fungsi.
+
+### 2g. Customer / CRM
+
+```
+Owner buka /dashboard/customers
+        ↓
+getCustomers() dipanggil — cek dulu requireOwner()
+        │  ⚠️ Proteksi di sini HANYA di kode TypeScript (cek role
+        │     lewat tabel profiles). TIDAK ADA RLS policy khusus
+        │     untuk tabel customers (lihat Bug 10).
+        ↓
+Kalau bukan owner → return kosong (tapi query sebenarnya
+tidak pernah jalan karena dicegat lebih dulu)
+        ↓
+Owner bisa: cari nama/HP, filter tier, urutkan
+        ↓
+Klik satu pelanggan → getCustomer() + getCustomerOrderHistory()
+        ↓
+Owner bisa: tambah pelanggan manual, edit data, atau hapus
+        │  Semua lewat createCustomer()/updateCustomer()/deleteCustomer()
+        │  — semuanya cek requireOwner() dulu sebelum eksekusi
+```
+
+**Bagaimana data pelanggan masuk:** SUDAH DIVERIFIKASI — **tidak otomatis**. `actions/store.ts` (checkout toko online) tidak pernah insert ke tabel `customers`, hanya simpan `customer_name`/`customer_phone` di tabel `orders`. Artinya CRM ini murni database terpisah yang **harus diisi manual** oleh owner satu-satu, tidak sinkron otomatis dengan pelanggan yang sudah checkout di toko.
+
 ---
 
 ## 3. Auth Flow
@@ -251,12 +309,14 @@ Halaman dashboard ditampilkan
 | 1 | Harga pesanan online sempat bisa dimanipulasi customer | 🔴 Tinggi — **SUDAH DIPERBAIKI** | `actions/store.ts` — `submitOrder()` | Sebelumnya harga yang tersimpan berasal dari data yang dikirim browser, bukan dari database. Customer bisa ubah harga jadi Rp1 lewat devtools. Sekarang sistem selalu ambil harga asli dari tabel `products` |
 | 2 | Tabel `order_items` sempat bisa diubah/dihapus sembarangan | 🔴 Tinggi — **SUDAH DIPERBAIKI** | Database RLS policy `order_items_all` | Policy lama izinkan siapa saja (termasuk tidak login) UPDATE/DELETE pesanan siapapun. Sekarang hanya boleh INSERT + SELECT |
 | 3 | Ada 2 tabel pesanan: `orders` dan `customer_orders` | 🟡 Sedang — **BELUM DICEK** | Database, belum jelas file mana pakai yang mana | Kemungkinan salah satu adalah sisa lama tidak terpakai. **Jangan hapus salah satu sebelum dicek tuntas** |
-| 4 | RPC khusus status pesanan tidak tersimpan di repo | 🟡 Sedang — **SUDAH ADA BACKUP (rekonstruksi)** | `rpc_confirm_order`, `rpc_cancel_order`, `rpc_start_production`, `rpc_ready_for_pickup`, `rpc_deliver_order`, `rpc_complete_order`, `rpc_mark_paid` — dipanggil dari `actions/orders.ts` | Definisi asli TETAP hanya ada di Supabase, tapi sudah direkonstruksi ke `supabase/migrations/000000_order_status_rpcs.sql` (ter-validasi sintaks di Postgres lokal). ⚠️ File itu REKONSTRUKSI dari kontrak kode + skema, BUKAN dump asli — `rpc_confirm_order` memanggil `process_sale()` (tebakan terbaik). **JANGAN jalankan ke live tanpa diff dulu dengan fungsi asli di Supabase (Database → Functions) & test di staging.** RPC lain (`process_purchase`, `process_sale`, `generate_invoice_number`) aman, sudah di `supabase/migration-sql` |
+| 4 | RPC khusus status pesanan tidak tersimpan di repo | 🟡 Sedang — **BELUM DICEK** | `rpc_confirm_order`, `rpc_cancel_order`, `rpc_start_production`, dll — dipanggil dari `actions/orders.ts`, definisinya cuma ada di Supabase | Kalau project Supabase rusak/dibuat ulang, fungsi ini **hilang tanpa jejak**. Catatan: RPC lain (`process_purchase`, `process_sale`, `generate_invoice_number`) **AMAN**, sudah tersimpan di `supabase/migration-sql` — hanya RPC order status yang hilang |
 | 5 | Pendaftaran akun baru dimatikan tapi kode masih ada (dikomentari) | 🟢 Rendah | `actions/auth.ts` | Bukan bug, sengaja. Tapi jangan hapus kode dikomentari itu tanpa alasan jelas |
 | 6 | Harga transaksi POS tidak diverifikasi ulang ke database | 🟡 Sedang — **BELUM DIPERBAIKI** | `actions/sales.ts` — `createSale()` | Sama seperti masalah #1 tapi risiko lebih rendah karena hanya staff login yang bisa akses POS. Kasir nakal tetap bisa manipulasi devtools untuk ubah subtotal/diskon |
 | 7 | Policy RLS produk saling bertentangan — niat "hanya owner" gagal | 🟠 Sedang-Tinggi — **BELUM DIPERBAIKI** | Database RLS `products_write` vs `products_update` | `products_write` bermaksud batasi UPDATE produk hanya untuk owner, tapi ada policy lain (`products_update`) yang izinkan baker/cashier juga. Di Postgres, multiple policy untuk operasi sama itu **digabung dengan OR** — jadi baker/cashier tetap bisa ubah harga jual produk meski niatnya dibatasi ke owner saja |
 | 8 | `updateBatchStatus()` tidak cek login sendiri, full andalkan RLS | 🟢 Rendah — informasional | `actions/production.ts` | Beda dari kebanyakan fungsi lain yang cek `getUser()` dulu, fungsi ini langsung serah ke RLS database. **Bukan bug aktif** karena RLS `production_update` di database sudah benar (hanya owner/baker) — tapi kalau nanti ada yang "memperbaiki" RLS production tanpa tahu ini, bisa jadi lubang baru |
 | 9 | Gross profit di laporan keuangan salah — tampil sama dengan revenue | 🟠 Sedang — **BELUM DIPERBAIKI** | `actions/reports.ts` — `getFinancialReport()` | Fungsi ini tidak pernah SELECT kolom `cogs` dari tabel `sales`, padahal `process_sale()` sudah mengisi kolom itu dengan benar. Akibatnya `grossProfit = revenue` (salah) bukannya `revenue - COGS` (benar). Owner tidak bisa lihat margin sesungguhnya lewat laporan ini |
+| 10 | Tabel `customers` sama sekali tidak punya RLS — terbuka penuh di level database | 🔴 Tinggi — **PATCH SUDAH DIBUAT, PERLU DIJALANKAN** | Database, tidak ada `ENABLE ROW LEVEL SECURITY` untuk `customers` di manapun | Kode aplikasi (`requireOwner()`) sudah benar, tapi itu cuma proteksi level kode. Tanpa RLS aktif, siapa saja dengan anon key Supabase (key ini publik, ada di frontend) bisa baca/ubah/hapus data pelanggan (nama, HP, alamat) langsung lewat API, di luar aplikasi Eattie sama sekali. File fix sudah dibuat: `supabase/migrations/000002_customers_rls.sql` — **wajib dijalankan manual di Supabase SQL Editor**, membuat file saja tidak otomatis menjalankannya |
+| 11 | CRM (`customers`) tidak terhubung dengan toko online (`orders`) | 🟡 Sedang — gap fungsional, bukan bug keamanan | `actions/store.ts` vs `actions/customers.ts` | Checkout toko online simpan `customer_name`/`customer_phone` ke tabel `orders`, TAPI tidak pernah otomatis buat/update row di tabel `customers`. Owner harus input data pelanggan dua kali kalau mau pakai fitur CRM (tier, riwayat gabungan, dll) — fitur CRM saat ini praktis kosong kecuali diisi manual satu-satu |
 
 ---
 
@@ -317,12 +377,20 @@ Halaman dashboard ditampilkan
 - Logic simpan resep di `actions/recipes.ts` — `upsertRecipe()`
 - **Ingat:** hanya owner yang bisa akses ini, dijaga RLS. Kalau baker melapor "tidak bisa buka menu resep", itu **kerja sesuai desain**, bukan bug
 
+### Perbaiki tidak adanya RLS di tabel customers (Bug 10)
+- Tambah policy di Supabase SQL Editor, contoh: hanya owner boleh SELECT/INSERT/UPDATE/DELETE
+- Simpan sebagai file migration baru di `supabase/migrations/`, jangan cuma dijalankan manual — supaya tercatat (lihat prinsip di Bug 4)
+
+### Hubungkan CRM dengan toko online (Bug 11 — kalau mau perbaiki gap fungsional ini)
+- Tambah logic di `submitOrder()` (`actions/store.ts`): setelah order berhasil dibuat, cek apakah `customer_phone` sudah ada di tabel `customers` — kalau belum, auto-insert; kalau sudah, bisa update statistik (total belanja, dll)
+- **Hati-hati:** ini nambah kompleksitas ke fungsi `submitOrder()` yang sudah punya validasi harga (Bug 1 fix) — jangan sampai logic baru ini mengganggu validasi yang sudah ada
+
 ---
 
 ## Yang BELUM masuk dokumen ini (menyusul)
 
-- Customer/CRM (`app/dashboard/customers/**`)
 - Push Notification (`lib/push/**`)
-- Katalog Produk sort/tampilan (`app/dashboard/products/page.tsx`, `components/products/product-list-controls.tsx`) — fitur baru, belum diverifikasi mendalam untuk risiko keamanan (kemungkinan rendah karena read-only/tampilan saja)
+- QRIS Dinamis (`lib/qris/**`, `app/api/qris/route.ts`) — fitur baru, belum diverifikasi mendalam untuk risiko keamanan/RLS
+- Katalog Produk sort/tampilan (`app/dashboard/products/page.tsx`, `components/products/product-list-controls.tsx`) — fitur baru, kemungkinan risiko rendah karena read-only/tampilan saja
 
 Setiap modul ditambahkan setelah kodenya benar-benar dicek — bukan ditulis dari nama file.
