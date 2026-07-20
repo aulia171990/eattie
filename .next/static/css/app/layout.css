@@ -19,40 +19,40 @@
      BRAND
   =============================== */
 
-  --primary:            25 40% 15%;
-  --primary-hover:      25 40% 10%;
-  --primary-foreground: 40 50% 96%;
-  --primary-subtle:     25 20% 90%;
+  --primary:            142 60% 38%;
+  --primary-hover:      345 52% 26%;
+  --primary-foreground: 0 0% 100%;
+  --primary-subtle:     345 55% 95%;
 
   /* Gold Accent */
-  --accent:             45 60% 55%;
-  --accent-foreground:  25 40% 15%;
+  --accent:             38 55% 48%;
+  --accent-foreground:  0 0% 100%;
 
   /* ===============================
      BACKGROUND
   =============================== */
 
-  --background:         40 50% 97%;
-  --surface:            40 60% 99%;
-  --surface-raised:     0 0% 100%;
+  --background:         35 35% 97%;
+  --surface:            0 0% 100%;
+  --surface-raised:     35 30% 99%;
 
   /* ===============================
      TEXT
   =============================== */
 
-  --foreground:         25 50% 10%;
-  --text-secondary:     25 30% 30%;
-  --text-muted:         25 20% 50%;
-  --text-disabled:      25 15% 70%;
+  --foreground:         20 18% 14%;
+  --text-secondary:     20 12% 35%;
+  --text-muted:         20 10% 50%;
+  --text-disabled:      20 8% 70%;
 
   /* ===============================
      BORDER
   =============================== */
 
-  --border:             40 30% 85%;
-  --border-strong:      40 30% 75%;
-  --input:              40 30% 85%;
-  --ring:               45 60% 55%;
+  --border:             30 15% 88%;
+  --border-strong:      30 18% 78%;
+  --input:              30 15% 88%;
+  --ring:               345 47% 32%;
 
   /* ===============================
      SUCCESS
@@ -106,35 +106,35 @@
      SIDEBAR
   =============================== */
 
-  --sidebar-bg:         25 40% 15%;
-  --sidebar-text:       40 50% 90%;
-  --sidebar-text-muted: 25 20% 60%;
-  --sidebar-accent:     45 60% 55%;
-  --sidebar-border:     25 40% 12%;
-  --sidebar-hover:      25 35% 20%;
+  --sidebar-bg:         345 32% 18%;
+  --sidebar-text:       35 20% 90%;
+  --sidebar-text-muted: 35 12% 68%;
+  --sidebar-accent:     38 55% 48%;
+  --sidebar-border:     345 22% 24%;
+  --sidebar-hover:      345 25% 24%;
 
 }
 /* ── Dark mode ───────────────────────────────────────────── */
 .dark{
 
-  --primary:            45 60% 55%;
-  --primary-hover:      45 60% 65%;
-  --primary-foreground: 25 40% 15%;
-  --primary-subtle:     25 50% 25%;
+  --primary:            345 52% 48%;
+  --primary-hover:      345 55% 42%;
+  --primary-foreground: 0 0% 100%;
+  --primary-subtle:     345 35% 22%;
 
-  --background:         25 35% 10%;
-  --surface:            25 30% 14%;
-  --surface-raised:     25 25% 18%;
+  --background:         345 18% 9%;
+  --surface:            345 18% 12%;
+  --surface-raised:     345 16% 15%;
 
-  --foreground:         40 50% 94%;
-  --text-secondary:     40 30% 75%;
-  --text-muted:         40 20% 60%;
-  --text-disabled:      40 10% 40%;
+  --foreground:         35 25% 94%;
+  --text-secondary:     35 18% 75%;
+  --text-muted:         35 12% 60%;
+  --text-disabled:      35 8% 40%;
 
-  --border:             25 30% 22%;
-  --border-strong:      25 30% 32%;
-  --input:              25 30% 22%;
-  --ring:               45 60% 55%;
+  --border:             345 12% 24%;
+  --border-strong:      345 12% 34%;
+  --input:              345 12% 24%;
+  --ring:               345 52% 48%;
 
   --success:            145 45% 46%;
   --success-bg:         145 30% 18%;
@@ -148,11 +148,11 @@
   --info:               210 65% 60%;
   --info-bg:            210 35% 18%;
 
-  --sidebar-bg:         25 40% 8%;
-  --sidebar-text:       40 50% 90%;
-  --sidebar-text-muted: 40 20% 60%;
-  --sidebar-border:     25 35% 12%;
-  --sidebar-hover:      25 35% 16%;
+  --sidebar-bg:         345 18% 8%;
+  --sidebar-text:       35 22% 90%;
+  --sidebar-text-muted: 35 12% 60%;
+  --sidebar-border:     345 10% 20%;
+  --sidebar-hover:      345 15% 18%;
 
 }
 
@@ -1042,6 +1042,9 @@ html {
 .col-span-4{
   grid-column: span 4 / span 4;
 }
+.m-auto{
+  margin: auto;
+}
 .mx-3{
   margin-left: 0.75rem;
   margin-right: 0.75rem;
@@ -1247,6 +1250,9 @@ html {
 .max-h-\[75vh\]{
   max-height: 75vh;
 }
+.max-h-full{
+  max-height: 100%;
+}
 .min-h-0{
   min-height: 0px;
 }
@@ -1285,6 +1291,9 @@ html {
 }
 .w-4{
   width: 1rem;
+}
+.w-40{
+  width: 10rem;
 }
 .w-44{
   width: 11rem;
@@ -1357,6 +1366,9 @@ html {
 }
 .max-w-5xl{
   max-width: 64rem;
+}
+.max-w-full{
+  max-width: 100%;
 }
 .max-w-lg{
   max-width: 32rem;
@@ -2146,6 +2158,10 @@ html {
 }
 .blur{
   --tw-blur: blur(8px);
+  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+.drop-shadow-sm{
+  --tw-drop-shadow: drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .filter{

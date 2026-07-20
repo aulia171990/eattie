@@ -1,10 +1,9 @@
 'use client'
 
-import { BRANDING } from '@/config/branding'
-
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { useBranding } from '@/contexts/branding-context'
 import type { Profile } from '@/types'
 import { LayoutDashboard, Package, ShoppingBag, BookOpen, Factory, Receipt, BarChart3, Briefcase, Settings, ShoppingCart, AlertTriangle, X, ClipboardList, Cake, Users, Star } from 'lucide-react'
 
@@ -39,6 +38,7 @@ const navItems: NavItem[] = [
   { title: 'Pengaturan', href: '/dashboard/settings', icon: <Settings size={18} />, roles: ['owner', 'cashier', 'baker'],
     children: [
       { title: 'Umum', href: '/dashboard/settings' },
+      { title: 'Toko', href: '/dashboard/settings/store' },
       { title: 'Pengguna', href: '/dashboard/settings/users' },
       { title: 'Profil', href: '/dashboard/settings/profile' },
     ]},
@@ -53,6 +53,7 @@ interface SidebarProps {
 
 function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
   const pathname = usePathname()
+  const { logoIconUrl, shortName } = useBranding()
   const filtered = navItems.filter(item => item.roles.includes(user.role))
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
@@ -65,10 +66,10 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center shrink-0">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={BRANDING.logoIconWhite} alt={BRANDING.shortName} width={36} height={36} style={{ objectFit: 'contain' }} />
+              <img src={logoIconUrl || '/branding/logo-icon-white.svg'} alt={shortName} width={36} height={36} style={{ objectFit: 'contain' }} />
             </div>
           <div className="min-w-0">
-            <div className="text-white font-semibold text-sm truncate">Bakery Manager</div>
+            <div className="text-white font-semibold text-sm truncate">{shortName} Manager</div>
             <div className="text-xs truncate" style={{ color: 'hsl(var(--text-muted))' }}>Manajemen Toko Roti</div>
           </div>
         </div>

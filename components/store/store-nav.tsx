@@ -1,16 +1,15 @@
 'use client'
 
-
-import { BRANDING } from '@/config/branding'
-
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useStoreCart } from '@/contexts/store-cart-context'
+import { useBranding } from '@/contexts/branding-context'
 import { ShoppingBag, MapPin } from 'lucide-react'
 
 export function StoreNav() {
   const pathname = usePathname()
   const { itemCount } = useStoreCart()
+  const { logoIconUrl, shortName } = useBranding()
   const isHome = pathname === '/store'
 
   return (
@@ -28,7 +27,7 @@ export function StoreNav() {
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
             style={{ background: 'hsl(var(--primary))' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={BRANDING.logoIcon} alt={BRANDING.shortName} width={28} height={28} style={{ objectFit: 'contain' }} />
+            <img src={logoIconUrl || '/branding/logo-icon.svg'} alt={shortName} width={28} height={28} style={{ objectFit: 'contain' }} />
           </div>
           <span style={{
             fontFamily: "'Playfair Display', serif",
@@ -37,7 +36,7 @@ export function StoreNav() {
             color: 'hsl(var(--foreground))',
             letterSpacing: '-0.3px',
           }}>
-            {BRANDING.shortName}
+            {shortName}
           </span>
         </Link>
 

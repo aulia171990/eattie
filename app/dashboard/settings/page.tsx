@@ -7,6 +7,7 @@ export default function SettingsPage() {
       <PageHeader title="Pengaturan" breadcrumbs={[{ label: 'Dashboard', href: '/dashboard' }, { label: 'Pengaturan' }]} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
+          { href: '/dashboard/settings/store', icon: '🏪', title: 'Pengaturan Toko', desc: 'Nama toko, logo, tema warna, dan kontak' },
           { href: '/dashboard/settings/profile', icon: '👤', title: 'Profil Saya', desc: 'Ubah nama, foto, dan password' },
           { href: '/dashboard/settings/users', icon: '👥', title: 'Manajemen Pengguna', desc: 'Kelola akun kasir dan baker' },
         ].map(item => (
