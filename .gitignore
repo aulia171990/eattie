@@ -2,6 +2,7 @@
 # Supabase migrations
 supabase/migrations/*.sql
 
+.next
 # Dependencies
 node_modules/
 venv/
