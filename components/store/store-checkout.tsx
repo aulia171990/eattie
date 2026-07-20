@@ -91,7 +91,7 @@ export default function StoreCheckout() {
   }
 
   const waMessage = encodeURIComponent(
-    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}\n\nMohon konfirmasinya. Terima kasih! 🍞`
+    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}${proofUrl ? `\n\nBukti Bayar: ${proofUrl}` : ''}\n\nMohon konfirmasinya. Terima kasih! 🍞`
   )
   const waLink = STORE_PHONE ? `https://wa.me/${STORE_PHONE}?text=${waMessage}` : null
 

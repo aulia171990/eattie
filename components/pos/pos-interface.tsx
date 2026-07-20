@@ -1,7 +1,5 @@
 'use client'
 
-import { BRANDING } from '@/config/branding'
-
 import { useState, useEffect } from 'react'
 import { ProductGrid } from './product-grid'
 import { Cart } from './cart'
@@ -10,6 +8,7 @@ import { useCart } from '@/contexts/cart-context'
 import type { Product } from '@/types'
 import Link from 'next/link'
 import { ArrowLeft, Clock, ShoppingCart, Grid } from 'lucide-react'
+import { useBranding } from '@/contexts/branding-context'
 
 interface PosInterfaceProps {
   products: Product[]
@@ -18,6 +17,7 @@ interface PosInterfaceProps {
 
 export function PosInterface({ products, cashierName }: PosInterfaceProps) {
   const { items, clearCart, itemCount } = useCart()
+  const { logoIconUrl, shortName } = useBranding()
   const [paymentOpen, setPaymentOpen] = useState(false)
   const [lastSale, setLastSale] = useState<{ invoiceNumber: string; total: number } | null>(null)
   const [time, setTime] = useState(new Date())
@@ -109,7 +109,7 @@ export function PosInterface({ products, cashierName }: PosInterfaceProps) {
           <div className="w-7 h-7 rounded-lg flex items-center justify-center text-base shrink-0"
             style={{ background: 'hsl(var(--primary))' }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={BRANDING.logoIconWhite} alt={BRANDING.shortName} width={24} height={24} style={{ objectFit: 'contain' }} />
+              <img src={logoIconUrl || '/branding/logo-icon-white.svg'} alt={shortName} width={24} height={24} style={{ objectFit: 'contain' }} />
             </div>
           <span className="text-white font-semibold text-sm">Bakery POS</span>
         </div>

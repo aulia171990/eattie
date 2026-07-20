@@ -1098,6 +1098,69 @@ export type Database = {
           },
         ]
       }
+      store_settings: {
+        Row: {
+          id: number
+          company_name: string
+          short_name: string
+          tagline: string
+          logo_url: string | null
+          logo_icon_url: string | null
+          favicon_url: string | null
+          primary_color: string
+          primary_color_hex: string
+          accent_color: string
+          sidebar_color: string
+          whatsapp: string
+          instagram: string
+          facebook: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: number
+          company_name?: string
+          short_name?: string
+          tagline?: string
+          logo_url?: string | null
+          logo_icon_url?: string | null
+          favicon_url?: string | null
+          primary_color?: string
+          primary_color_hex?: string
+          accent_color?: string
+          sidebar_color?: string
+          whatsapp?: string
+          instagram?: string
+          facebook?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          company_name?: string
+          short_name?: string
+          tagline?: string
+          logo_url?: string | null
+          logo_icon_url?: string | null
+          favicon_url?: string | null
+          primary_color?: string
+          primary_color_hex?: string
+          accent_color?: string
+          sidebar_color?: string
+          whatsapp?: string
+          instagram?: string
+          facebook?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'store_settings_updated_by_fkey'
+            columns: ['updated_by']
+            referencedRelation: 'profiles'
+            referencedColumns: ['id']
+          }
+        ]
+      }
     }
     Views: {
       daily_sales_summary: {

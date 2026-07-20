@@ -1,7 +1,10 @@
+'use client'
+
 import Link from 'next/link'
-import { BRANDING } from '@/config/branding'
+import { useBranding } from '@/contexts/branding-context'
 
 export function StoreFooter() {
+  const { logoIconUrl, shortName, companyName } = useBranding()
   return (
     <footer style={{ background: 'hsl(var(--foreground))', color: 'hsl(var(--border-strong))' }}>
       <div style={{ maxWidth: '1024px', margin: '0 auto', padding: '2.5rem 1rem 1.5rem' }}>
@@ -16,7 +19,7 @@ export function StoreFooter() {
               <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
                 style={{ background: 'hsl(var(--primary))' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={BRANDING.logoIconWhite} alt={BRANDING.shortName} width={28} height={28} style={{ objectFit: 'contain' }} />
+                <img src={logoIconUrl || '/branding/logo-icon-white.svg'} alt={shortName} width={28} height={28} style={{ objectFit: 'contain' }} />
               </div>
               <span style={{
                 fontFamily: '"Playfair Display", serif',
@@ -24,7 +27,7 @@ export function StoreFooter() {
                 fontSize: '1.05rem',
                 color: 'white',
               }}>
-                {BRANDING.shortName}
+                {shortName}
               </span>
             </div>
             <p style={{ fontSize: '0.8rem', lineHeight: 1.7 }}>
@@ -86,7 +89,7 @@ export function StoreFooter() {
         {/* Bottom */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4">
           <p style={{ fontSize: '0.7rem', color: 'hsl(var(--text-muted))' }}>
-            © {new Date().getFullYear()} {BRANDING.companyName}. Semua hak dilindungi.
+            © {new Date().getFullYear()} {companyName}. Semua hak dilindungi.
           </p>
           <div className="flex items-center gap-3">
             {['Instagram', 'WhatsApp'].map(s => (
