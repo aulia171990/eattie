@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useRef, useState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { updateStoreSettings, uploadStoreLogo, type StoreSettings } from '@/actions/store-settings'
 import { Upload, Check, Loader } from 'lucide-react'
 
@@ -36,6 +36,18 @@ export function StoreSettingsForm({ settings }: Props) {
   const iconRef = useRef<HTMLInputElement>(null)
   const [selectedPrimary, setSelectedPrimary] = useState(settings?.primary_color ?? '32 95% 44%')
   const [selectedSidebar, setSelectedSidebar] = useState(settings?.sidebar_color ?? '345 32% 18%')
+
+  const primaryHex = COLORS.find(c => c.hsl === selectedPrimary)?.hex ?? settings?.primary_color_hex ?? '#c87e1a'
+
+  useEffect(() => {
+    if (state?.success) {
+      sessionStorage.removeItem('eattie-branding')
+      const root = document.documentElement
+      root.style.setProperty('--primary', selectedPrimary)
+      root.style.setProperty('--accent', selectedPrimary)
+      root.style.setProperty('--sidebar-bg', selectedSidebar)
+    }
+  }, [state, selectedPrimary, selectedSidebar])
 
   const handleUpload = async (file: File, type: 'logo' | 'icon') => {
     setUploading(type)
@@ -148,6 +160,8 @@ export function StoreSettingsForm({ settings }: Props) {
             ))}
           </div>
           <input type="hidden" name="primary_color" value={selectedPrimary} />
+          <input type="hidden" name="primary_color_hex" value={primaryHex} />
+          <input type="hidden" name="accent_color" value={selectedPrimary} />
           <p className="text-xs mt-1.5" style={{ color: 'hsl(var(--text-muted))' }}>
             HSL: {selectedPrimary}
           </p>
