@@ -85,6 +85,16 @@ export async function uploadStoreLogo(
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'Tidak terautentikasi' }
 
+  const { data: caller } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (caller?.role !== 'owner') {
+    return { error: 'Hanya owner yang dapat mengubah logo toko' }
+  }
+
   const ext = file.name.split('.').pop()
   const filename = `logos/${type}-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
