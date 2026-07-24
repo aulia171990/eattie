@@ -246,13 +246,30 @@ export async function submitOrder(
 
 export async function trackOrder(orderNumber: string, phone: string) {
   const supabase = await createClient()
-  const { data } = await supabase
-    .from('orders')
-    .select('order_number,customer_name,customer_phone,status,payment_status,order_type,pickup_date,pickup_time,total_amount,created_at,order_items!order_items_order_id_fkey(product_name,quantity,unit_price,subtotal)')
-    .eq('order_number', orderNumber.toUpperCase())
-    .eq('customer_phone', phone)
-    .maybeSingle()
-  return data
+  const { data, error } = await supabase.rpc('track_order', {
+    p_order_number: orderNumber.toUpperCase(),
+    p_phone: phone,
+  })
+  if (error) return null
+  return data as {
+    id: string
+    order_number: string
+    status: string
+    payment_status: string
+    order_type: string
+    pickup_date: string | null
+    pickup_time: string | null
+    total_amount: number
+    customer_name: string
+    created_at: string
+    order_items: {
+      product_id: string
+      product_name: string
+      quantity: number
+      unit_price: number
+      subtotal: number
+    }[]
+  } | null
 }
 
 export async function uploadPaymentProof(file: File): Promise<{ url?: string; error?: string }> {
