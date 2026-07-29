@@ -6,7 +6,7 @@ import { useBranding } from '@/contexts/branding-context'
 export function StoreFooter() {
   const { logoIconUrl, shortName, companyName } = useBranding()
   return (
-    <footer style={{ background: 'hsl(var(--foreground))', color: 'hsl(var(--border-strong))' }}>
+    <footer style={{ background: 'hsl(var(--footer-bg))', color: 'hsl(var(--footer-text))' }}>
       <div style={{ maxWidth: '1024px', margin: '0 auto', padding: '2.5rem 1rem 1.5rem' }}>
 
         {/* Top grid */}
