@@ -15,6 +15,18 @@ export type StoreSettings = {
   primary_color_hex: string
   accent_color: string
   sidebar_color: string
+  background_color: string
+  surface_color: string
+  text_color: string
+  text_muted_color: string
+  border_color: string
+  button_text_color: string
+  success_color: string
+  danger_color: string
+  warning_color: string
+  sidebar_text_color: string
+  footer_bg_color: string
+  footer_text_color: string
   whatsapp: string
   instagram: string
   facebook: string
@@ -59,6 +71,18 @@ export async function updateStoreSettings(
     primary_color_hex: (formData.get('primary_color_hex') as string) ?? '',
     accent_color: (formData.get('accent_color') as string) ?? '',
     sidebar_color: (formData.get('sidebar_color') as string) ?? '',
+    background_color: (formData.get('background_color') as string) ?? '',
+    surface_color: (formData.get('surface_color') as string) ?? '',
+    text_color: (formData.get('text_color') as string) ?? '',
+    text_muted_color: (formData.get('text_muted_color') as string) ?? '',
+    border_color: (formData.get('border_color') as string) ?? '',
+    button_text_color: (formData.get('button_text_color') as string) ?? '',
+    success_color: (formData.get('success_color') as string) ?? '',
+    danger_color: (formData.get('danger_color') as string) ?? '',
+    warning_color: (formData.get('warning_color') as string) ?? '',
+    sidebar_text_color: (formData.get('sidebar_text_color') as string) ?? '',
+    footer_bg_color: (formData.get('footer_bg_color') as string) ?? '',
+    footer_text_color: (formData.get('footer_text_color') as string) ?? '',
     whatsapp: (formData.get('whatsapp') as string) ?? '',
     instagram: (formData.get('instagram') as string) ?? '',
     facebook: (formData.get('facebook') as string) ?? '',
