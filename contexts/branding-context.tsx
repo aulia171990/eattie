@@ -16,6 +16,18 @@ export interface BrandingValue {
   primaryColorHex: string
   accentColor: string
   sidebarColor: string
+  backgroundColor: string
+  surfaceColor: string
+  textColor: string
+  textMutedColor: string
+  borderColor: string
+  buttonTextColor: string
+  successColor: string
+  dangerColor: string
+  warningColor: string
+  sidebarTextColor: string
+  footerBgColor: string
+  footerTextColor: string
   whatsapp: string
   instagram: string
   facebook: string
@@ -32,6 +44,18 @@ const defaultBranding: BrandingValue = {
   primaryColorHex: BRANDING.colors.primaryHex,
   accentColor: '38 55% 48%',
   sidebarColor: '345 32% 18%',
+  backgroundColor: '35 35% 97%',
+  surfaceColor: '0 0% 100%',
+  textColor: '20 18% 14%',
+  textMutedColor: '20 10% 50%',
+  borderColor: '30 15% 88%',
+  buttonTextColor: '0 0% 100%',
+  successColor: '145 45% 34%',
+  dangerColor: '355 68% 46%',
+  warningColor: '38 82% 42%',
+  sidebarTextColor: '35 20% 90%',
+  footerBgColor: '345 32% 18%',
+  footerTextColor: '35 20% 90%',
   whatsapp: BRANDING.whatsapp,
   instagram: BRANDING.instagram,
   facebook: BRANDING.facebook,
@@ -41,6 +65,17 @@ const BrandingContext = createContext<BrandingValue>(defaultBranding)
 
 export function useBranding() {
   return useContext(BrandingContext)
+}
+
+/**
+ * Terapkan warna baru secara langsung ke halaman yang sedang aktif,
+ * tanpa perlu reload. Dipakai oleh form Settings untuk live preview
+ * saat owner memilih warna, dan untuk update instan setelah submit.
+ * Hanya field yang disebut di `partial` yang berubah — field lain
+ * TIDAK direset ke default.
+ */
+export function previewCssVariables(partial: Partial<BrandingValue>) {
+  applyCssVariables(partial)
 }
 
 export function BrandingProvider({ children }: { children: React.ReactNode }) {
@@ -70,6 +105,18 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
         primaryColorHex: settings.primary_color_hex,
         accentColor: settings.accent_color,
         sidebarColor: settings.sidebar_color,
+        backgroundColor: settings.background_color,
+        surfaceColor: settings.surface_color,
+        textColor: settings.text_color,
+        textMutedColor: settings.text_muted_color,
+        borderColor: settings.border_color,
+        buttonTextColor: settings.button_text_color,
+        successColor: settings.success_color,
+        dangerColor: settings.danger_color,
+        warningColor: settings.warning_color,
+        sidebarTextColor: settings.sidebar_text_color,
+        footerBgColor: settings.footer_bg_color,
+        footerTextColor: settings.footer_text_color,
         whatsapp: settings.whatsapp,
         instagram: settings.instagram,
         facebook: settings.facebook,
@@ -87,9 +134,21 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   )
 }
 
-function applyCssVariables(b: BrandingValue) {
+function applyCssVariables(b: Partial<BrandingValue>) {
   const root = document.documentElement
-  if (b.primaryColor) root.style.setProperty('--primary', b.primaryColor)
-  if (b.accentColor) root.style.setProperty('--accent', b.accentColor)
-  if (b.sidebarColor) root.style.setProperty('--sidebar-bg', b.sidebarColor)
+  if (b.primaryColor)      root.style.setProperty('--primary', b.primaryColor)
+  if (b.accentColor)       root.style.setProperty('--accent', b.accentColor)
+  if (b.sidebarColor)      root.style.setProperty('--sidebar-bg', b.sidebarColor)
+  if (b.backgroundColor)   root.style.setProperty('--background', b.backgroundColor)
+  if (b.surfaceColor)      root.style.setProperty('--surface', b.surfaceColor)
+  if (b.textColor)         root.style.setProperty('--foreground', b.textColor)
+  if (b.textMutedColor)    root.style.setProperty('--text-muted', b.textMutedColor)
+  if (b.borderColor)       root.style.setProperty('--border', b.borderColor)
+  if (b.buttonTextColor)   root.style.setProperty('--primary-foreground', b.buttonTextColor)
+  if (b.successColor)      root.style.setProperty('--success', b.successColor)
+  if (b.dangerColor)       root.style.setProperty('--danger', b.dangerColor)
+  if (b.warningColor)      root.style.setProperty('--warning', b.warningColor)
+  if (b.sidebarTextColor)  root.style.setProperty('--sidebar-text', b.sidebarTextColor)
+  if (b.footerBgColor)     root.style.setProperty('--footer-bg', b.footerBgColor)
+  if (b.footerTextColor)   root.style.setProperty('--footer-text', b.footerTextColor)
 }
