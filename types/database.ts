@@ -1111,6 +1111,18 @@ export type Database = {
           primary_color_hex: string
           accent_color: string
           sidebar_color: string
+          background_color: string
+          surface_color: string
+          text_color: string
+          text_muted_color: string
+          border_color: string
+          button_text_color: string
+          success_color: string
+          danger_color: string
+          warning_color: string
+          sidebar_text_color: string
+          footer_bg_color: string
+          footer_text_color: string
           whatsapp: string
           instagram: string
           facebook: string
@@ -1129,6 +1141,18 @@ export type Database = {
           primary_color_hex?: string
           accent_color?: string
           sidebar_color?: string
+          background_color?: string
+          surface_color?: string
+          text_color?: string
+          text_muted_color?: string
+          border_color?: string
+          button_text_color?: string
+          success_color?: string
+          danger_color?: string
+          warning_color?: string
+          sidebar_text_color?: string
+          footer_bg_color?: string
+          footer_text_color?: string
           whatsapp?: string
           instagram?: string
           facebook?: string
@@ -1146,6 +1170,18 @@ export type Database = {
           primary_color_hex?: string
           accent_color?: string
           sidebar_color?: string
+          background_color?: string
+          surface_color?: string
+          text_color?: string
+          text_muted_color?: string
+          border_color?: string
+          button_text_color?: string
+          success_color?: string
+          danger_color?: string
+          warning_color?: string
+          sidebar_text_color?: string
+          footer_bg_color?: string
+          footer_text_color?: string
           whatsapp?: string
           instagram?: string
           facebook?: string
