@@ -1,4 +1,5 @@
 import type { Tables } from './database'
+import type { ProductVariant } from './product-config'
 
 // ─── Row types from database ──────────────────────────────────────────────────
 export type Profile              = Tables<'profiles'>
@@ -10,7 +11,10 @@ export type StockPurchaseItem    = Tables<'stock_purchase_items'>
 export type StockMovement        = Tables<'stock_movements'>
 export type StockOpname          = Tables<'stock_opnames'>
 export type StockOpnameItem      = Tables<'stock_opname_items'>
-export type Product              = Tables<'products'>
+export type Product              = Tables<'products'> & {
+  category_id: string | null;
+  is_featured: boolean;
+}
 export type Recipe               = Tables<'recipes'>
 export type RecipeIngredient     = Tables<'recipe_ingredients'>
 export type ProductionBatch      = Tables<'production_batches'>
@@ -18,8 +22,6 @@ export type ProductInventory     = Tables<'product_inventory'>
 export type Sale                 = Tables<'sales'>
 export type SaleItem             = Tables<'sale_items'>
 export type Expense              = Tables<'expenses'>
-
-// ─── Joined / extended types ──────────────────────────────────────────────────
 
 export interface IngredientWithRelations extends Ingredient {
   ingredient_categories: IngredientCategory | null
@@ -55,6 +57,7 @@ export interface RecipeIngredientWithIngredient extends RecipeIngredient {
 
 export interface RecipeWithRelations extends Recipe {
   products: Product | null
+  variants: ProductVariant | null
   recipe_ingredients: RecipeIngredientWithIngredient[]
 }
 

@@ -2,6 +2,8 @@
 # Supabase migrations
 supabase/migrations/*.sql
 
+eattie.zip
+
 .next
 # Dependencies
 node_modules/

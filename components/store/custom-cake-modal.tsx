@@ -50,9 +50,12 @@ export function CustomCakeModal({ open, onClose }: Props) {
     fd.append('file', file)
     try {
       const res = await fetch('/api/upload-product-image', { method: 'POST', body: fd })
-      const json = await res.json()
-      if (json.url) setUploadedUrl(json.url)
-      else setError('Gagal upload gambar, coba lagi.')
+      const json: unknown = await res.json().catch(() => null)
+      if (res.ok && json && typeof json === 'object' && 'url' in json && typeof (json as { url?: unknown }).url === 'string') {
+        setUploadedUrl((json as { url: string }).url)
+      } else {
+        setError('Gagal upload gambar, coba lagi.')
+      }
     } catch {
       setError('Gagal upload gambar.')
     } finally {

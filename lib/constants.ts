@@ -15,12 +15,12 @@ export const ROLE_LABELS = {
     owner: 'Pemilik',
     cashier: 'Kasir',
     baker: 'Baker',
-  },
+  } as Record<string, string>,
   en: {
     owner: 'Owner',
     cashier: 'Cashier',
     baker: 'Baker',
-  },
+  } as Record<string, string>,
 }
 
 // Stock movement types

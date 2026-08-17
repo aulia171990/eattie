@@ -6,20 +6,77 @@ import type { StoreProduct } from '@/actions/store'
 import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingBag, Star, Search, ChevronRight, Plus, Check, Truck, Leaf, Palette, X, ArrowUpDown } from 'lucide-react'
+import {
+  ShoppingBag,
+  Star,
+  Search,
+  ChevronRight,
+  Plus,
+  Check,
+  Truck,
+  Leaf,
+  Palette,
+  X,
+  ArrowUpDown,
+  Sparkles,
+  Wheat,
+  Heart,
+  ShieldCheck,
+} from 'lucide-react'
 import { CustomCakeModal } from '@/components/store/custom-cake-modal'
-import { ProductModal } from '@/components/store/product-modal'
+import { ProductDetailModal } from '@/components/store/product-detail-modal'
 
-/* ─── Category config ─────────────────────────────────────── */
-const CAT_EMOJI: Record<string, string> = {
-  Kue: '🎂', Roti: '🍞', Pastri: '🥐', Cookies: '🍪',
-  cake: '🎂', bread: '🍞', pastry: '🥐', healthy: '🌿', hampers: '🎁',
+const CATEGORY_LABELS: Record<string, string> = {
+  Kue: 'Kue',
+  Roti: 'Roti',
+  Pastri: 'Pastri',
+  Cookies: 'Cookies',
+  cake: 'Kue',
+  bread: 'Roti',
+  pastry: 'Pastri',
+  healthy: 'Healthy',
+  hampers: 'Hampers',
 }
 
-/* ─── Product Card ────────────────────────────────────────── */
-function ProductCard({ product }: { product: StoreProduct }) {
+function cleanProductName(name: string) {
+  return name
+    .replace(/^(cake|kue|roti|bread)\s+/i, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function productDescription(product: StoreProduct) {
+  return product.online_description || product.description || 'Dibuat fresh dengan bahan pilihan dan sentuhan handmade.'
+}
+
+function ProductImage({ product, priority = false, className = '' }: {
+  product: StoreProduct
+  priority?: boolean
+  className?: string
+}) {
+  if (product.image_url) {
+    return (
+      <Image
+        src={product.image_url}
+        alt={product.name}
+        fill
+        priority={priority}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+        className={`object-cover transition-transform duration-700 group-hover:scale-105 ${className}`}
+      />
+    )
+  }
+
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-[#f0e7dc] text-4xl font-semibold text-[#8a5a32]">
+      {cleanProductName(product.name).slice(0, 1).toUpperCase()}
+    </div>
+  )
+}
+
+function ProductCard({ product, signature = false }: { product: StoreProduct; signature?: boolean }) {
   const { addItem, items, updateQty } = useStoreCart()
-  const cartItem = items.find(i => i.product.id === product.id)
+  const cartItem = items.find(i => i.product_id === product.id)
   const qty = cartItem?.quantity ?? 0
   const [added, setAdded] = useState(false)
 
@@ -30,70 +87,71 @@ function ProductCard({ product }: { product: StoreProduct }) {
   }
 
   return (
-    <div className="group bg-white rounded-2xl border overflow-hidden flex flex-col transition-all duration-200 hover:shadow-lg"
-      style={{ borderColor: 'hsl(var(--border))' }}>
-
-      {/* Image */}
-      <div className="relative w-full overflow-hidden shrink-0"
-        style={{ aspectRatio: '4/3', background: 'hsl(var(--surface-raised))' }}>
-        {product.image_url
-          ? <Image src={product.image_url} alt={product.name}
-              fill
-              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105" />
-          : <div className="w-full h-full flex items-center justify-center text-5xl select-none">
-              {CAT_EMOJI[product.category ?? ''] ?? '🧁'}
-            </div>
-        }
-        {/* Qty badge */}
+    <div
+      className={`group flex h-full flex-col overflow-hidden rounded-[1.75rem] border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${signature ? 'shadow-[0_24px_70px_rgba(45,28,18,0.10)]' : 'shadow-sm'}`}
+      style={{ borderColor: 'rgba(185, 143, 92, 0.18)' }}
+    >
+      <div className="relative w-full shrink-0 overflow-hidden bg-[#f2eadf]" style={{ aspectRatio: signature ? '4/5' : '4/3' }}>
+        <ProductImage product={product} />
+        {signature && (
+          <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[#a46d2f] shadow-sm backdrop-blur">
+            Best Seller
+          </div>
+        )}
         {qty > 0 && (
-          <div className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold text-white"
-            style={{ background: 'hsl(var(--primary))' }}>
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg" style={{ background: '#2d2118' }}>
             {qty}
           </div>
         )}
       </div>
 
-      {/* Info */}
-      <div className="p-3 flex flex-col flex-1 gap-2">
-        <div className="flex-1">
-          <p className="text-xs font-medium mb-0.5" style={{ color: 'hsl(var(--warning))' }}>
-            {product.category ?? 'Produk'}
+      <div className="flex flex-1 flex-col gap-3 p-4">
+        <div className="flex-1 space-y-2">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#b98f5c]">
+            {CATEGORY_LABELS[product.category ?? ''] ?? product.category ?? 'Produk'}
           </p>
-          <p className="text-sm font-bold leading-snug line-clamp-2"
-            style={{ color: 'hsl(var(--foreground))', fontFamily: '"Playfair Display", serif' }}>
-            {product.name}
-          </p>
+          <h3 className="line-clamp-2 text-lg font-bold leading-tight text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+            {cleanProductName(product.name)}
+          </h3>
+          {signature && (
+            <p className="line-clamp-2 text-sm leading-relaxed text-[#75685d]">
+              {productDescription(product)}
+            </p>
+          )}
         </div>
 
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-extrabold" style={{ color: 'hsl(var(--primary))' }}>
+        <div className="flex items-center justify-between gap-3">
+          <span className="text-sm font-extrabold text-[#8a5a32]">
             {formatCurrency(product.selling_price)}
           </span>
 
           {qty > 0 ? (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5 rounded-full bg-[#f7f0e8] p-1">
               <button
                 onClick={(e) => { e.stopPropagation(); updateQty(product.id, qty - 1) }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-sm font-bold transition-colors"
-                style={{ background: 'hsl(var(--surface-raised))', color: 'hsl(var(--text-secondary))' }}>
+                className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-[#5e4a3b] transition-colors hover:bg-white"
+                aria-label={`Kurangi ${product.name}`}
+              >
                 −
               </button>
-              <span className="w-5 text-center text-sm font-bold"
-                style={{ color: 'hsl(var(--foreground))' }}>{qty}</span>
+              <span className="w-5 text-center text-sm font-bold text-[#2d2118]">{qty}</span>
               <button
                 onClick={(e) => { e.stopPropagation(); handleAdd() }}
-                className="w-7 h-7 rounded-lg flex items-center justify-center font-bold transition-colors"
-                style={{ background: 'hsl(var(--primary))', color: 'white' }}>
+                className="flex h-7 w-7 items-center justify-center rounded-full font-bold text-white transition-colors"
+                style={{ background: '#2d2118' }}
+                aria-label={`Tambah ${product.name}`}
+              >
                 +
               </button>
             </div>
           ) : (
-            <button onClick={(e) => { e.stopPropagation(); handleAdd() }}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold text-white transition-all"
-              style={{ background: added ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}>
-              {added ? <Check size={11} /> : <Plus size={11} />}
-              {added ? 'Added!' : 'Pesan'}
+            <button
+              onClick={(e) => { e.stopPropagation(); handleAdd() }}
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-white transition-all hover:opacity-90"
+              style={{ background: added ? '#4f7d55' : '#2d2118' }}
+            >
+              {added ? <Check size={12} /> : <Plus size={12} />}
+              {added ? 'Ditambah' : 'Pesan'}
             </button>
           )}
         </div>
@@ -102,7 +160,6 @@ function ProductCard({ product }: { product: StoreProduct }) {
   )
 }
 
-/* ─── Main ────────────────────────────────────────────────── */
 export function StoreLanding({ bestsellers, allProducts, reviews }: {
   bestsellers: StoreProduct[]
   allProducts: StoreProduct[]
@@ -116,7 +173,6 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
   const [showCustomCake, setShowCustomCake] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(null)
 
-  // Debounce search input (200ms) so filtering doesn't run on every keystroke
   useEffect(() => {
     const t = setTimeout(() => setSearch(searchInput), 200)
     return () => clearTimeout(t)
@@ -127,144 +183,180 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
     const q = search.toLowerCase()
     const matchSearch = !search
       || p.name.toLowerCase().includes(q)
-      || (p.online_description ?? p.description ?? '').toLowerCase().includes(q)
+      || productDescription(p).toLowerCase().includes(q)
     const matchCat = activeCategory === 'all' || p.category === activeCategory
     return matchSearch && matchCat
   })
 
   const sorted = [...filtered].sort((a, b) => {
     switch (sort) {
-      case 'price_asc':  return a.selling_price - b.selling_price
+      case 'price_asc': return a.selling_price - b.selling_price
       case 'price_desc': return b.selling_price - a.selling_price
-      case 'name_asc':   return a.name.localeCompare(b.name)
-      default:           return 0 // featured = urutan asli (online_sort_order)
+      case 'name_asc': return a.name.localeCompare(b.name)
+      default: return 0
     }
   })
 
   const hero = bestsellers[0] ?? allProducts[0]
+  const signatureProducts = (bestsellers.length > 0 ? bestsellers : allProducts).slice(0, 3)
+  const specialProducts = allProducts.filter((product) => {
+    const content = `${product.name} ${product.category ?? ''} ${productDescription(product)}`.toLowerCase()
+    return ['vegan', 'sugar', 'sehat', 'healthy', 'diet'].some(term => content.includes(term))
+  }).slice(0, 3)
+  const wellnessProducts = specialProducts.length > 0 ? specialProducts : allProducts.slice(0, 3)
 
   return (
-    <div style={{ background: '#faf9f7' }}>
+    <div className="min-h-screen bg-[#fbf8f3] text-[#2d2118]">
+      <section className="relative isolate overflow-hidden bg-[#2d2118]">
+        {hero?.image_url && (
+          <div className="absolute inset-0 opacity-30">
+            <Image src={hero.image_url} alt="Bakery hero background" fill priority sizes="100vw" className="object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#2d2118] via-[#2d2118]/90 to-[#2d2118]/40" />
+          </div>
+        )}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#fbf8f3] to-transparent" />
 
-      {/* ── HERO ─────────────────────────────────────────── */}
-      <section className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(175deg, hsl(var(--sidebar-bg)) 0%, hsl(25,25%,18%) 100%)' }}>
-
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-10 pointer-events-none"
-          style={{ background: 'hsl(var(--warning))', transform: 'translate(40%, -40%)' }} />
-        <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full opacity-5 pointer-events-none"
-          style={{ background: 'hsl(var(--text-muted))', transform: 'translate(-30%, 30%)' }} />
-
-        <div className="max-w-5xl mx-auto px-4 pt-10 pb-0">
-          <div className="flex flex-col lg:flex-row items-end gap-6 lg:gap-10">
-
-            {/* Text */}
-            <div className="flex-1 space-y-4 pb-8 lg:pb-12">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-widest"
-                style={{ background: 'rgba(255,255,255,0.1)', color: 'hsl(var(--text-muted))' }}>
-                ✨ Artisanal Bakery
-              </span>
-
-              <h1 className="font-bold leading-tight"
-                style={{
-                  fontFamily: '"Playfair Display", serif',
-                  fontSize: 'clamp(1.75rem, 6vw, 3rem)',
-                  color: 'white',
-                  letterSpacing: '-0.02em',
-                }}>
-                Roti & Kue<br />
-                <span style={{ color: 'hsl(var(--primary))' }}>Dibuat dengan Cinta</span>
-              </h1>
-
-              <p className="text-sm leading-relaxed max-w-sm"
-                style={{ color: 'hsl(var(--text-muted))' }}>
-                Bahan premium, tanpa pengawet, langsung dari dapur kami ke tangan Anda.
-              </p>
-
-              <div className="flex gap-2 flex-wrap">
-                <a href="#katalog"
-                  className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white transition-all hover:opacity-90"
-                  style={{ background: 'hsl(var(--primary))' }}>
-                  Lihat Katalog
-                </a>
-                <button onClick={() => setShowCustomCake(true)}
-                  className="px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-1.5 transition-all"
-                  style={{ background: 'rgba(255,255,255,0.08)', color: 'white', border: '1px solid rgba(255,255,255,0.15)' }}>
-                  <Palette size={14} />
-                  Kue Custom
-                </button>
-              </div>
-
-              {/* Stats */}
-              <div className="flex gap-5 pt-2">
-                {[
-                  { val: `${allProducts.length}+`, label: 'Produk' },
-                  { val: '⭐ 4.9', label: 'Rating' },
-                  { val: '100%', label: 'Bahan Segar' },
-                ].map(s => (
-                  <div key={s.label}>
-                    <p className="text-base font-bold" style={{ color: 'white' }}>{s.val}</p>
-                    <p className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>{s.label}</p>
-                  </div>
-                ))}
-              </div>
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-20 pt-16 md:px-6 lg:min-h-[680px] lg:grid-cols-[1fr_440px] lg:items-center lg:py-24">
+          <div className="max-w-2xl space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.26em] text-[#d8b37b] backdrop-blur">
+              <Sparkles size={14} />
+              Artisanal Luxury Bakery
             </div>
 
-            {/* Hero product image — sits at bottom of dark section */}
-            {hero && (
-              <div className="w-full lg:w-72 shrink-0 relative">
-                <div className="rounded-t-2xl overflow-hidden"
-                  style={{ aspectRatio: '1/1', background: 'hsl(var(--border))' }}>
-                  {hero.image_url
-                    ? <Image src={hero.image_url} alt={hero.name} fill priority
-                        sizes="(max-width: 1024px) 100vw, 18rem"
-                        className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center text-7xl">
-                        {CAT_EMOJI[hero.category ?? ''] ?? '🧁'}
-                      </div>
-                  }
+            <div className="space-y-5">
+              <h1 className="text-5xl font-bold leading-[0.95] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl" style={{ fontFamily: '"Playfair Display", serif' }}>
+                Roti & Kue Dibuat dengan Cinta
+              </h1>
+              <p className="max-w-xl text-base leading-8 text-[#eadfd2] sm:text-lg">
+                Premium ingredients, no preservatives, from our kitchen to your hands. Setiap kue dibuat fresh untuk momen yang terasa lebih istimewa.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <a href="#katalog" className="inline-flex items-center justify-center rounded-full bg-[#d8b37b] px-7 py-3.5 text-sm font-bold text-[#2d2118] shadow-xl transition-all hover:-translate-y-0.5">
+                Explore Our Menu
+              </a>
+              <button
+                onClick={() => setShowCustomCake(true)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-bold text-white backdrop-blur transition-all hover:bg-white/15"
+              >
+                <Palette size={16} />
+                Custom Cake
+              </button>
+            </div>
+
+            <div className="grid max-w-lg grid-cols-3 gap-4 border-t border-white/10 pt-6">
+              {[
+                { value: `${allProducts.length}+`, label: 'Produk pilihan' },
+                { value: '4.9', label: 'Rating pelanggan' },
+                { value: '100%', label: 'Fresh harian' },
+              ].map(item => (
+                <div key={item.label}>
+                  <p className="text-2xl font-bold text-white" style={{ fontFamily: '"Playfair Display", serif' }}>{item.value}</p>
+                  <p className="mt-1 text-xs text-[#bca993]">{item.label}</p>
                 </div>
-                {/* Floating label */}
-                <div className="absolute bottom-3 left-3 right-3 rounded-xl px-3 py-2"
-                  style={{ background: 'rgba(255,255,255,0.95)', backdropFilter: 'blur(8px)' }}>
-                  <p className="text-[9px] uppercase font-bold tracking-widest mb-0.5"
-                    style={{ color: 'hsl(var(--primary))' }}>
-                    🔥 {bestsellers.length > 0 ? 'Paling Laris' : 'Pilihan Kami'}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold truncate"
-                      style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
-                      {hero.name}
-                    </p>
-                    <span className="text-xs font-bold shrink-0 ml-2"
-                      style={{ color: 'hsl(var(--primary))' }}>
-                      {formatCurrency(hero.selling_price)}
-                    </span>
+              ))}
+            </div>
+          </div>
+
+          {hero && (
+            <div className="group relative mx-auto w-full max-w-sm lg:max-w-none">
+              <div className="absolute -inset-6 rounded-[3rem] bg-[#d8b37b]/20 blur-3xl" />
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-white/15 bg-white/10 p-3 shadow-2xl backdrop-blur">
+                <div className="relative overflow-hidden rounded-[2rem] bg-[#f0e7dc]" style={{ aspectRatio: '4/5' }}>
+                  <ProductImage product={hero} priority />
+                </div>
+                <div className="absolute bottom-7 left-7 right-7 rounded-[1.5rem] bg-white/95 p-4 shadow-xl backdrop-blur">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#b98f5c]">Signature Pick</p>
+                  <div className="mt-2 flex items-end justify-between gap-3">
+                    <div className="min-w-0">
+                      <h2 className="truncate text-xl font-bold text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>{cleanProductName(hero.name)}</h2>
+                      <p className="mt-1 line-clamp-1 text-xs text-[#75685d]">{productDescription(hero)}</p>
+                    </div>
+                    <p className="shrink-0 text-sm font-extrabold text-[#8a5a32]">{formatCurrency(hero.selling_price)}</p>
                   </div>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────────── */}
-      <section className="py-6 border-b" style={{ borderColor: 'hsl(var(--border))', background: 'white' }}>
-        <div className="max-w-5xl mx-auto px-4">
-          <div className="flex overflow-x-auto gap-4 pb-1 no-scrollbar">
-            {[
-              { icon: '🚚', title: 'Pengiriman Aman', desc: 'Dikemas khusus, tiba sempurna' },
-              { icon: '🌿', title: 'Bahan Premium', desc: 'Tanpa pengawet buatan' },
-              { icon: '💚', title: 'Varian Sehat', desc: 'Sugar-free & vegan tersedia' },
-              { icon: '🎂', title: 'Custom Cake', desc: 'Desain sesuai keinginan' },
-            ].map(f => (
-              <div key={f.title} className="flex items-center gap-2.5 shrink-0 px-4 py-2.5 rounded-xl"
-                style={{ background: 'hsl(var(--surface-raised))', border: '1px solid hsl(var(--surface-raised))' }}>
-                <span className="text-xl">{f.icon}</span>
-                <div>
-                  <p className="text-xs font-semibold whitespace-nowrap" style={{ color: 'hsl(var(--foreground))' }}>{f.title}</p>
-                  <p className="text-[10px] whitespace-nowrap" style={{ color: 'hsl(var(--text-muted))' }}>{f.desc}</p>
+      <section className="relative z-10 mx-auto -mt-10 max-w-6xl px-4">
+        <div className="grid gap-3 rounded-[2rem] border border-[#eadcc8] bg-white/95 p-3 shadow-[0_24px_80px_rgba(45,28,18,0.10)] backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { icon: Leaf, title: '100% Fresh', desc: 'Made daily from scratch.' },
+            { icon: Wheat, title: 'No Additives', desc: 'Pure, natural ingredients.' },
+            { icon: Heart, title: 'Custom Design', desc: 'Personalized for your moment.' },
+            { icon: Truck, title: 'Safe Shipping', desc: 'Delivered perfectly packed.' },
+          ].map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="flex items-center gap-3 rounded-[1.5rem] bg-[#fbf8f3] p-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#efe1cf] text-[#8a5a32]">
+                <Icon size={19} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-[#2d2118]">{title}</h3>
+                <p className="mt-1 text-xs text-[#75685d]">{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {signatureProducts.length > 0 && (
+        <section className="mx-auto max-w-6xl px-4 py-20 md:px-6">
+          <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div className="max-w-xl space-y-3">
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b98f5c]">Signature Collection</p>
+              <h2 className="text-4xl font-bold tracking-[-0.03em] text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                Bestsellers yang paling dicari
+              </h2>
+            </div>
+            <a href="#katalog" className="inline-flex items-center gap-2 text-sm font-bold text-[#8a5a32]">
+              View full menu <ChevronRight size={16} />
+            </a>
+          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            {signatureProducts.map(product => (
+              <div key={product.id} onClick={() => setSelectedProduct(product)} className="cursor-pointer">
+                <ProductCard product={product} signature />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="bg-[#f4eadf] py-20">
+        <div className="mx-auto grid max-w-6xl gap-10 px-4 md:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
+          <div className="space-y-5">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#8a5a32] shadow-sm">
+              <ShieldCheck size={22} />
+            </div>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b98f5c]">Dietary Friendly</p>
+            <h2 className="text-4xl font-bold leading-tight tracking-[-0.03em] text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+              Indulge without compromise.
+            </h2>
+            <p className="leading-8 text-[#75685d]">
+              Pilihan sugar-free, vegan, dan varian sehat tersedia untuk Anda yang ingin menikmati dessert premium dengan rasa tetap maksimal.
+            </p>
+            <button
+              onClick={() => setShowCustomCake(true)}
+              className="inline-flex items-center gap-2 rounded-full bg-[#2d2118] px-6 py-3 text-sm font-bold text-white transition-all hover:-translate-y-0.5"
+            >
+              <Palette size={16} />
+              Request Custom Order
+            </button>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-3">
+            {wellnessProducts.map(product => (
+              <div key={product.id} onClick={() => setSelectedProduct(product)} className="group cursor-pointer overflow-hidden rounded-[2rem] bg-white p-3 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+                <div className="relative overflow-hidden rounded-[1.5rem] bg-[#f0e7dc]" style={{ aspectRatio: '1/1' }}>
+                  <ProductImage product={product} />
+                </div>
+                <div className="p-3">
+                  <h3 className="line-clamp-2 text-base font-bold text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>{cleanProductName(product.name)}</h3>
+                  <p className="mt-2 text-sm font-extrabold text-[#8a5a32]">{formatCurrency(product.selling_price)}</p>
                 </div>
               </div>
             ))}
@@ -272,83 +364,38 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
         </div>
       </section>
 
-      {/* ── BESTSELLERS ──────────────────────────────────── */}
-      {bestsellers.length > 0 && (
-        <section className="py-8" style={{ background: 'white' }}>
-          <div className="max-w-5xl mx-auto px-4">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 rounded-lg flex items-center justify-center"
-                style={{ background: 'hsl(var(--primary))' }}>
-                <Star size={12} fill="white" style={{ color: 'white' }} />
-              </div>
-              <h2 className="text-base font-bold"
-                style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
-                Paling Laris
-              </h2>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {bestsellers.slice(0, 4).map(p => (
-                <div key={p.id} onClick={() => setSelectedProduct(p)} className="cursor-pointer">
-                  <ProductCard product={p} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ── FULL CATALOG ─────────────────────────────────── */}
-      <section id="katalog" className="py-8">
-        <div className="max-w-5xl mx-auto px-4 space-y-4">
-
-          {/* Section header */}
-          <div className="flex items-center justify-between">
-            <h2 className="text-base font-bold"
-              style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--foreground))' }}>
+      <section id="katalog" className="mx-auto max-w-6xl px-4 py-20 md:px-6">
+        <div className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
+          <div className="max-w-xl space-y-3">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b98f5c]">Complete Menu</p>
+            <h2 className="text-4xl font-bold tracking-[-0.03em] text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
               Semua Produk
             </h2>
-            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
-              {sorted.length} produk
-            </span>
+            <p className="text-sm text-[#75685d]">{sorted.length} produk tersedia untuk dipesan online.</p>
           </div>
 
-          {/* Search + Sort */}
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2"
-                style={{ color: 'hsl(var(--text-muted))' }} />
+          <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
+            <div className="relative min-w-0 flex-1 lg:w-80">
+              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9b8a7b]" />
               <input
                 type="text"
                 placeholder="Cari produk..."
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                className="w-full pl-9 pr-10 py-3 rounded-2xl border text-sm outline-none"
-                style={{
-                  borderColor: 'hsl(var(--border))',
-                  background: 'white',
-                  color: 'hsl(var(--foreground))',
-                }}
+                className="w-full rounded-full border border-[#eadcc8] bg-white py-3 pl-11 pr-10 text-sm text-[#2d2118] outline-none transition-all focus:border-[#b98f5c] focus:ring-4 focus:ring-[#b98f5c]/10"
               />
               {searchInput && (
-                <button onClick={() => setSearchInput('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full"
-                  style={{ color: 'hsl(var(--text-muted))' }}>
-                  <X size={14} />
+                <button onClick={() => setSearchInput('')} className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full text-[#9b8a7b]" aria-label="Hapus pencarian">
+                  <X size={15} />
                 </button>
               )}
             </div>
 
-            {/* Sort dropdown */}
             <div className="relative shrink-0">
               <select
                 value={sort}
                 onChange={e => setSort(e.target.value as typeof sort)}
-                className="h-full pl-3 pr-8 py-3 rounded-2xl border text-sm font-medium outline-none appearance-none cursor-pointer"
-                style={{
-                  borderColor: 'hsl(var(--border))',
-                  background: 'white',
-                  color: 'hsl(var(--foreground))',
-                }}
+                className="h-full w-full appearance-none rounded-full border border-[#eadcc8] bg-white py-3 pl-4 pr-10 text-sm font-semibold text-[#2d2118] outline-none transition-all focus:border-[#b98f5c] focus:ring-4 focus:ring-[#b98f5c]/10 sm:w-auto"
                 aria-label="Urutkan produk"
               >
                 <option value="featured">Unggulan</option>
@@ -356,76 +403,65 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
                 <option value="price_desc">Harga Termahal</option>
                 <option value="name_asc">Nama A-Z</option>
               </select>
-              <ArrowUpDown size={13} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                style={{ color: 'hsl(var(--text-muted))' }} />
+              <ArrowUpDown size={14} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#9b8a7b]" />
             </div>
           </div>
+        </div>
 
-          {/* Category pills */}
-          <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-            {categories.map(cat => (
-              <button key={cat} onClick={() => setActiveCategory(cat)}
-                className="shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all"
-                style={activeCategory === cat
-                  ? { background: 'hsl(var(--primary))', color: 'white' }
-                  : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(var(--border))' }
-                }>
-                {cat === 'all' ? '🧁 Semua' : `${CAT_EMOJI[cat] ?? '•'} ${cat}`}
-              </button>
+        <div className="mb-8 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {categories.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all"
+              style={activeCategory === cat
+                ? { background: '#2d2118', color: 'white' }
+                : { background: 'white', color: '#75685d', border: '1px solid #eadcc8' }
+              }
+            >
+              {cat === 'all' ? 'Semua' : (CATEGORY_LABELS[cat] ?? cat)}
+            </button>
+          ))}
+        </div>
+
+        {sorted.length === 0 ? (
+          <div className="rounded-[2rem] border border-[#eadcc8] bg-white py-16 text-center">
+            <p className="text-sm font-semibold text-[#75685d]">Produk tidak ditemukan</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5 lg:grid-cols-4">
+            {sorted.map(product => (
+              <div key={product.id} onClick={() => setSelectedProduct(product)} className="cursor-pointer">
+                <ProductCard product={product} />
+              </div>
             ))}
           </div>
-
-          {/* Grid */}
-          {sorted.length === 0 ? (
-            <div className="py-16 text-center space-y-2">
-              <p className="text-3xl">🔍</p>
-              <p className="text-sm font-medium" style={{ color: 'hsl(var(--text-secondary))' }}>
-                Produk tidak ditemukan
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-              {sorted.map(p => (
-                <div key={p.id} onClick={() => setSelectedProduct(p)} className="cursor-pointer">
-                  <ProductCard product={p} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        )}
       </section>
 
-      {/* ── TESTIMONIAL (curated by admin via is_featured) ── */}
       {reviews.length > 0 && (
-        <section className="py-10 mx-4 mb-4 rounded-3xl"
-          style={{ background: 'hsl(var(--foreground))' }}>
-          <div className="max-w-3xl mx-auto px-4">
-            <div className="flex justify-center gap-0.5 mb-5">
-              <Star size={14} fill="hsl(var(--warning))" style={{ color: 'hsl(var(--warning))' }} />
-              <span className="text-xs font-semibold ml-2" style={{ color: 'hsl(var(--text-muted))' }}>
-                Ulasan Pelanggan
-              </span>
+        <section className="mx-4 mb-8 rounded-[2.5rem] bg-[#2d2118] px-4 py-16 md:mx-6">
+          <div className="mx-auto max-w-5xl">
+            <div className="mx-auto mb-9 max-w-2xl text-center">
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#d8b37b]">Customer Notes</p>
+              <h2 className="mt-3 text-3xl font-bold text-white" style={{ fontFamily: '"Playfair Display", serif' }}>
+                Dibuat untuk momen yang diingat
+              </h2>
             </div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {reviews.map(rv => (
-                <div key={rv.id} className="text-left p-4 rounded-2xl"
-                  style={{ background: 'rgba(255,255,255,0.05)' }}>
-                  <div className="flex gap-0.5 mb-2">
+            <div className="grid gap-4 md:grid-cols-3">
+              {reviews.map(review => (
+                <div key={review.id} className="rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-5 text-left">
+                  <div className="mb-4 flex gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={11}
-                        fill={i < rv.rating ? 'hsl(var(--warning))' : 'none'}
-                        style={{ color: i < rv.rating ? 'hsl(var(--warning))' : 'hsl(var(--text-muted))' }} />
+                      <Star key={i} size={13} fill={i < review.rating ? '#d8b37b' : 'none'} className={i < review.rating ? 'text-[#d8b37b]' : 'text-white/20'} />
                     ))}
                   </div>
-                  {rv.comment && (
-                    <p className="text-sm leading-relaxed"
-                      style={{ fontFamily: '"Playfair Display", serif', color: 'hsl(var(--border-strong))' }}>
-                      "{rv.comment}"
+                  {review.comment && (
+                    <p className="text-base leading-7 text-[#eadfd2]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                      “{review.comment}”
                     </p>
                   )}
-                  <p className="text-xs font-semibold mt-2" style={{ color: 'hsl(var(--text-muted))' }}>
-                    — {rv.customer_name}
-                  </p>
+                  <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#bca993]">{review.customer_name}</p>
                 </div>
               ))}
             </div>
@@ -433,38 +469,27 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
         </section>
       )}
 
-      {/* ── FLOATING CART ────────────────────────────────── */}
       {itemCount > 0 && (
-        <div className="fixed bottom-4 inset-x-4 max-w-sm mx-auto z-50"
-          key={itemCount}
-          style={{ animation: 'cart-bump 300ms var(--ease-spring)' }}>
-          <Link href="/store/checkout"
-            className="flex items-center justify-between w-full px-4 py-3.5 rounded-2xl shadow-xl transition-all active:scale-[0.98]"
-            style={{ background: 'hsl(var(--foreground))' }}>
+        <div className="fixed bottom-4 inset-x-4 z-50 mx-auto max-w-sm" key={itemCount} style={{ animation: 'cart-bump 300ms var(--ease-spring)' }}>
+          <Link href="/store/checkout" className="flex w-full items-center justify-between rounded-2xl bg-[#2d2118] px-4 py-3.5 shadow-2xl transition-all active:scale-[0.98]">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ background: 'hsl(var(--primary))' }}>
-                <ShoppingBag size={14} style={{ color: 'white' }} />
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#d8b37b] text-[#2d2118]">
+                <ShoppingBag size={15} />
               </div>
               <div>
-                <p className="text-xs font-semibold text-white">{itemCount} item</p>
-                <p className="text-[10px]" style={{ color: 'hsl(var(--text-muted))' }}>Tap untuk checkout</p>
+                <p className="text-xs font-bold text-white">{itemCount} item</p>
+                <p className="text-[10px] text-[#bca993]">Tap untuk checkout</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>
-                {formatCurrency(total)}
-              </span>
-              <ChevronRight size={15} style={{ color: 'hsl(var(--text-muted))' }} />
+              <span className="text-sm font-bold text-[#d8b37b]">{formatCurrency(total)}</span>
+              <ChevronRight size={15} className="text-[#bca993]" />
             </div>
           </Link>
         </div>
       )}
 
-      {/* Product Detail Modal */}
-      <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-
-      {/* Custom Cake Modal */}
+      <ProductDetailModal productId={selectedProduct?.id ?? null} onClose={() => setSelectedProduct(null)} />
       <CustomCakeModal open={showCustomCake} onClose={() => setShowCustomCake(false)} />
     </div>
   )

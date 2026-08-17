@@ -52,6 +52,8 @@ export default async function SaleDetailPage({
       is_available_online: false,
       online_description: null,
       online_sort_order: 0,
+      category_id: null,
+      is_featured: false,
       created_at: item.created_at,
       updated_at: item.created_at,
     },

@@ -40,11 +40,14 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
         method: 'POST',
         body: formData,
       })
-      const json = await res.json()
-      if (json.url) {
-        setImageUrl(json.url)
+      const json: unknown = await res.json().catch(() => null)
+      if (res.ok && json && typeof json === 'object' && 'url' in json && typeof (json as { url?: unknown }).url === 'string') {
+        setImageUrl((json as { url: string }).url)
       } else {
-        alert('Gagal upload gambar: ' + (json.error ?? 'Unknown error'))
+        const error = json && typeof json === 'object' && 'error' in json && typeof (json as { error?: unknown }).error === 'string'
+          ? (json as { error: string }).error
+          : 'Unknown error'
+        alert('Gagal upload gambar: ' + error)
         setPreview(product?.image_url ?? null)
       }
     } catch {

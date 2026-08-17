@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import type { Product, RecipeWithRelations } from '@/types'
+import type { ProductVariant } from '@/types/product-config'
 import type { ServerAction } from '@/types/forms'
 import { getError } from '@/types/forms'
 import { BASE_UNITS } from '@/lib/constants'
@@ -26,6 +27,7 @@ interface RecipeIngredientRow {
 interface RecipeFormProps {
   action: ServerAction
   products: Product[]
+  variants: ProductVariant[]
   ingredients: IngredientOption[]
   recipe?: RecipeWithRelations
   cancelHref: string
@@ -34,6 +36,7 @@ interface RecipeFormProps {
 export function RecipeForm({
   action,
   products,
+  variants,
   ingredients,
   recipe,
   cancelHref,
@@ -49,6 +52,11 @@ export function RecipeForm({
       notes: ri.notes ?? '',
     })) ?? []
   )
+
+  const [selectedProductId, setSelectedProductId] = useState(recipe?.product_id ?? '')
+  const productVariants = selectedProductId
+    ? variants.filter(v => v.product_id === selectedProductId)
+    : []
 
   const addItem = () =>
     setItems((prev) => [
@@ -113,7 +121,8 @@ export function RecipeForm({
             </label>
             <select
               name="product_id"
-              defaultValue={recipe?.product_id ?? ''}
+              value={selectedProductId}
+              onChange={e => setSelectedProductId(e.target.value)}
               required
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
               style={{ borderColor: 'hsl(var(--border))' }}
@@ -121,6 +130,25 @@ export function RecipeForm({
               <option value="">-- Pilih Produk --</option>
               {products.map((p) => (
                 <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label
+              className="text-xs font-medium block mb-1"
+              style={{ color: 'hsl(var(--text-secondary))' }}
+            >
+              Varian (opsional)
+            </label>
+            <select
+              name="variant_id"
+              defaultValue={recipe?.variant_id ?? ''}
+              className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
+              style={{ borderColor: 'hsl(var(--border))' }}
+            >
+              <option value="">-- Semua Varian (Produk) --</option>
+              {productVariants.map((v) => (
+                <option key={v.id} value={v.id}>{v.name}</option>
               ))}
             </select>
           </div>

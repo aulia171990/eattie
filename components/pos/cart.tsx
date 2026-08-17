@@ -77,7 +77,7 @@ export function Cart({ onCheckout }: CartProps) {
         ) : (
           <div className="divide-y" style={{ borderColor: 'hsl(var(--border))' }}>
             {items.map(item => (
-              <div key={item.product.id} className="px-4 py-3 flex items-center gap-3">
+              <div key={item._cartId || item.product.id} className="px-4 py-3 flex items-center gap-3">
                 {/* Product info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>
@@ -91,7 +91,7 @@ export function Cart({ onCheckout }: CartProps) {
                 {/* Qty controls */}
                 <div className="flex items-center gap-1 shrink-0">
                   <button
-                    onClick={() => updateQty(item.product.id, item.quantity - 1)}
+                    onClick={() => updateQty(item._cartId || item.product.id, item.quantity - 1)}
                     className="w-6 h-6 rounded-md flex items-center justify-center transition-all hover:opacity-80"
                     style={{ background: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
                     <Minus size={11} />
@@ -101,7 +101,7 @@ export function Cart({ onCheckout }: CartProps) {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => updateQty(item.product.id, item.quantity + 1)}
+                    onClick={() => updateQty(item._cartId || item.product.id, item.quantity + 1)}
                     className="w-6 h-6 rounded-md flex items-center justify-center transition-all hover:opacity-80"
                     style={{ background: 'hsl(var(--primary))', color: 'white' }}>
                     <Plus size={11} />
@@ -113,7 +113,7 @@ export function Cart({ onCheckout }: CartProps) {
                   <p className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
                     {formatCurrency(item.subtotal)}
                   </p>
-                  <button onClick={() => removeItem(item.product.id)}
+                  <button onClick={() => removeItem(item._cartId || item.product.id)}
                     className="mt-0.5 hover:opacity-70 transition-opacity"
                     style={{ color: 'hsl(var(--danger))' }}>
                     <Trash2 size={12} />

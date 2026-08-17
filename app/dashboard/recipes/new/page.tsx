@@ -1,12 +1,13 @@
-import { getProducts } from '@/actions/products'
+import { getProducts, getAllProductVariants } from '@/actions/products'
 import { getIngredients } from '@/actions/ingredients'
 import { upsertRecipe } from '@/actions/recipes'
 import { RecipeForm } from '@/components/forms/recipe-form'
 import { PageHeader } from '@/components/shared/page-header'
 
 export default async function NewRecipePage() {
-  const [products, ingredients] = await Promise.all([
+  const [products, variants, ingredients] = await Promise.all([
     getProducts(true),
+    getAllProductVariants(),
     getIngredients({ isActive: true }),
   ])
 
@@ -30,6 +31,7 @@ export default async function NewRecipePage() {
       <RecipeForm
         action={upsertRecipe}
         products={products}
+        variants={variants}
         ingredients={ingOptions}
         cancelHref="/dashboard/recipes"
       />

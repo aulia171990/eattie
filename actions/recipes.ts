@@ -53,11 +53,13 @@ export async function upsertRecipe(
   }
   if (ingredients.length === 0) return { error: 'Tambahkan minimal 1 bahan' }
 
+  const variant_id = raw.variant_id as string
   const product_id = raw.product_id as string
-  if (!product_id) return { error: 'Pilih produk' }
+  if (!product_id && !variant_id) return { error: 'Pilih produk atau varian' }
 
   const recipeData = {
-    product_id,
+    product_id: product_id || null,
+    variant_id: variant_id || null,
     yield_quantity: parseInt(raw.yield_quantity as string, 10) || 1,
     instructions: (raw.instructions as string) || null,
     prep_time_minutes: raw.prep_time_minutes
@@ -100,12 +102,26 @@ export async function upsertRecipe(
   const { error: ingErr } = await supabase.from('recipe_ingredients').insert(ingRows)
   if (ingErr) return { error: ingErr.message }
 
-  // Recalculate and update product cost_price
-  const totalCost = ingredients.reduce((sum, _i) => sum + 0, 0) // placeholder
-  await supabase
-    .from('products')
-    .update({ cost_price: totalCost, updated_at: new Date().toISOString() })
-    .eq('id', product_id)
+  // Fetch ingredient prices for cost calculation
+  const { data: ingredientsData } = await supabase
+    .from('ingredients')
+    .select('id, price_per_unit')
+    .in('id', ingredients.map(i => i.ingredient_id))
+  const ingredientsMap = new Map((ingredientsData ?? []).map(i => [i.id, i.price_per_unit]))
+
+  // Recalculate and update cost_price on variant if variant_id provided, else product
+  const totalCost = ingredients.reduce((sum, i) => sum + (i.quantity * (ingredientsMap.get(i.ingredient_id) ?? 0)), 0)
+  if (variant_id) {
+    await supabase
+      .from('product_variants')
+      .update({ cost_price: totalCost, updated_at: new Date().toISOString() })
+      .eq('id', variant_id)
+  } else if (product_id) {
+    await supabase
+      .from('products')
+      .update({ cost_price: totalCost, updated_at: new Date().toISOString() })
+      .eq('id', product_id)
+  }
 
   revalidatePath('/dashboard/recipes')
   redirect('/dashboard/recipes')

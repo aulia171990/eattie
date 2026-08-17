@@ -2,6 +2,8 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { sendNewOrderPushNotification } from '@/lib/push/send-new-order-push'
+import type { ProductVariant, ProductAddon, StoreProductDetail } from '@/types/product-config'
+import type { ProductGallery } from '@/types/product-config'
 
 export interface StoreProduct {
   id: string
@@ -21,6 +23,9 @@ export interface CheckoutItem {
   unit_price: number
   subtotal: number
   notes?: string
+  variant?: { variant_id: string; variant_name: string | null; variant_price: number | null }
+  addon_ids?: string[]
+  addons?: { addon_id: string; name: string; price: number }[]
 }
 
 export interface CheckoutInput {
@@ -128,9 +133,85 @@ export async function getBestsellerProducts(limit = 6): Promise<StoreProduct[]> 
   return ranked as StoreProduct[]
 }
 
+export async function getProductDetail(productId: string): Promise<StoreProductDetail | null> {
+  const supabase = await createClient()
+
+  const { data: product, error: productError } = await supabase
+    .from('products')
+    .select('id, name, description, online_description, category, image_url, online_sort_order')
+    .eq('id', productId)
+    .single()
+
+  if (productError || !product) return null
+
+  const { data: gallery, error: galleryError } = await supabase
+    .from('product_gallery')
+    .select('*')
+    .eq('product_id', productId)
+    .order('sort_order', { ascending: true })
+
+  if (galleryError) throw new Error(galleryError.message)
+
+  const { data: variants, error: variantsError } = await supabase
+    .from('product_variants')
+    .select('*')
+    .eq('product_id', productId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+
+  if (variantsError) throw new Error(variantsError.message)
+
+  const { data: addons, error: addonsError } = await supabase
+    .from('product_addons')
+    .select('*')
+    .eq('product_id', productId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+
+  if (addonsError) throw new Error(addonsError.message)
+
+  const min_price = variants.reduce((min, v) => Math.min(min, v.price), Infinity) || (product as any).selling_price || 0
+
+  return {
+    ...product,
+    variants: variants as unknown as ProductVariant[],
+    addons: addons as unknown as ProductAddon[],
+    gallery: gallery as unknown as ProductGallery[],
+    min_price,
+  } as StoreProductDetail
+}
+
+export async function getProductVariants(productId: string): Promise<ProductVariant[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('product_variants')
+    .select('*')
+    .eq('product_id', productId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+
+  if (error) throw new Error(error.message)
+  return (data ?? []) as ProductVariant[]
+}
+
+export async function getProductAddons(productId: string): Promise<ProductAddon[]> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('product_addons')
+    .select('*')
+    .eq('product_id', productId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+
+  if (error) throw new Error(error.message)
+  return (data ?? []) as ProductAddon[]
+}
+
 export async function submitOrder(
   input: CheckoutInput
-): Promise<{ success?: boolean; error?: string; orderNumber?: string }> {
+): Promise<{ success?: boolean; error?: string; orderNumber?: string; totalAmount?: number }> {
   const supabase = await createClient()
 
   if (!input.items || input.items.length === 0) {
@@ -152,6 +233,26 @@ export async function submitOrder(
 
   const productMap = new Map((products ?? []).map(p => [p.id, p]))
 
+  // Fetch all variants (active) and addons (active) for these products in one batch
+  const { data: variants, error: variantsErr } = await supabase
+    .from('product_variants')
+    .select('id, product_id, name, price, is_active')
+    .in('product_id', productIds)
+    .eq('is_active', true)
+
+  if (variantsErr) return { error: 'Gagal memverifikasi varian produk' }
+
+  const { data: addons, error: addonsErr } = await supabase
+    .from('product_addons')
+    .select('id, product_id, name, price, is_active')
+    .in('product_id', productIds)
+    .eq('is_active', true)
+
+  if (addonsErr) return { error: 'Gagal memverifikasi add-on produk' }
+
+  const variantMap = new Map((variants ?? []).map(v => [v.id, v]))
+  const addonMap = new Map((addons ?? []).map(a => [a.id, a]))
+
   let verifiedSubtotal = 0
   const verifiedItems: {
     product_id: string
@@ -159,7 +260,12 @@ export async function submitOrder(
     quantity: number
     unit_price: number
     subtotal: number
-    notes: string | null
+    notes?: string | null
+    variant_id?: string | null
+    variant_name?: string | null
+    variant_price?: number | null
+    addon_ids?: string[]
+    addons?: { name: string; price: number }[]
   }[] = []
 
   for (const item of input.items) {
@@ -175,17 +281,54 @@ export async function submitOrder(
       return { error: `Jumlah tidak valid untuk: ${product.name}` }
     }
 
-    const realUnitPrice = product.selling_price
-    const realSubtotal = realUnitPrice * item.quantity
+    const itemVariant = item.variant ?? { variant_id: 'default', variant_name: null, variant_price: null }
+    const hasCustomVariant = itemVariant.variant_id && itemVariant.variant_id !== 'default'
+    const hasAddons = item.addons && item.addons.length > 0
 
-    verifiedSubtotal += realSubtotal
+    let basePrice = product.selling_price
+    let variantId: string | null = null
+    let variantName: string | null = null
+    let variantPrice: number | null = null
+    let selectedAddons: { name: string; price: number }[] = []
+
+    if (hasCustomVariant) {
+      const variant = variantMap.get(itemVariant.variant_id!)
+      if (!variant || !variant.is_active) {
+        return { error: `Varian tidak ditemukan atau tidak aktif: ${itemVariant.variant_name}` }
+      }
+      variantId = variant.id
+      variantName = variant.name
+      variantPrice = variant.price
+      basePrice = variant.price
+    }
+
+    if (hasAddons) {
+      for (const addon of item.addons!) {
+        const addonRec = addonMap.get(addon.addon_id)
+        if (!addonRec || !addonRec.is_active) {
+          return { error: `Add-on tidak ditemukan atau tidak aktif: ${addon.name}` }
+        }
+        selectedAddons.push({ name: addonRec.name, price: addonRec.price })
+      }
+    }
+
+    const addonsSum = selectedAddons.reduce((s, a) => s + a.price, 0)
+    const unitPrice = basePrice + addonsSum
+    const subtotal = unitPrice * item.quantity
+
+    verifiedSubtotal += subtotal
     verifiedItems.push({
       product_id:   product.id,
       product_name: product.name,
       quantity:     item.quantity,
-      unit_price:   realUnitPrice,
-      subtotal:     realSubtotal,
+      unit_price:   unitPrice,
+      subtotal:     subtotal,
       notes:        item.notes ?? null,
+      variant_id:   variantId ?? null,
+      variant_name: variantName ?? null,
+      variant_price: variantPrice ?? null,
+      addon_ids:    hasAddons ? item.addon_ids : undefined,
+      addons:       hasAddons ? selectedAddons : undefined,
     })
   }
 
@@ -222,7 +365,7 @@ export async function submitOrder(
   if (orderErr) return { error: orderErr.message }
 
   // Insert order items — using server-verified prices, not client input
-  const items = verifiedItems.map((item) => ({
+  const items = verifiedItems.map(({ addon_ids, ...item }) => ({
     order_id: order.id,
     ...item,
   }))
@@ -241,7 +384,7 @@ export async function submitOrder(
     totalAmount: input.total_amount,
   })
 
-  return { success: true, orderNumber: orderNum as string }
+  return { success: true, orderNumber: orderNum as string, totalAmount: verifiedTotal }
 }
 
 export async function trackOrder(orderNumber: string, phone: string) {

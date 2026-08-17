@@ -68,11 +68,15 @@ export default function StoreCheckout() {
         delivery_address: form.delivery_address || undefined,
         notes: form.notes || undefined,
         items: items.map(i => ({
-          product_id: i.product.id,
-          product_name: i.product.name,
+          product_id: i.product_id,
+          product_name: i.product_name,
           quantity: i.quantity,
-          unit_price: i.product.selling_price,
-          subtotal: i.product.selling_price * i.quantity,
+          unit_price: i.unit_price,
+          subtotal: i.subtotal,
+          variant_id: i.variant.variant_id === 'default' ? undefined : i.variant.variant_id,
+          variant_name: i.variant.variant_name,
+          variant_price: i.variant.variant_price,
+          addons: i.addons.length > 0 ? i.addons.map(a => ({ addon_id: a.addon_id, name: a.name, price: a.price })) : undefined,
         })),
         subtotal: total,
         total_amount: total,
@@ -81,7 +85,7 @@ export default function StoreCheckout() {
 
       if (result.error) { setError(result.error); return }
       setOrderNumber(result.orderNumber ?? '')
-      setOrderTotal(total)
+      setOrderTotal(result.totalAmount ?? total)
       clearCart()
       setStep('success')
     } finally {
@@ -173,26 +177,26 @@ export default function StoreCheckout() {
 
         <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
           {items.map((item, idx) => (
-            <div key={item.product.id} className={`flex items-center gap-3 px-4 py-3 ${idx > 0 ? 'border-t' : ''}`}
+            <div key={item.id} className={`flex items-center gap-3 px-4 py-3 ${idx > 0 ? 'border-t' : ''}`}
               style={{ borderColor: 'hsl(var(--border))' }}>
               {/* Product image */}
               <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 overflow-hidden"
                 style={{ background: 'hsl(var(--surface-raised))' }}>
-                {item.product.image_url ? (
+                {item.product_image ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={item.product.image_url} alt={item.product.name}
+                  <img src={item.product_image} alt={item.product_name}
                     className="w-full h-full object-cover" />
                 ) : '🧁'}
               </div>
 
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>{item.product.name}</p>
-                <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{formatCurrency(item.product.selling_price)}</p>
+                <p className="text-sm font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>{item.product_name}</p>
+                <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{item.variant.variant_name} — {formatCurrency(item.unit_price)}</p>
 
                 {/* Quantity controls */}
                 <div className="flex items-center gap-2 mt-1.5">
                   <button
-                    onClick={() => updateQty(item.product.id, item.quantity - 1)}
+                    onClick={() => updateQty(item.id, item.quantity - 1)}
                     className="w-6 h-6 rounded-full flex items-center justify-center border"
                     style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
                   >
@@ -202,14 +206,14 @@ export default function StoreCheckout() {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => updateQty(item.product.id, item.quantity + 1)}
+                    onClick={() => updateQty(item.id, item.quantity + 1)}
                     className="w-6 h-6 rounded-full flex items-center justify-center"
                     style={{ background: 'hsl(var(--primary))', color: 'white' }}
                   >
                     <Plus size={12} />
                   </button>
                   <button
-                    onClick={() => removeItem(item.product.id)}
+                    onClick={() => removeItem(item.id)}
                     className="ml-1 p-1 rounded-lg"
                     style={{ color: 'hsl(var(--danger))' }}
                   >
@@ -219,7 +223,7 @@ export default function StoreCheckout() {
               </div>
 
               <p className="text-sm font-bold shrink-0" style={{ color: 'hsl(var(--primary))' }}>
-                {formatCurrency(item.product.selling_price * item.quantity)}
+                {formatCurrency(item.subtotal)}
               </p>
             </div>
           ))}

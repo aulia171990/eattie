@@ -2,18 +2,26 @@
 
 import { createContext, useContext, useState, useCallback } from 'react'
 import type { StoreProduct } from '@/actions/store'
+import type { ConfigurableCartItem, CartVariantPick, CartAddonPick } from '@/types/product-config'
 
 export interface StoreCartItem {
-  product: StoreProduct
+  id: string // unique ID for cart item (product_id + variant_id + addon_ids)
+  product_id: string
+  product_name: string
+  product_image: string | null
+  variant: CartVariantPick
+  addons: CartAddonPick[]
   quantity: number
-  notes?: string
+  unit_price: number   // variant_price + addons sum
+  subtotal: number     // unit_price * qty
 }
 
 interface CartContextType {
   items: StoreCartItem[]
+  addConfigurableItem: (item: ConfigurableCartItem) => void
   addItem: (product: StoreProduct, qty?: number) => void
-  removeItem: (productId: string) => void
-  updateQty: (productId: string, qty: number) => void
+  removeItem: (id: string) => void
+  updateQty: (id: string, qty: number) => void
   clearCart: () => void
   itemCount: number
   total: number
@@ -24,30 +32,45 @@ const CartContext = createContext<CartContextType | null>(null)
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<StoreCartItem[]>([])
 
-  const addItem = useCallback((product: StoreProduct, qty = 1) => {
+  const addConfigurableItem = useCallback((item: ConfigurableCartItem) => {
+    const id = `${item.product_id}-${item.variant.variant_id}-${item.addons.map(a => a.addon_id).sort().join(',')}`
     setItems(prev => {
-      const existing = prev.find(i => i.product.id === product.id)
+      const existing = prev.find(i => i.id === id)
       if (existing) {
         return prev.map(i =>
-          i.product.id === product.id
-            ? { ...i, quantity: i.quantity + qty }
+          i.id === id
+            ? { ...i, quantity: i.quantity + item.quantity, subtotal: i.subtotal + item.subtotal }
             : i
         )
       }
-      return [...prev, { product, quantity: qty }]
+      return [...prev, { ...item, id }]
     })
   }, [])
 
-  const removeItem = useCallback((productId: string) => {
-    setItems(prev => prev.filter(i => i.product.id !== productId))
+  const addItem = useCallback((product: StoreProduct, qty = 1) => {
+    // legacy support
+    addConfigurableItem({
+      product_id: product.id,
+      product_name: product.name,
+      product_image: product.image_url,
+      variant: { variant_id: 'default', variant_name: 'Standard', variant_price: product.selling_price },
+      addons: [],
+      quantity: qty,
+      unit_price: product.selling_price,
+      subtotal: product.selling_price * qty,
+    })
+  }, [addConfigurableItem])
+
+  const removeItem = useCallback((id: string) => {
+    setItems(prev => prev.filter(i => i.id !== id))
   }, [])
 
-  const updateQty = useCallback((productId: string, qty: number) => {
+  const updateQty = useCallback((id: string, qty: number) => {
     if (qty <= 0) {
-      setItems(prev => prev.filter(i => i.product.id !== productId))
+      setItems(prev => prev.filter(i => i.id !== id))
     } else {
       setItems(prev =>
-        prev.map(i => i.product.id === productId ? { ...i, quantity: qty } : i)
+        prev.map(i => i.id === id ? { ...i, quantity: qty, subtotal: i.unit_price * qty } : i)
       )
     }
   }, [])
@@ -55,10 +78,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = useCallback(() => setItems([]), [])
 
   const itemCount = items.reduce((s, i) => s + i.quantity, 0)
-  const total = items.reduce((s, i) => s + i.product.selling_price * i.quantity, 0)
+  const total = items.reduce((s, i) => s + i.subtotal, 0)
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQty, clearCart, itemCount, total }}>
+    <CartContext.Provider value={{ items, addItem, addConfigurableItem, removeItem, updateQty, clearCart, itemCount, total }}>
       {children}
     </CartContext.Provider>
   )

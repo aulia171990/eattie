@@ -7,6 +7,7 @@ import { formatCurrency } from '@/lib/utils'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { LayoutGrid, List, ArrowUpDown } from 'lucide-react'
 import type { Product } from '@/types'
+import { toggleProductActive } from '@/actions/products'
 
 type ProductCardType = Product & { current_stock: number; min_stock: number }
 
@@ -106,8 +107,21 @@ export function ProductListControls({ products }: { products: ProductCardType[] 
 
 function ProductTile({ product }: { product: ProductCardType }) {
   const p = product
+  const [isActive, setIsActive] = useState(p.is_active)
+  const [error, setError] = useState('')
   const margin = p.cost_price > 0 ? ((p.selling_price - p.cost_price) / p.selling_price * 100) : null
   const emoji = PRODUCT_CATEGORIES.find(c => c.value === p.category)?.emoji ?? '🧁'
+
+  const handleToggle = async () => {
+    const newState = !isActive
+    setIsActive(newState)
+    setError('')
+    const { error } = await toggleProductActive(p.id, newState)
+    if (error) {
+      setIsActive(isActive) // rollback
+      setError('Gagal update status')
+    }
+  }
 
   return (
     <div className="bg-white rounded-xl border overflow-hidden hover:shadow-sm transition-all" style={{ borderColor: 'hsl(var(--border))' }}>
@@ -117,6 +131,13 @@ function ProductTile({ product }: { product: ProductCardType }) {
         ) : (
           <div className="w-full h-full flex items-center justify-center text-4xl">{emoji}</div>
         )}
+        <button
+          onClick={handleToggle}
+          className="absolute top-2 left-2 text-xs px-2 py-1 rounded-md font-medium backdrop-blur-sm"
+          style={{ background: isActive ? 'rgba(34, 197, 94, 0.9)' : 'rgba(239, 68, 68, 0.9)', color: 'white' }}
+        >
+          {isActive ? 'Aktif' : 'Nonaktif'}
+        </button>
         <Link
           href={`/dashboard/products/${p.id}/edit`}
           className="absolute top-2 right-2 text-xs px-2 py-1 rounded-md font-medium backdrop-blur-sm"
@@ -155,8 +176,21 @@ function ProductTile({ product }: { product: ProductCardType }) {
 
 function ProductListRow({ product, isLast }: { product: ProductCardType; isLast: boolean }) {
   const p = product
+  const [isActive, setIsActive] = useState(p.is_active)
+  const [error, setError] = useState('')
   const margin = p.cost_price > 0 ? ((p.selling_price - p.cost_price) / p.selling_price * 100) : null
   const emoji = PRODUCT_CATEGORIES.find(c => c.value === p.category)?.emoji ?? '🧁'
+
+  const handleToggle = async () => {
+    const newState = !isActive
+    setIsActive(newState)
+    setError('')
+    const { error } = await toggleProductActive(p.id, newState)
+    if (error) {
+      setIsActive(isActive) // rollback
+      setError('Gagal update status')
+    }
+  }
 
   return (
     <div
@@ -179,26 +213,35 @@ function ProductListRow({ product, isLast }: { product: ProductCardType; isLast:
         </p>
       </div>
 
-      <div className="text-right shrink-0">
-        <p className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(p.selling_price)}</p>
-        <span
-          className="text-xs font-bold px-2 py-0.5 rounded-full inline-block mt-0.5"
-          style={{
-            background: p.current_stock <= 0 ? 'hsl(var(--danger-bg))' : p.current_stock <= p.min_stock ? 'hsl(var(--primary-subtle))' : 'hsl(var(--success-bg))',
-            color: p.current_stock <= 0 ? 'hsl(var(--danger))' : p.current_stock <= p.min_stock ? 'hsl(var(--primary-hover))' : 'hsl(var(--success))',
-          }}
+      <div className="flex items-center gap-2 shrink-0">
+        <button
+          onClick={handleToggle}
+          className="text-xs px-2 py-1 rounded-md font-medium"
+          style={{ background: isActive ? 'hsl(var(--success-bg))' : 'hsl(var(--danger-bg))', color: isActive ? 'hsl(var(--success))' : 'hsl(var(--danger))' }}
         >
-          {p.current_stock <= 0 ? 'Habis' : `${p.current_stock} pcs`}
-        </span>
-      </div>
+          {isActive ? 'Aktif' : 'Nonaktif'}
+        </button>
+        <div className="text-right">
+          <p className="text-sm font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(p.selling_price)}</p>
+          <span
+            className="text-xs font-bold px-2 py-0.5 rounded-full inline-block mt-0.5"
+            style={{
+              background: p.current_stock <= 0 ? 'hsl(var(--danger-bg))' : p.current_stock <= p.min_stock ? 'hsl(var(--primary-subtle))' : 'hsl(var(--success-bg))',
+              color: p.current_stock <= 0 ? 'hsl(var(--danger))' : p.current_stock <= p.min_stock ? 'hsl(var(--primary-hover))' : 'hsl(var(--success))',
+            }}
+          >
+            {p.current_stock <= 0 ? 'Habis' : `${p.current_stock} pcs`}
+          </span>
+        </div>
 
-      <Link
-        href={`/dashboard/products/${p.id}/edit`}
-        className="text-xs px-3 py-1.5 rounded-md font-medium shrink-0"
-        style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
-      >
-        Edit
-      </Link>
+        <Link
+          href={`/dashboard/products/${p.id}/edit`}
+          className="text-xs px-3 py-1.5 rounded-md font-medium"
+          style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }}
+        >
+          Edit
+        </Link>
+      </div>
     </div>
   )
 }

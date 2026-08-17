@@ -3,6 +3,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import type { CustomCakeRequest, CustomCakeStatus } from '@/types/custom-cake'
+import { CustomCakeSchema } from '@/lib/validations/custom-cake'
+
+const CUSTOM_CAKE_STATUSES: CustomCakeStatus[] = ['pending', 'quoted', 'confirmed', 'in_production', 'ready', 'delivered', 'cancelled']
+
+function isCustomCakeStatus(value: string): value is CustomCakeStatus {
+  return CUSTOM_CAKE_STATUSES.includes(value as CustomCakeStatus)
+}
 
 // Generate request number: CC-YYYYMMDD-XXXX
 function generateReqNumber(): string {
@@ -20,17 +27,23 @@ export async function submitCustomCakeRequest(formData: FormData): Promise<{
 }> {
   const supabase = await createClient()
 
-  const customerName  = (formData.get('customer_name') as string)?.trim()
-  const customerPhone = (formData.get('customer_phone') as string)?.trim()
-  const size          = (formData.get('size') as string)?.trim()
-  const flavor        = (formData.get('flavor') as string)?.trim()
-  const colorTheme    = (formData.get('color_theme') as string)?.trim() || null
-  const specialNotes  = (formData.get('special_notes') as string)?.trim() || null
-  const refImageUrl   = (formData.get('reference_image_url') as string)?.trim() || null
+  const parsed = CustomCakeSchema.safeParse({
+    customer_name: formData.get('customer_name'),
+    customer_phone: formData.get('customer_phone'),
+    size: formData.get('size'),
+    flavor: formData.get('flavor'),
+    color_theme: formData.get('color_theme') || undefined,
+    special_notes: formData.get('special_notes') || undefined,
+    reference_image_url: formData.get('reference_image_url') || undefined,
+  })
 
-  if (!customerName || !customerPhone || !size || !flavor) {
-    return { error: 'Nama, nomor HP, ukuran, dan rasa wajib diisi.' }
+  if (!parsed.success) {
+    return { error: 'Input custom cake tidak valid' }
   }
+
+  const { customer_name: customerName, customer_phone: customerPhone, size, flavor, color_theme: colorTheme, special_notes: specialNotes, reference_image_url: refImageUrl } = parsed.data
+
+  if (!CUSTOM_CAKE_STATUSES.includes('pending')) return { error: 'Status internal tidak valid' }
 
   const reqNumber = generateReqNumber()
 
@@ -59,7 +72,10 @@ export async function getCustomCakeRequests(status?: CustomCakeStatus): Promise<
     .select('*')
     .order('created_at', { ascending: false })
 
-  if (status) q = q.eq('status', status)
+  if (status) {
+    if (!isCustomCakeStatus(status)) return []
+    q = q.eq('status', status)
+  }
 
   const { data, error } = await q
   if (error) throw new Error(error.message)
@@ -72,6 +88,12 @@ export async function updateCustomCakeRequest(
   updates: { status?: CustomCakeStatus; quoted_price?: number | null }
 ): Promise<{ error?: string }> {
   const supabase = await createClient()
+
+  if (!id.trim()) return { error: 'ID tidak valid' }
+  if (updates.status && !isCustomCakeStatus(updates.status)) return { error: 'Status tidak valid' }
+  if (updates.quoted_price != null && (!Number.isFinite(updates.quoted_price) || updates.quoted_price < 0)) {
+    return { error: 'Harga tidak valid' }
+  }
 
   const { error } = await supabase
     .from('custom_cake_requests')

@@ -1,9 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import { useCart } from '@/contexts/cart-context'
 import type { Product } from '@/types'
 import { formatCurrency } from '@/lib/utils'
+import { PosProductConfiguratorModal } from './pos-product-configurator-modal'
 
 const categoryEmoji: Record<string, string> = {
   bread: '🍞', cake: '🎂', pastry: '🥐', cookies: '🍪', other: '🍰'
@@ -14,7 +16,8 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products }: ProductGridProps) {
-  const { addItem, items } = useCart()
+  const { addItem, items } = useCart() // addItem is for legacy non-configurable items
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
 
   if (products.length === 0) {
     return (
@@ -36,7 +39,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           return (
             <button
               key={p.id}
-              onClick={() => !outOfStock && addItem(p)}
+              onClick={() => setSelectedProductId(p.id)} // Open configurator modal
               disabled={outOfStock}
               className="relative flex flex-col rounded-xl border text-left transition-all active:scale-95 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60 overflow-hidden"
               style={{
@@ -98,13 +101,18 @@ export function ProductGrid({ products }: ProductGridProps) {
                   {formatCurrency(p.selling_price)}
                 </p>
                 <p className="text-xs" style={{ color: outOfStock ? 'hsl(var(--danger))' : 'hsl(var(--success))' }}>
-                  {outOfStock ? 'Stok habis' : `Stok: ${p.current_stock}`}
+                  Stok: {p.current_stock}
                 </p>
               </div>
             </button>
           )
         })}
       </div>
+      <PosProductConfiguratorModal
+        productId={selectedProductId}
+        onClose={() => setSelectedProductId(null)}
+      />
     </div>
   )
 }
+

@@ -54,7 +54,7 @@ interface SidebarProps {
 function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
   const pathname = usePathname()
   const { logoIconUrl, shortName } = useBranding()
-  const filtered = navItems.filter(item => item.roles.includes(user.role))
+  const filtered = navItems.filter(item => item.roles.includes(user.role as 'owner' | 'cashier' | 'baker'))
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
     return pathname.startsWith(href)
