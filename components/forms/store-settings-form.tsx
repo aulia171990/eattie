@@ -54,120 +54,65 @@ function hexToHsl(hex: string): string {
   return `${h.toFixed(0)} ${(s * 100).toFixed(0)}% ${(l * 100).toFixed(0)}%`
 }
 
-/** Palet warna — campuran earthy/klasik bakery + pastel modern cafe. */
+/** Palet warna — 6 warna utama bakery simple-luxury */
 const PRIMARY_COLORS = [
   { label: 'Cokelat Hangat', hsl: '32 95% 44%', hex: '#c87e1a' },
-  { label: 'Terracotta', hsl: '18 68% 48%', hex: '#c1622e' },
-  { label: 'Oranye Susu', hsl: '28 85% 58%', hex: '#e8934a' },
   { label: 'Krem Karamel', hsl: '35 60% 52%', hex: '#c99a4a' },
-  { label: 'Merah Marun', hsl: '345 52% 36%', hex: '#8a2e42' },
-  { label: 'Merah Muda', hsl: '350 65% 52%', hex: '#d34a6e' },
-  { label: 'Coral', hsl: '12 78% 56%', hex: '#e96a4a' },
-  { label: 'Hijau Segar', hsl: '142 60% 38%', hex: '#2e7d4f' },
-  { label: 'Hijau Sage', hsl: '120 25% 45%', hex: '#5a8560' },
-  { label: 'Teal', hsl: '175 55% 38%', hex: '#2a8c82' },
-  { label: 'Biru Laut', hsl: '210 60% 38%', hex: '#27639c' },
-  { label: 'Biru Cerah', hsl: '205 85% 52%', hex: '#2ba3e8' },
-  { label: 'Ungu Lembut', hsl: '270 40% 45%', hex: '#6b46a3' },
-  { label: 'Ungu Tua', hsl: '280 55% 38%', hex: '#6a2f9e' },
-  { label: 'Pink Muda', hsl: '340 65% 62%', hex: '#dd6f9a' },
-  { label: 'Pink Flamingo', hsl: '330 75% 58%', hex: '#e85a9c' },
-  { label: 'Mint Pastel', hsl: '165 40% 55%', hex: '#5cb894' },
-  { label: 'Lavender', hsl: '260 45% 68%', hex: '#9683d6' },
-  { label: 'Oranye Cerah', hsl: '24 90% 50%', hex: '#f0570a' },
-  { label: 'Kuning Madu', hsl: '42 85% 50%', hex: '#e0a516' },
-  { label: 'Kuning Lemon', hsl: '50 95% 55%', hex: '#f2d24a' },
   { label: 'Cokelat Cokelat', hsl: '25 45% 35%', hex: '#7a4a26' },
-  { label: 'Hitam Jet', hsl: '0 0% 18%', hex: '#2e2e2e' },
-  { label: 'Silver', hsl: '0 0% 55%', hex: '#8c8c8c' },
+  { label: 'Terakota', hsl: '18 68% 48%', hex: '#c1622e' },
+  { label: 'Merah Marun', hsl: '345 52% 36%', hex: '#8a2e42' },
+  { label: 'Beige Lembut', hsl: '30 20% 70%', hex: '#b8a789' },
 ]
 
+/** Warna netral & pendukung (lebih sedikit pilihan, terkonsentrasi) */
 const NEUTRAL_DARK_COLORS = [
-  { label: 'Merah Marun', hsl: '345 32% 18%' },
-  { label: 'Marun Gelap', hsl: '345 40% 14%' },
-  { label: 'Hijau Tua', hsl: '150 30% 18%' },
-  { label: 'Hijau Hutan', hsl: '155 35% 14%' },
-  { label: 'Biru Tua', hsl: '220 30% 18%' },
-  { label: 'Navy', hsl: '225 45% 22%' },
-  { label: 'Abu Gelap', hsl: '0 0% 15%' },
-  { label: 'Abu Arang', hsl: '0 0% 22%' },
   { label: 'Cokelat Tua', hsl: '25 30% 12%' },
-  { label: 'Kopi', hsl: '28 35% 16%' },
-  { label: 'Ungu Tua', hsl: '270 25% 16%' },
-  { label: 'Teal Gelap', hsl: '185 35% 16%' },
+  { label: 'Terakota Tua', hsl: '18 40% 16%' },
+  { label: 'Merah Marun', hsl: '345 32% 18%' },
 ]
 
 const BACKGROUND_COLORS = [
-  { label: 'Krem Hangat', hsl: '35 35% 97%' },
+  { label: 'Beige Lembut', hsl: '30 20% 70%' },
   { label: 'Putih Bersih', hsl: '0 0% 100%' },
-  { label: 'Beige Lembut', hsl: '30 30% 95%' },
-  { label: 'Krem Muda', hsl: '40 40% 96%' },
-  { label: 'Pink Sangat Muda', hsl: '340 30% 97%' },
-  { label: 'Mint Sangat Muda', hsl: '150 25% 96%' },
-  { label: 'Abu Terang', hsl: '210 15% 96%' },
-  { label: 'Lavender Muda', hsl: '260 30% 97%' },
-  { label: 'Biru Muda', hsl: '205 35% 96%' },
-  { label: 'Peach Muda', hsl: '20 45% 96%' },
-  { label: 'Kelabu Netral', hsl: '0 0% 96%' },
-  { label: 'Krem Karamel Muda', hsl: '35 30% 94%' },
+  { label: 'Krem Hangat', hsl: '35 35% 97%' },
 ]
 
 const TEXT_COLORS = [
-  { label: 'Cokelat Gelap', hsl: '20 18% 14%' },
-  { label: 'Hitam Lembut', hsl: '0 0% 12%' },
-  { label: 'Abu Gelap', hsl: '220 10% 18%' },
-  { label: 'Marun Gelap', hsl: '345 25% 16%' },
   { label: 'Cokelat Tua', hsl: '25 30% 18%' },
-  { label: 'Hijau Tua', hsl: '150 25% 20%' },
-  { label: 'Biru Tua', hsl: '220 35% 22%' },
-  { label: 'Ungu Gelap', hsl: '270 25% 22%' },
-  { label: 'Abu Sedang', hsl: '0 0% 28%' },
+  { label: 'Hitam Lembut', hsl: '0 0% 12%' },
 ]
 
 const LIGHT_NEUTRAL_TEXT = [
-  { label: 'Krem Terang', hsl: '35 20% 90%' },
   { label: 'Putih', hsl: '0 0% 100%' },
-  { label: 'Krem Pudar', hsl: '40 25% 88%' },
-  { label: 'Mint Pudar', hsl: '150 20% 88%' },
-  { label: 'Lavender Pudar', hsl: '260 25% 90%' },
-  { label: 'Biru Pudar', hsl: '210 25% 90%' },
+  { label: 'Beige Lembut', hsl: '30 20% 90%' },
 ]
 
 const SURFACE_OPTIONS = [
   { label: 'Putih', hsl: '0 0% 100%' },
-  { label: 'Krem', hsl: '35 20% 98%' },
-  { label: 'Krem Pudar', hsl: '40 30% 96%' },
-  { label: 'Abu Sangat Muda', hsl: '210 15% 97%' },
-  { label: 'Mint Muda', hsl: '150 25% 97%' },
-  { label: 'Lavender Muda', hsl: '260 30% 98%' },
+  { label: 'Krem Hangat', hsl: '35 20% 98%' },
+  { label: 'Beige Lembut', hsl: '30 15% 95%' },
 ]
 
 const BORDER_OPTIONS = [
-  { label: 'Terang', hsl: '30 15% 88%' },
-  { label: 'Sedang', hsl: '30 15% 80%' },
-  { label: 'Gelap', hsl: '30 15% 72%' },
-  { label: 'Abu', hsl: '210 12% 85%' },
-  { label: 'Karamel', hsl: '35 25% 82%' },
-  { label: 'Mint', hsl: '150 20% 84%' },
+  { label: 'Terakota', hsl: '18 20% 85%' },
+  { label: 'Beige Lembut', hsl: '30 15% 80%' },
+  { label: 'Abu Terracotta', hsl: '0 0% 88%' },
 ]
-
+/** Status & Notifikasi */
 const SEMANTIC_COLORS = {
   success: [
     { label: 'Hijau Standar', hsl: '145 45% 34%' },
     { label: 'Hijau Sage', hsl: '120 30% 38%' },
     { label: 'Hijau Emerald', hsl: '152 55% 38%' },
-    { label: 'Hijau Teal', hsl: '170 50% 36%' },
   ],
   danger: [
     { label: 'Merah Standar', hsl: '355 68% 46%' },
     { label: 'Merah Bata', hsl: '15 60% 46%' },
-    { label: 'Merah Muda', hsl: '345 70% 50%' },
     { label: 'Merah Tua', hsl: '358 65% 40%' },
   ],
   warning: [
     { label: 'Kuning Standar', hsl: '38 82% 42%' },
     { label: 'Oranye Karamel', hsl: '28 75% 46%' },
-    { label: 'Oranye Cerah', hsl: '25 90% 50%' },
     { label: 'Amber', hsl: '42 90% 48%' },
   ],
 }
@@ -195,22 +140,22 @@ const FIELD_MAP: Record<string, string> = {
 
 const DEFAULT_COLORS: Record<string, string> = {
   primary_color: '32 95% 44%',
-  accent_color: '38 55% 48%',
-  sidebar_color: '345 32% 18%',
-  background_color: '35 35% 97%',
+  accent_color: '35 60% 52%',
+  sidebar_color: '18 68% 48%',
+  background_color: '30 20% 70%',
   surface_color: '0 0% 100%',
-  text_color: '20 18% 14%',
-  text_muted_color: '20 10% 50%',
-  text_secondary_color: '20 12% 35%',
-  border_color: '30 15% 88%',
+  text_color: '25 30% 18%',
+  text_muted_color: '25 30% 18%',
+  text_secondary_color: '25 30% 18%',
+  border_color: '18 20% 85%',
   button_text_color: '0 0% 100%',
   accent_foreground_color: '0 0% 100%',
-  surface_raised_color: '35 30% 99%',
+  surface_raised_color: '35 20% 98%',
   success_color: '145 45% 34%',
   danger_color: '355 68% 46%',
   warning_color: '38 82% 42%',
   sidebar_text_color: '35 20% 90%',
-  footer_bg_color: '345 32% 18%',
+  footer_bg_color: '18 32% 18%',
   footer_text_color: '35 20% 90%',
 }
 
