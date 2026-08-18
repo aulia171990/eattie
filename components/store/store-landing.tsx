@@ -68,7 +68,7 @@ function ProductImage({ product, priority = false, className = '' }: {
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center bg-[#f0e7dc] text-4xl font-semibold text-[#8a5a32]">
+    <div className="flex h-full w-full items-center justify-center bg-surface text-4xl font-semibold text-primary">
       {cleanProductName(product.name).slice(0, 1).toUpperCase()}
     </div>
   )
@@ -88,18 +88,18 @@ function ProductCard({ product, signature = false }: { product: StoreProduct; si
 
   return (
     <div
-      className={`group flex h-full flex-col overflow-hidden rounded-[1.75rem] border bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${signature ? 'shadow-[0_24px_70px_rgba(45,28,18,0.10)]' : 'shadow-sm'}`}
-      style={{ borderColor: 'rgba(185, 143, 92, 0.18)' }}
+      className={`group flex h-full flex-col overflow-hidden rounded-[1.75rem] border bg-surface transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${signature ? 'shadow-[0_24px_70px_rgba(45,28,18,0.10)]' : 'shadow-sm'}`}
+      style={{ borderColor: 'hsl(var(--border))' }}
     >
-      <div className="relative w-full shrink-0 overflow-hidden bg-[#f2eadf]" style={{ aspectRatio: signature ? '4/5' : '4/3' }}>
+      <div className="relative w-full shrink-0 overflow-hidden bg-surface-raised" style={{ aspectRatio: signature ? '4/5' : '4/3' }}>
         <ProductImage product={product} />
         {signature && (
-          <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-[#a46d2f] shadow-sm backdrop-blur">
+          <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-accent shadow-sm backdrop-blur">
             Best Seller
           </div>
         )}
         {qty > 0 && (
-          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg" style={{ background: '#2d2118' }}>
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-primary-foreground shadow-lg" style={{ background: 'hsl(var(--primary))' }}>
             {qty}
           </div>
         )}
@@ -107,38 +107,38 @@ function ProductCard({ product, signature = false }: { product: StoreProduct; si
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex-1 space-y-2">
-          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#b98f5c]">
+          <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-accent">
             {CATEGORY_LABELS[product.category ?? ''] ?? product.category ?? 'Produk'}
           </p>
-          <h3 className="line-clamp-2 text-lg font-bold leading-tight text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+          <h3 className="line-clamp-2 text-lg font-bold leading-tight text-foreground" style={{ fontFamily: '"Playfair Display", serif' }}>
             {cleanProductName(product.name)}
           </h3>
           {signature && (
-            <p className="line-clamp-2 text-sm leading-relaxed text-[#75685d]">
+            <p className="line-clamp-2 text-sm leading-relaxed text-text-secondary">
               {productDescription(product)}
             </p>
           )}
         </div>
 
         <div className="flex items-center justify-between gap-3">
-          <span className="text-sm font-extrabold text-[#8a5a32]">
+          <span className="text-sm font-extrabold text-primary">
             {formatCurrency(product.selling_price)}
           </span>
 
           {qty > 0 ? (
-            <div className="flex items-center gap-1.5 rounded-full bg-[#f7f0e8] p-1">
+            <div className="flex items-center gap-1.5 rounded-full bg-surface-raised p-1">
               <button
                 onClick={(e) => { e.stopPropagation(); updateQty(product.id, qty - 1) }}
-                className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-[#5e4a3b] transition-colors hover:bg-white"
+                className="flex h-7 w-7 items-center justify-center rounded-full text-sm font-bold text-text-secondary transition-colors hover:bg-white"
                 aria-label={`Kurangi ${product.name}`}
               >
                 −
               </button>
-              <span className="w-5 text-center text-sm font-bold text-[#2d2118]">{qty}</span>
+              <span className="w-5 text-center text-sm font-bold text-foreground">{qty}</span>
               <button
                 onClick={(e) => { e.stopPropagation(); handleAdd() }}
-                className="flex h-7 w-7 items-center justify-center rounded-full font-bold text-white transition-colors"
-                style={{ background: '#2d2118' }}
+                className="flex h-7 w-7 items-center justify-center rounded-full font-bold text-primary-foreground transition-colors"
+                style={{ background: 'hsl(var(--primary))' }}
                 aria-label={`Tambah ${product.name}`}
               >
                 +
@@ -147,8 +147,8 @@ function ProductCard({ product, signature = false }: { product: StoreProduct; si
           ) : (
             <button
               onClick={(e) => { e.stopPropagation(); handleAdd() }}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-white transition-all hover:opacity-90"
-              style={{ background: added ? '#4f7d55' : '#2d2118' }}
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-primary-foreground transition-all hover:opacity-90"
+              style={{ background: added ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}
             >
               {added ? <Check size={12} /> : <Plus size={12} />}
               {added ? 'Ditambah' : 'Pesan'}
@@ -206,19 +206,19 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
   const wellnessProducts = specialProducts.length > 0 ? specialProducts : allProducts.slice(0, 3)
 
   return (
-    <div className="min-h-screen bg-[#fbf8f3] text-[#2d2118]">
-      <section className="relative isolate overflow-hidden bg-[#2d2118]">
+    <div className="min-h-screen bg-background text-foreground">
+      <section className="relative isolate overflow-hidden bg-primary">
         {hero?.image_url && (
           <div className="absolute inset-0 opacity-30">
             <Image src={hero.image_url} alt="Bakery hero background" fill priority sizes="100vw" className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#2d2118] via-[#2d2118]/90 to-[#2d2118]/40" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/40" />
           </div>
         )}
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#fbf8f3] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
         <div className="relative mx-auto grid max-w-6xl gap-10 px-4 pb-20 pt-16 md:px-6 lg:min-h-[680px] lg:grid-cols-[1fr_440px] lg:items-center lg:py-24">
           <div className="max-w-2xl space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.26em] text-[#d8b37b] backdrop-blur">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2 text-[11px] font-bold uppercase tracking-[0.26em] text-primary-foreground backdrop-blur">
               <Sparkles size={14} />
               Artisanal Luxury Bakery
             </div>
@@ -227,13 +227,13 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
               <h1 className="text-5xl font-bold leading-[0.95] tracking-[-0.04em] text-white sm:text-6xl lg:text-7xl" style={{ fontFamily: '"Playfair Display", serif' }}>
                 Roti & Kue Dibuat dengan Cinta
               </h1>
-              <p className="max-w-xl text-base leading-8 text-[#eadfd2] sm:text-lg">
+              <p className="max-w-xl text-base leading-8 text-text-muted sm:text-lg">
                 Premium ingredients, no preservatives, from our kitchen to your hands. Setiap kue dibuat fresh untuk momen yang terasa lebih istimewa.
               </p>
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <a href="#katalog" className="inline-flex items-center justify-center rounded-full bg-[#d8b37b] px-7 py-3.5 text-sm font-bold text-[#2d2118] shadow-xl transition-all hover:-translate-y-0.5">
+              <a href="#katalog" className="inline-flex items-center justify-center rounded-full bg-accent px-7 py-3.5 text-sm font-bold text-primary-foreground shadow-xl transition-all hover:-translate-y-0.5">
                 Explore Our Menu
               </a>
               <button
@@ -253,7 +253,7 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
               ].map(item => (
                 <div key={item.label}>
                   <p className="text-2xl font-bold text-white" style={{ fontFamily: '"Playfair Display", serif' }}>{item.value}</p>
-                  <p className="mt-1 text-xs text-[#bca993]">{item.label}</p>
+                  <p className="mt-1 text-xs text-text-muted">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -261,19 +261,19 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
 
           {hero && (
             <div className="group relative mx-auto w-full max-w-sm lg:max-w-none">
-              <div className="absolute -inset-6 rounded-[3rem] bg-[#d8b37b]/20 blur-3xl" />
+              <div className="absolute -inset-6 rounded-[3rem] bg-accent/20 blur-3xl" />
               <div className="relative overflow-hidden rounded-[2.5rem] border border-white/15 bg-white/10 p-3 shadow-2xl backdrop-blur">
-                <div className="relative overflow-hidden rounded-[2rem] bg-[#f0e7dc]" style={{ aspectRatio: '4/5' }}>
+                <div className="relative overflow-hidden rounded-[2rem] bg-surface-raised" style={{ aspectRatio: '4/5' }}>
                   <ProductImage product={hero} priority />
                 </div>
                 <div className="absolute bottom-7 left-7 right-7 rounded-[1.5rem] bg-white/95 p-4 shadow-xl backdrop-blur">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#b98f5c]">Signature Pick</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.24em] text-accent">Signature Pick</p>
                   <div className="mt-2 flex items-end justify-between gap-3">
                     <div className="min-w-0">
-                      <h2 className="truncate text-xl font-bold text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>{cleanProductName(hero.name)}</h2>
-                      <p className="mt-1 line-clamp-1 text-xs text-[#75685d]">{productDescription(hero)}</p>
+                      <h2 className="truncate text-xl font-bold text-foreground" style={{ fontFamily: '"Playfair Display", serif' }}>{cleanProductName(hero.name)}</h2>
+                      <p className="mt-1 line-clamp-1 text-xs text-text-secondary">{productDescription(hero)}</p>
                     </div>
-                    <p className="shrink-0 text-sm font-extrabold text-[#8a5a32]">{formatCurrency(hero.selling_price)}</p>
+                    <p className="shrink-0 text-sm font-extrabold text-primary">{formatCurrency(hero.selling_price)}</p>
                   </div>
                 </div>
               </div>
@@ -283,20 +283,20 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
       </section>
 
       <section className="relative z-10 mx-auto -mt-10 max-w-6xl px-4">
-        <div className="grid gap-3 rounded-[2rem] border border-[#eadcc8] bg-white/95 p-3 shadow-[0_24px_80px_rgba(45,28,18,0.10)] backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 rounded-[2rem] border border-border bg-surface/95 p-3 shadow-[0_24px_80px_rgba(45,28,18,0.10)] backdrop-blur sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Leaf, title: '100% Fresh', desc: 'Made daily from scratch.' },
             { icon: Wheat, title: 'No Additives', desc: 'Pure, natural ingredients.' },
             { icon: Heart, title: 'Custom Design', desc: 'Personalized for your moment.' },
             { icon: Truck, title: 'Safe Shipping', desc: 'Delivered perfectly packed.' },
           ].map(({ icon: Icon, title, desc }) => (
-            <div key={title} className="flex items-center gap-3 rounded-[1.5rem] bg-[#fbf8f3] p-4">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#efe1cf] text-[#8a5a32]">
+            <div key={title} className="flex items-center gap-3 rounded-[1.5rem] bg-background p-4">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-accent-subtle text-primary">
                 <Icon size={19} />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#2d2118]">{title}</h3>
-                <p className="mt-1 text-xs text-[#75685d]">{desc}</p>
+                <h3 className="text-sm font-bold text-foreground">{title}</h3>
+                <p className="mt-1 text-xs text-text-secondary">{desc}</p>
               </div>
             </div>
           ))}
@@ -307,12 +307,12 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
         <section className="mx-auto max-w-6xl px-4 py-20 md:px-6">
           <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div className="max-w-xl space-y-3">
-              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b98f5c]">Signature Collection</p>
-              <h2 className="text-4xl font-bold tracking-[-0.03em] text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-accent">Signature Collection</p>
+              <h2 className="text-4xl font-bold tracking-[-0.03em] text-foreground" style={{ fontFamily: '"Playfair Display", serif' }}>
                 Bestsellers yang paling dicari
               </h2>
             </div>
-            <a href="#katalog" className="inline-flex items-center gap-2 text-sm font-bold text-[#8a5a32]">
+            <a href="#katalog" className="inline-flex items-center gap-2 text-sm font-bold text-primary">
               View full menu <ChevronRight size={16} />
             </a>
           </div>
@@ -326,22 +326,22 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
         </section>
       )}
 
-      <section className="bg-[#f4eadf] py-20">
+      <section className="bg-accent-subtle py-20">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 md:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center">
           <div className="space-y-5">
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-white text-[#8a5a32] shadow-sm">
+            <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-surface text-primary shadow-sm">
               <ShieldCheck size={22} />
             </div>
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b98f5c]">Dietary Friendly</p>
-            <h2 className="text-4xl font-bold leading-tight tracking-[-0.03em] text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-accent">Dietary Friendly</p>
+            <h2 className="text-4xl font-bold leading-tight tracking-[-0.03em] text-foreground" style={{ fontFamily: '"Playfair Display", serif' }}>
               Indulge without compromise.
             </h2>
-            <p className="leading-8 text-[#75685d]">
+            <p className="leading-8 text-text-secondary">
               Pilihan sugar-free, vegan, dan varian sehat tersedia untuk Anda yang ingin menikmati dessert premium dengan rasa tetap maksimal.
             </p>
             <button
               onClick={() => setShowCustomCake(true)}
-              className="inline-flex items-center gap-2 rounded-full bg-[#2d2118] px-6 py-3 text-sm font-bold text-white transition-all hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-bold text-primary-foreground transition-all hover:-translate-y-0.5"
             >
               <Palette size={16} />
               Request Custom Order
@@ -350,13 +350,13 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
 
           <div className="grid gap-4 sm:grid-cols-3">
             {wellnessProducts.map(product => (
-              <div key={product.id} onClick={() => setSelectedProduct(product)} className="group cursor-pointer overflow-hidden rounded-[2rem] bg-white p-3 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
-                <div className="relative overflow-hidden rounded-[1.5rem] bg-[#f0e7dc]" style={{ aspectRatio: '1/1' }}>
+              <div key={product.id} onClick={() => setSelectedProduct(product)} className="group cursor-pointer overflow-hidden rounded-[2rem] bg-surface p-3 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl">
+                <div className="relative overflow-hidden rounded-[1.5rem] bg-surface-raised" style={{ aspectRatio: '1/1' }}>
                   <ProductImage product={product} />
                 </div>
                 <div className="p-3">
-                  <h3 className="line-clamp-2 text-base font-bold text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>{cleanProductName(product.name)}</h3>
-                  <p className="mt-2 text-sm font-extrabold text-[#8a5a32]">{formatCurrency(product.selling_price)}</p>
+                  <h3 className="line-clamp-2 text-base font-bold text-foreground" style={{ fontFamily: '"Playfair Display", serif' }}>{cleanProductName(product.name)}</h3>
+                  <p className="mt-2 text-sm font-extrabold text-primary">{formatCurrency(product.selling_price)}</p>
                 </div>
               </div>
             ))}
@@ -367,25 +367,25 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
       <section id="katalog" className="mx-auto max-w-6xl px-4 py-20 md:px-6">
         <div className="mb-8 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
           <div className="max-w-xl space-y-3">
-            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#b98f5c]">Complete Menu</p>
-            <h2 className="text-4xl font-bold tracking-[-0.03em] text-[#2d2118]" style={{ fontFamily: '"Playfair Display", serif' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-accent">Complete Menu</p>
+            <h2 className="text-4xl font-bold tracking-[-0.03em] text-foreground" style={{ fontFamily: '"Playfair Display", serif' }}>
               Semua Produk
             </h2>
-            <p className="text-sm text-[#75685d]">{sorted.length} produk tersedia untuk dipesan online.</p>
+            <p className="text-sm text-text-secondary">{sorted.length} produk tersedia untuk dipesan online.</p>
           </div>
 
           <div className="flex w-full flex-col gap-2 sm:flex-row lg:w-auto">
             <div className="relative min-w-0 flex-1 lg:w-80">
-              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#9b8a7b]" />
+              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 type="text"
                 placeholder="Cari produk..."
                 value={searchInput}
                 onChange={e => setSearchInput(e.target.value)}
-                className="w-full rounded-full border border-[#eadcc8] bg-white py-3 pl-11 pr-10 text-sm text-[#2d2118] outline-none transition-all focus:border-[#b98f5c] focus:ring-4 focus:ring-[#b98f5c]/10"
+                className="w-full rounded-full border border-border bg-surface py-3 pl-11 pr-10 text-sm text-foreground outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10"
               />
               {searchInput && (
-                <button onClick={() => setSearchInput('')} className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full text-[#9b8a7b]" aria-label="Hapus pencarian">
+                <button onClick={() => setSearchInput('')} className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full text-text-muted" aria-label="Hapus pencarian">
                   <X size={15} />
                 </button>
               )}
@@ -395,7 +395,7 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
               <select
                 value={sort}
                 onChange={e => setSort(e.target.value as typeof sort)}
-                className="h-full w-full appearance-none rounded-full border border-[#eadcc8] bg-white py-3 pl-4 pr-10 text-sm font-semibold text-[#2d2118] outline-none transition-all focus:border-[#b98f5c] focus:ring-4 focus:ring-[#b98f5c]/10 sm:w-auto"
+                className="h-full w-full appearance-none rounded-full border border-border bg-surface py-3 pl-4 pr-10 text-sm font-semibold text-foreground outline-none transition-all focus:border-primary focus:ring-4 focus:ring-primary/10 sm:w-auto"
                 aria-label="Urutkan produk"
               >
                 <option value="featured">Unggulan</option>
@@ -403,7 +403,7 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
                 <option value="price_desc">Harga Termahal</option>
                 <option value="name_asc">Nama A-Z</option>
               </select>
-              <ArrowUpDown size={14} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#9b8a7b]" />
+              <ArrowUpDown size={14} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-text-muted" />
             </div>
           </div>
         </div>
@@ -415,8 +415,8 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
               onClick={() => setActiveCategory(cat)}
               className="shrink-0 rounded-full px-4 py-2 text-xs font-bold transition-all"
               style={activeCategory === cat
-                ? { background: '#2d2118', color: 'white' }
-                : { background: 'white', color: '#75685d', border: '1px solid #eadcc8' }
+                ? { background: 'hsl(var(--primary))', color: 'hsl(var(--primary-foreground))' }
+                : { background: 'hsl(var(--surface))', color: 'hsl(var(--text-secondary))', border: '1px solid hsl(var(--border))' }
               }
             >
               {cat === 'all' ? 'Semua' : (CATEGORY_LABELS[cat] ?? cat)}
@@ -440,10 +440,10 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
       </section>
 
       {reviews.length > 0 && (
-        <section className="mx-4 mb-8 rounded-[2.5rem] bg-[#2d2118] px-4 py-16 md:mx-6">
+        <section className="mx-4 mb-8 rounded-[2.5rem] bg-primary px-4 py-16 md:mx-6">
           <div className="mx-auto max-w-5xl">
             <div className="mx-auto mb-9 max-w-2xl text-center">
-              <p className="text-xs font-bold uppercase tracking-[0.28em] text-[#d8b37b]">Customer Notes</p>
+              <p className="text-xs font-bold uppercase tracking-[0.28em] text-accent">Customer Notes</p>
               <h2 className="mt-3 text-3xl font-bold text-white" style={{ fontFamily: '"Playfair Display", serif' }}>
                 Dibuat untuk momen yang diingat
               </h2>
@@ -453,15 +453,15 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
                 <div key={review.id} className="rounded-[1.75rem] border border-white/10 bg-white/[0.06] p-5 text-left">
                   <div className="mb-4 flex gap-1">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} size={13} fill={i < review.rating ? '#d8b37b' : 'none'} className={i < review.rating ? 'text-[#d8b37b]' : 'text-white/20'} />
+                      <Star key={i} size={13} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? 'text-accent' : 'text-white/20'} />
                     ))}
                   </div>
                   {review.comment && (
-                    <p className="text-base leading-7 text-[#eadfd2]" style={{ fontFamily: '"Playfair Display", serif' }}>
+                    <p className="text-base leading-7 text-text-muted" style={{ fontFamily: '"Playfair Display", serif' }}>
                       “{review.comment}”
                     </p>
                   )}
-                  <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-[#bca993]">{review.customer_name}</p>
+                  <p className="mt-4 text-xs font-bold uppercase tracking-[0.18em] text-text-muted">{review.customer_name}</p>
                 </div>
               ))}
             </div>
@@ -471,19 +471,19 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
 
       {itemCount > 0 && (
         <div className="fixed bottom-4 inset-x-4 z-50 mx-auto max-w-sm" key={itemCount} style={{ animation: 'cart-bump 300ms var(--ease-spring)' }}>
-          <Link href="/store/checkout" className="flex w-full items-center justify-between rounded-2xl bg-[#2d2118] px-4 py-3.5 shadow-2xl transition-all active:scale-[0.98]">
+          <Link href="/store/checkout" className="flex w-full items-center justify-between rounded-2xl bg-primary px-4 py-3.5 shadow-2xl transition-all active:scale-[0.98]">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#d8b37b] text-[#2d2118]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent text-primary-foreground">
                 <ShoppingBag size={15} />
               </div>
               <div>
                 <p className="text-xs font-bold text-white">{itemCount} item</p>
-                <p className="text-[10px] text-[#bca993]">Tap untuk checkout</p>
+                <p className="text-[10px] text-text-muted">Tap untuk checkout</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold text-[#d8b37b]">{formatCurrency(total)}</span>
-              <ChevronRight size={15} className="text-[#bca993]" />
+              <span className="text-sm font-bold text-accent">{formatCurrency(total)}</span>
+              <ChevronRight size={15} className="text-text-muted" />
             </div>
           </Link>
         </div>
