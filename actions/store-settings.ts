@@ -28,6 +28,9 @@ export type StoreSettings = {
   sidebar_text_color: string
   footer_bg_color: string
   footer_text_color: string
+  text_secondary_color: string
+  accent_foreground_color: string
+  surface_raised_color: string
   whatsapp: string
   instagram: string
   facebook: string
@@ -57,6 +60,9 @@ const settingsSchema = z.object({
   sidebar_text_color: z.string().regex(HSL_REGEX),
   footer_bg_color: z.string().regex(HSL_REGEX),
   footer_text_color: z.string().regex(HSL_REGEX),
+  text_secondary_color: z.string().regex(HSL_REGEX),
+  accent_foreground_color: z.string().regex(HSL_REGEX),
+  surface_raised_color: z.string().regex(HSL_REGEX),
   whatsapp: z.string().max(30).default(''),
   instagram: z.string().max(100).default(''),
   facebook: z.string().max(100).default(''),
@@ -111,6 +117,9 @@ export async function updateStoreSettings(
     sidebar_text_color: (formData.get('sidebar_text_color') as string) ?? '',
     footer_bg_color:    (formData.get('footer_bg_color') as string) ?? '',
     footer_text_color:  (formData.get('footer_text_color') as string) ?? '',
+    text_secondary_color: (formData.get('text_secondary_color') as string) ?? '',
+    accent_foreground_color: (formData.get('accent_foreground_color') as string) ?? '',
+    surface_raised_color: (formData.get('surface_raised_color') as string) ?? '',
     whatsapp:           (formData.get('whatsapp') as string) ?? '',
     instagram:          (formData.get('instagram') as string) ?? '',
     facebook:           (formData.get('facebook') as string) ?? '',

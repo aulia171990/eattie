@@ -28,6 +28,9 @@ export interface BrandingValue {
   sidebarTextColor: string
   footerBgColor: string
   footerTextColor: string
+  textSecondaryColor: string
+  accentForegroundColor: string
+  surfaceRaisedColor: string
   whatsapp: string
   instagram: string
   facebook: string
@@ -56,6 +59,9 @@ const defaultBranding: BrandingValue = {
   sidebarTextColor: '35 20% 90%',
   footerBgColor: '345 32% 18%',
   footerTextColor: '35 20% 90%',
+  textSecondaryColor: '20 12% 35%',
+  accentForegroundColor: '0 0% 100%',
+  surfaceRaisedColor: '35 30% 99%',
   whatsapp: BRANDING.whatsapp,
   instagram: BRANDING.instagram,
   facebook: BRANDING.facebook,
@@ -156,6 +162,9 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
         sidebarTextColor: settings.sidebar_text_color,
         footerBgColor: settings.footer_bg_color,
         footerTextColor: settings.footer_text_color,
+        textSecondaryColor: settings.text_secondary_color,
+        accentForegroundColor: settings.accent_foreground_color,
+        surfaceRaisedColor: settings.surface_raised_color,
         whatsapp: settings.whatsapp,
         instagram: settings.instagram,
         facebook: settings.facebook,
@@ -196,5 +205,8 @@ function applyCssVariables(b: Partial<BrandingValue>) {
   if (b.warningColor)      root.style.setProperty('--warning', b.warningColor)
   if (b.sidebarTextColor)  root.style.setProperty('--sidebar-text', b.sidebarTextColor)
   if (b.footerBgColor)     root.style.setProperty('--footer-bg', b.footerBgColor)
-  if (b.footerTextColor)   root.style.setProperty('--footer-text', b.footerTextColor)
+  if (b.footerTextColor)  root.style.setProperty('--footer-text', b.footerTextColor)
+  if (b.textSecondaryColor) root.style.setProperty('--text-secondary', b.textSecondaryColor)
+  if (b.accentForegroundColor) root.style.setProperty('--accent-foreground', b.accentForegroundColor)
+  if (b.surfaceRaisedColor) root.style.setProperty('--surface-raised', b.surfaceRaisedColor)
 }

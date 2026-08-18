@@ -188,6 +188,9 @@ const FIELD_MAP: Record<string, string> = {
   sidebar_text_color: 'sidebarTextColor',
   footer_bg_color: 'footerBgColor',
   footer_text_color: 'footerTextColor',
+  text_secondary_color: 'textSecondaryColor',
+  accent_foreground_color: 'accentForegroundColor',
+  surface_raised_color: 'surfaceRaisedColor',
 }
 
 const DEFAULT_COLORS: Record<string, string> = {
@@ -198,8 +201,11 @@ const DEFAULT_COLORS: Record<string, string> = {
   surface_color: '0 0% 100%',
   text_color: '20 18% 14%',
   text_muted_color: '20 10% 50%',
+  text_secondary_color: '20 12% 35%',
   border_color: '30 15% 88%',
   button_text_color: '0 0% 100%',
+  accent_foreground_color: '0 0% 100%',
+  surface_raised_color: '35 30% 99%',
   success_color: '145 45% 34%',
   danger_color: '355 68% 46%',
   warning_color: '38 82% 42%',
@@ -235,6 +241,14 @@ const COLOR_SECTIONS: { title: string; slots: ColorSlot[] }[] = [
     slots: [
       { key: 'text_color', label: 'Warna Teks Utama', options: TEXT_COLORS },
       { key: 'text_muted_color', label: 'Warna Teks Sekunder', options: TEXT_COLORS },
+    ],
+  },
+  {
+    title: 'Teks & Permukaan Lanjutan',
+    slots: [
+      { key: 'text_secondary_color', label: 'Teks Deskripsi/Label', options: TEXT_COLORS },
+      { key: 'accent_foreground_color', label: 'Teks di Atas Aksen', options: LIGHT_NEUTRAL_TEXT },
+      { key: 'surface_raised_color', label: 'Latar Gambar/Highlight', options: SURFACE_OPTIONS },
     ],
   },
   {
