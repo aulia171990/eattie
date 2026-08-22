@@ -42,9 +42,9 @@ export type Database = {
         Relationships: []
       }
       product_variants: {
-        Row: { id: string; product_id: string; name: string; option_text: string | null; price: number; cost_price: number; sort_order: number; is_active: boolean; image_url: string | null; created_at: string; updated_at: string }
-        Insert: { id?: string; product_id: string; name: string; option_text?: string | null; price?: number; cost_price?: number; sort_order?: number; is_active?: boolean; image_url?: string | null; created_at?: string; updated_at?: string }
-        Update: { name?: string; option_text?: string | null; price?: number; cost_price?: number; sort_order?: number; is_active?: boolean; image_url?: string | null; updated_at?: string }
+        Row: { id: string; product_id: string; name: string; option_text: string | null; price: number; cost_price: number; sort_order: number; is_active: boolean; image_url: string | null; stock: number; created_at: string; updated_at: string }
+        Insert: { id?: string; product_id: string; name: string; option_text?: string | null; price?: number; cost_price?: number; sort_order?: number; is_active?: boolean; image_url?: string | null; stock?: number; created_at?: string; updated_at?: string }
+        Update: { name?: string; option_text?: string | null; price?: number; cost_price?: number; sort_order?: number; is_active?: boolean; image_url?: string | null; stock?: number; updated_at?: string }
         Relationships: [{ foreignKeyName: "product_variants_product_id_fkey"; columns: ["product_id"]; referencedRelation: "products"; referencedColumns: ["id"] }]
       }
       product_addons: {

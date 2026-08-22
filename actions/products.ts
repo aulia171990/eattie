@@ -136,6 +136,7 @@ export interface VariantWithOptionIds {
   id: string
   name: string
   price: number
+  stock: number
   option_value_ids: string[]
 }
 
@@ -213,7 +214,7 @@ export async function getProductVariantsWithOptions(productId: string): Promise<
   const supabase = await createClient()
   const { data: variants, error } = await supabase
     .from('product_variants')
-    .select('id, name, price')
+    .select('id, name, price, stock')
     .eq('product_id', productId)
     .order('sort_order', { ascending: true })
   if (error) throw new Error(error.message)
@@ -235,12 +236,17 @@ export async function getProductVariantsWithOptions(productId: string): Promise<
 
 export async function saveVariantWithOptions(
   productId: string,
-  input: { name: string; price: number; option_value_ids: string[] }
+  input: { name: string; price: number; stock?: number; option_value_ids: string[] }
 ): Promise<{ error?: string }> {
   const supabase = await createClient()
   const { data: variant, error: variantErr } = await supabase
     .from('product_variants')
-    .insert({ product_id: productId, name: input.name, price: input.price })
+    .insert({
+      product_id: productId,
+      name: input.name,
+      price: input.price,
+      stock: input.stock ?? 0,
+    })
     .select('id')
     .single()
   if (variantErr) return { error: variantErr.message }
@@ -250,6 +256,21 @@ export async function saveVariantWithOptions(
     const { error: joinErr } = await supabase.from('variant_option_values').insert(rows)
     if (joinErr) return { error: joinErr.message }
   }
+  return {}
+}
+
+export async function updateVariantStockAction(
+  variantId: string,
+  stock: number
+): Promise<{ error?: string }> {
+  const clamped = Math.max(0, Math.floor(stock))
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('product_variants')
+    .update({ stock: clamped })
+    .eq('id', variantId)
+  if (error) return { error: error.message }
+  revalidatePath('/dashboard/products')
   return {}
 }
 

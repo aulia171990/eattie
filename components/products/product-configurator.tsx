@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import {
   getProductOptionGroups, saveOptionGroup, removeOptionGroup,
   getProductVariantsWithOptions, saveVariantWithOptions, removeVariantAction,
+  updateVariantStockAction,
   getProductAddonsAction, saveProductAddons,
   getProductCategories,
   getProductGallery, addGalleryImage, removeGalleryImage,
@@ -37,6 +38,7 @@ export function ProductConfigurator({ productId }: Props) {
   // New variant form
   const [newVariantName, setNewVariantName] = useState('')
   const [newVariantPrice, setNewVariantPrice] = useState(0)
+  const [newVariantStock, setNewVariantStock] = useState(0)
   const [newVariantValues, setNewVariantValues] = useState<string[]>([])
 
   const load = async () => {
@@ -79,11 +81,20 @@ export function ProductConfigurator({ productId }: Props) {
     const r = await saveVariantWithOptions(productId, {
       name: newVariantName.trim(),
       price: newVariantPrice,
+      stock: newVariantStock,
       option_value_ids: newVariantValues.filter(Boolean),
     })
     if (r.error) { setMsg(r.error) } else {
-      setNewVariantName(''); setNewVariantPrice(0); setNewVariantValues([])
+      setNewVariantName(''); setNewVariantPrice(0); setNewVariantStock(0); setNewVariantValues([])
     }
+    await load()
+    setSaving(false)
+  }
+
+  const handleUpdateVariantStock = async (id: string, stock: number) => {
+    setSaving(true)
+    const r = await updateVariantStockAction(id, stock)
+    if (r.error) setMsg(r.error)
     await load()
     setSaving(false)
   }
@@ -190,10 +201,27 @@ export function ProductConfigurator({ productId }: Props) {
                   <span className="text-xs ml-2" style={{ color: 'hsl(var(--text-muted))' }}>
                     Rp{v.price.toLocaleString('id-ID')}
                   </span>
+                  <span className={`text-xs ml-2 px-1.5 py-0.5 rounded-full ${v.stock <= 0 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>
+                    {v.stock <= 0 ? 'Habis' : `${v.stock} pcs`}
+                  </span>
                 </div>
-                <button onClick={() => handleRemoveVariant(v.id)} className="text-red-500 p-1">
-                  <Trash2 size={14} />
-                </button>
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number" min={0}
+                    defaultValue={v.stock}
+                    key={`${v.id}-${v.stock}`}
+                    onBlur={e => {
+                      const next = Number(e.target.value)
+                      if (!Number.isNaN(next) && next !== v.stock) handleUpdateVariantStock(v.id, next)
+                    }}
+                    className="w-20 px-2 py-1 text-sm border rounded-lg outline-none text-right"
+                    style={{ borderColor: 'hsl(var(--border))' }}
+                    title="Stok varian"
+                  />
+                  <button onClick={() => handleRemoveVariant(v.id)} className="text-red-500 p-1">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
               </div>
             ))}
 
@@ -204,6 +232,8 @@ export function ProductConfigurator({ productId }: Props) {
                   placeholder="Nama varian" className="flex-1 px-2 py-1.5 text-sm border rounded-lg outline-none" style={{ borderColor: 'hsl(var(--border))' }} />
                 <input value={newVariantPrice} onChange={e => setNewVariantPrice(Number(e.target.value))}
                   type="number" min={0} placeholder="Harga" className="w-24 px-2 py-1.5 text-sm border rounded-lg outline-none text-right" style={{ borderColor: 'hsl(var(--border))' }} />
+                <input value={newVariantStock} onChange={e => setNewVariantStock(Number(e.target.value))}
+                  type="number" min={0} placeholder="Stok" className="w-20 px-2 py-1.5 text-sm border rounded-lg outline-none text-right" style={{ borderColor: 'hsl(var(--border))' }} />
               </div>
               {/* Multi-select for option values */}
               {allValues.length > 0 && (
