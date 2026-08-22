@@ -54,6 +54,7 @@ export async function createProductionBatch(
   if (!user) return { error: 'Tidak terautentikasi' }
 
   const product_id = formData.get('product_id') as string
+  const variant_id = (formData.get('variant_id') as string) || null
   const quantity_planned = parseInt(formData.get('quantity_planned') as string, 10)
   const scheduled_date = (formData.get('scheduled_date') as string) || null
   const notes = (formData.get('notes') as string) || null
@@ -61,9 +62,10 @@ export async function createProductionBatch(
   if (!product_id) return { error: 'Pilih produk' }
   if (!quantity_planned || quantity_planned < 1) return { error: 'Jumlah harus > 0' }
 
-  // Lookup recipe via RPC (SECURITY DEFINER) — baker tidak boleh akses recipes langsung
+  // Lookup recipe via RPC (SECURITY DEFINER) — baker tidak boleh akses recipes langsung.
+  // 2-level resolution: variant-specific recipe first, fallback to product's generic recipe.
   const { data: recipeData } = await supabase
-    .rpc('get_recipe_id_for_product', { p_product_id: product_id })
+    .rpc('get_recipe_id_for_product', { p_product_id: product_id, p_variant_id: variant_id })
 
   if (!recipeData) return { error: 'Produk ini belum memiliki resep. Hubungi owner untuk menambahkan resep.' }
 

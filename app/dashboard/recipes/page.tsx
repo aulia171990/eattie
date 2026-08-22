@@ -1,13 +1,39 @@
 import Link from 'next/link'
 import { getRecipes } from '@/actions/recipes'
+import { getProducts, getAllProductVariants } from '@/actions/products'
 import { PageHeader } from '@/components/shared/page-header'
 import { EmptyState } from '@/components/shared/empty-state'
+import { DuplicateRecipeButton } from '@/components/recipes/duplicate-recipe-button'
 import { formatCurrency } from '@/lib/utils'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { Plus, Clock, ChefHat, Thermometer } from 'lucide-react'
 
 export default async function RecipesPage() {
-  const recipes = await getRecipes()
+  const [recipes, allVariants] = await Promise.all([
+    getRecipes(),
+    getAllProductVariants(),
+  ])
+
+  // Map of variant_ids that already have a recipe
+  const recipeVariantIds = new Set(
+    recipes
+      .map((r) => r.variant_id)
+      .filter((v): v is string => Boolean(v))
+  )
+  // Product ids that already have a generic (variant_id NULL) recipe
+  const genericProductIds = new Set(
+    recipes.filter((r) => !r.variant_id).map((r) => r.product_id)
+  )
+
+  // For each recipe, compute the list of variants of its product that don't have a recipe yet
+  const availableVariantsForRecipe = (productId: string | null | undefined) => {
+    if (!productId) return []
+    // If a generic recipe already exists for this product, no variant slot is "open"
+    if (genericProductIds.has(productId)) return []
+    return allVariants
+      .filter((v) => v.product_id === productId && !recipeVariantIds.has(v.id))
+      .map((v) => ({ id: v.id, name: v.name }))
+  }
 
   return (
     <div className="p-6">
@@ -71,6 +97,17 @@ export default async function RecipesPage() {
                       <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
                         Hasil: {recipe.yield_quantity} pcs
                       </p>
+                      {recipe.variants?.name && (
+                        <span
+                          className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full font-medium"
+                          style={{
+                            background: 'hsl(var(--primary-subtle))',
+                            color: 'hsl(var(--primary-hover))',
+                          }}
+                        >
+                          {recipe.variants.name}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <Link
@@ -80,6 +117,11 @@ export default async function RecipesPage() {
                   >
                     Edit
                   </Link>
+                  <DuplicateRecipeButton
+                    sourceRecipeId={recipe.id}
+                    sourceProductName={product?.name ?? 'Produk'}
+                    availableVariants={availableVariantsForRecipe(product?.id)}
+                  />
                 </div>
 
                 {/* Timing info */}

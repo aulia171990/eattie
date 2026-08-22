@@ -11,7 +11,7 @@ export async function getRecipes(): Promise<RecipeWithRelations[]> {
   const { data, error } = await supabase
     .from('recipes')
     .select(
-      'id,product_id,yield_quantity,instructions,prep_time_minutes,bake_time_minutes,bake_temperature,created_at,updated_at,products(id,name,name_en,description,category,selling_price,cost_price,image_url,is_active,created_at,updated_at),recipe_ingredients(id,recipe_id,ingredient_id,quantity,unit,notes,ingredients:ingredient_id(id,name,base_unit,price_per_unit))'
+      'id,product_id,variant_id,yield_quantity,instructions,prep_time_minutes,bake_time_minutes,bake_temperature,created_at,updated_at,products(id,name,name_en,description,category,selling_price,cost_price,image_url,is_active,created_at,updated_at),variants:id,variant_id(id,name),recipe_ingredients(id,recipe_id,ingredient_id,quantity,unit,notes,ingredients:ingredient_id(id,name,base_unit,price_per_unit))'
     )
     .order('created_at', { ascending: false })
   if (error) throw new Error(error.message)
@@ -23,7 +23,7 @@ export async function getRecipe(id: string): Promise<RecipeWithRelations> {
   const { data, error } = await supabase
     .from('recipes')
     .select(
-      'id,product_id,yield_quantity,instructions,prep_time_minutes,bake_time_minutes,bake_temperature,created_at,updated_at,products(id,name,name_en,description,category,selling_price,cost_price,image_url,is_active,created_at,updated_at),recipe_ingredients(id,recipe_id,ingredient_id,quantity,unit,notes,ingredients:ingredient_id(id,name,base_unit,price_per_unit))'
+      'id,product_id,variant_id,yield_quantity,instructions,prep_time_minutes,bake_time_minutes,bake_temperature,created_at,updated_at,products(id,name,name_en,description,category,selling_price,cost_price,image_url,is_active,created_at,updated_at),variants:id,variant_id(id,name),recipe_ingredients(id,recipe_id,ingredient_id,quantity,unit,notes,ingredients:ingredient_id(id,name,base_unit,price_per_unit))'
     )
     .eq('id', id)
     .single()

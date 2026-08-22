@@ -264,7 +264,7 @@ export type Database = {
       process_sale: { Args: { p_sale_id: string }; Returns: Json }
       process_stock_opname: { Args: { p_opname_id: string }; Returns: Json }
       generate_invoice_number: { Args: Record<string, never>; Returns: string }
-      get_recipe_id_for_product: { Args: { p_product_id: string }; Returns: string }
+      get_recipe_id_for_product: { Args: { p_product_id: string; p_variant_id?: string | null }; Returns: string }
       generate_order_number: { Args: Record<string, never>; Returns: string }
       confirm_order: { Args: { p_order_id: string; p_user_id: string }; Returns: Json }
       rpc_confirm_order: { Args: { p_order_id: string; p_user_id: string }; Returns: Json }

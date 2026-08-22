@@ -8,7 +8,7 @@ import type { ServerAction } from '@/types/forms'
 import { getError } from '@/types/forms'
 import { BASE_UNITS } from '@/lib/constants'
 import { formatCurrency } from '@/lib/utils'
-import { Plus, Trash2 } from 'lucide-react'
+import { Plus, Trash2, Copy } from 'lucide-react'
 
 interface IngredientOption {
   id: string
@@ -30,6 +30,8 @@ interface RecipeFormProps {
   variants: ProductVariant[]
   ingredients: IngredientOption[]
   recipe?: RecipeWithRelations
+  duplicateFrom?: RecipeWithRelations
+  defaultVariantId?: string
   cancelHref: string
 }
 
@@ -39,13 +41,19 @@ export function RecipeForm({
   variants,
   ingredients,
   recipe,
+  duplicateFrom,
+  defaultVariantId,
   cancelHref,
 }: RecipeFormProps) {
   const [state, formAction, isPending] = useActionState(action, null)
   const error = getError(state)
 
+  // When duplicating, prefill from the source recipe but treat it as a NEW recipe
+  // (recipe?.id is undefined, so handleSubmit won't set recipe_id → INSERT).
+  const src = recipe ?? duplicateFrom
+
   const [items, setItems] = useState<RecipeIngredientRow[]>(
-    recipe?.recipe_ingredients?.map((ri) => ({
+    src?.recipe_ingredients?.map((ri) => ({
       ingredient_id: ri.ingredient_id,
       quantity: ri.quantity,
       unit: ri.unit,
@@ -53,10 +61,21 @@ export function RecipeForm({
     })) ?? []
   )
 
-  const [selectedProductId, setSelectedProductId] = useState(recipe?.product_id ?? '')
+  const [selectedProductId, setSelectedProductId] = useState(src?.product_id ?? '')
+  // Prefill variant: explicit default (from ?variant= when duplicating) takes priority,
+  // otherwise fall back to the source recipe's variant.
+  const [selectedVariantId, setSelectedVariantId] = useState(
+    defaultVariantId ?? src?.variant_id ?? ''
+  )
   const productVariants = selectedProductId
     ? variants.filter(v => v.product_id === selectedProductId)
     : []
+
+  const handleProductChange = (value: string) => {
+    setSelectedProductId(value)
+    // Reset variant when product changes — old variant no longer belongs to this product
+    setSelectedVariantId('')
+  }
 
   const addItem = () =>
     setItems((prev) => [
@@ -92,6 +111,7 @@ export function RecipeForm({
 
   const handleSubmit = (fd: FormData) => {
     fd.set('ingredients_json', JSON.stringify(items))
+    // Only set recipe_id when editing an existing recipe — duplicates are always INSERTs
     if (recipe?.id) fd.set('recipe_id', recipe.id)
     formAction(fd)
   }
@@ -101,6 +121,19 @@ export function RecipeForm({
       {error && (
         <div className="p-3 rounded-lg text-sm bg-red-50 text-red-700 border border-red-200">
           {error}
+        </div>
+      )}
+
+      {duplicateFrom && (
+        <div
+          className="p-3 rounded-lg text-sm flex items-center gap-2"
+          style={{ background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary-hover))' }}
+        >
+          <Copy size={14} />
+          Mode Duplikat — menyalin resep
+          {' '}
+          <strong>{duplicateFrom.products?.name ?? 'Produk'}</strong>.
+          Pilih varian target lalu sesuaikan bahan, lalu simpan.
         </div>
       )}
 
@@ -122,7 +155,7 @@ export function RecipeForm({
             <select
               name="product_id"
               value={selectedProductId}
-              onChange={e => setSelectedProductId(e.target.value)}
+              onChange={(e) => handleProductChange(e.target.value)}
               required
               className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
               style={{ borderColor: 'hsl(var(--border))' }}
@@ -142,8 +175,10 @@ export function RecipeForm({
             </label>
             <select
               name="variant_id"
-              defaultValue={recipe?.variant_id ?? ''}
-              className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
+              value={selectedVariantId}
+              onChange={(e) => setSelectedVariantId(e.target.value)}
+              disabled={!selectedProductId}
+              className="w-full px-3 py-2 rounded-lg border text-sm outline-none disabled:opacity-50"
               style={{ borderColor: 'hsl(var(--border))' }}
             >
               <option value="">-- Semua Varian (Produk) --</option>

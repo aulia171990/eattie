@@ -1,21 +1,29 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 import Link from 'next/link'
 import type { Product } from '@/types'
+import type { ProductVariant } from '@/types/product-config'
 import type { ServerAction } from '@/types/forms'
 import { getError } from '@/types/forms'
 
 interface ProductionFormProps {
   action: ServerAction
   products: Product[]
+  variants: ProductVariant[]
   cancelHref: string
 }
 
-export function ProductionForm({ action, products, cancelHref }: ProductionFormProps) {
+export function ProductionForm({ action, products, variants, cancelHref }: ProductionFormProps) {
   const [state, formAction, isPending] = useActionState(action, null)
   const error = getError(state)
   const today = new Date().toISOString().split('T')[0]
+
+  const [selectedProductId, setSelectedProductId] = useState('')
+  const productVariants = selectedProductId
+    ? variants.filter((v) => v.product_id === selectedProductId)
+    : []
+  const hasVariants = productVariants.length > 0
 
   return (
     <form action={formAction} className="max-w-xl space-y-6">
@@ -35,6 +43,8 @@ export function ProductionForm({ action, products, cancelHref }: ProductionFormP
             Produk*
           </label>
           <select name="product_id" required
+            value={selectedProductId}
+            onChange={(e) => setSelectedProductId(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
             style={{ borderColor: 'hsl(var(--border))' }}>
             <option value="">-- Pilih Produk --</option>
@@ -43,6 +53,25 @@ export function ProductionForm({ action, products, cancelHref }: ProductionFormP
             ))}
           </select>
         </div>
+
+        {hasVariants && (
+          <div>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>
+              Varian (opsional)
+            </label>
+            <select name="variant_id"
+              className="w-full px-3 py-2 rounded-lg border text-sm outline-none"
+              style={{ borderColor: 'hsl(var(--border))' }}>
+              <option value="">-- Semua Varian (Resep Produk) --</option>
+              {productVariants.map((v) => (
+                <option key={v.id} value={v.id}>{v.name}</option>
+              ))}
+            </select>
+            <p className="text-xs mt-1" style={{ color: 'hsl(var(--text-muted))' }}>
+              Kosongkan untuk pakai resep generik produk.
+            </p>
+          </div>
+        )}
 
         <div className="grid grid-cols-2 gap-4">
           <div>
