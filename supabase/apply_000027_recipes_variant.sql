@@ -1,14 +1,18 @@
 -- ============================================================
--- Recipe → Product Variant support (2-level resolution)
+-- APPLY: Recipe → Product Variant support (resolver fix)
 -- ============================================================
--- A recipe can now be bound to a SPECIFIC variant (e.g. "Roti Coklat"
--- vs "Roti Keju") or left generic (variant_id IS NULL) to apply to the
--- whole product. Production resolves: variant-specific recipe first,
--- then falls back to the product's generic recipe.
+-- Cara pakai: copy SELURUH isi file ini ke Supabase SQL Editor,
+-- lalu klik "Run". Aman dijalankan berulang (idempoten).
 --
--- Idempotent: safe to re-run if the column already exists.
+-- Tujuannya:
+--   1. Pastikan kolom recipes.variant_id ada (sudah ada di migrasi lama,
+--      jadi blok ini jadi no-op).
+--   2. Tambah unique index agar tidak ada resep dobel per produk/varian.
+--   3. Ganti RPC get_recipe_id_for_product menjadi resolver 2-level
+--      (varian spesifik dulu, fallback ke resep generik produk).
+--   4. HILANGKAN overload fungsi lama (PGRST203) dengan DROP dulu.
 
--- 1. Add variant_id column (nullable) if missing
+-- 1. Tambah kolom variant_id (idempoten)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -22,16 +26,10 @@ BEGIN
   END IF;
 END $$;
 
--- 2. Index to speed up variant-specific lookups
+-- 2. Index lookup varian
 CREATE INDEX IF NOT EXISTS recipes_variant_id_idx ON public.recipes (variant_id);
 
--- 3. Unique constraint: one recipe per (product, variant) "slot".
---    Generic recipes (variant_id NULL) are coalesced to a fixed sentinel
---    UUID so multiple generic rows for DIFFERENT products don't collide,
---    while two generic rows for the SAME product are still rejected.
---    NOTE: Postgres treats NULLs as distinct in a unique index, so we use
---    a partial unique index for generics and a plain unique index for
---    variant-bound recipes separately.
+-- 3. Unique: satu resep per slot (produk, varian)
 CREATE UNIQUE INDEX IF NOT EXISTS recipes_product_generic_uniq
   ON public.recipes (product_id)
   WHERE variant_id IS NULL;
@@ -40,11 +38,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS recipes_product_variant_uniq
   ON public.recipes (product_id, variant_id)
   WHERE variant_id IS NOT NULL;
 
--- 4. Replace resolution RPC with 2-level logic.
---    NOTE: CREATE OR REPLACE cannot change the parameter list, so the old
---    1-arg version would remain as an overload and break PostgREST (PGRST203).
---    Drop the old signature first, then create the new 2-arg version.
+-- 4. Hapus overload lama, lalu buat RPC 2-level
 DROP FUNCTION IF EXISTS public.get_recipe_id_for_product(UUID);
+
 CREATE OR REPLACE FUNCTION public.get_recipe_id_for_product(
   p_product_id UUID,
   p_variant_id UUID DEFAULT NULL
@@ -56,7 +52,7 @@ AS $function$
 DECLARE
   v_recipe_id UUID;
 BEGIN
-  -- Level 1: variant-specific recipe (only when a variant is supplied)
+  -- Level 1: resep spesifik varian (hanya bila varian diberikan)
   IF p_variant_id IS NOT NULL THEN
     SELECT id INTO v_recipe_id
       FROM public.recipes
@@ -64,7 +60,7 @@ BEGIN
         LIMIT 1;
   END IF;
 
-  -- Level 0: fallback to the product's generic recipe
+  -- Level 0: fallback ke resep generik produk
   IF v_recipe_id IS NULL THEN
     SELECT id INTO v_recipe_id
       FROM public.recipes
@@ -76,3 +72,16 @@ BEGIN
   RETURN v_recipe_id;
 END;
 $function$;
+
+-- ============================================================
+-- VERIFIKASI (jalankan terpisah, opsional)
+-- ============================================================
+-- Resep varian spesifik (ganti UUID dengan punyamu):
+-- SELECT get_recipe_id_for_product(
+--   '3124136d-9ac6-476f-a0bb-0d5c4d1b4f66',
+--   '69f18a10-0e33-404b-b522-a4cd9b33abfd'
+-- );  -- harus balik 92be852c-...
+--
+-- Cek tidak ada lagi overload (harus 1 baris):
+-- SELECT pronargs, pg_get_function_arguments(oid)
+--   FROM pg_proc WHERE proname = 'get_recipe_id_for_product';
