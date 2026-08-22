@@ -54,6 +54,33 @@ function hexToHsl(hex: string): string {
   return `${h.toFixed(0)} ${(s * 100).toFixed(0)}% ${(l * 100).toFixed(0)}%`
 }
 
+/** Luminance relatif (WCAG) dari sebuah HSL string, range 0..1. */
+function relativeLuminance(hsl: string): number {
+  const p = parseHsl(hsl)
+  if (!p) return 0.2
+  const { h, s, l } = { h: p.h / 360, s: p.s / 100, l: p.l / 100 }
+  const a = s * Math.min(l, 1 - l)
+  const f = (n: number) => {
+    const k = (n + h * 12) % 12
+    const c = l - a * Math.max(-1, Math.min(k - 3, Math.min(9 - k, 1)))
+    return c
+  }
+  const lin = (c: number) => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4))
+  const r = lin(f(0))
+  const g = lin(f(8))
+  const b = lin(f(4))
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+/** Rasio kontras WCAG (1..21) antara dua HSL string. */
+function contrastRatio(hsl1: string, hsl2: string): number {
+  const l1 = relativeLuminance(hsl1)
+  const l2 = relativeLuminance(hsl2)
+  const light = Math.max(l1, l2)
+  const dark = Math.min(l1, l2)
+  return (light + 0.05) / (dark + 0.05)
+}
+
 /** Palet warna — 6 warna utama bakery simple-luxury */
 const PRIMARY_COLORS = [
   { label: 'Cokelat Hangat', hsl: '32 95% 44%', hex: '#c87e1a' },
@@ -303,8 +330,32 @@ function CustomColorSwatch({ hsl, onPick }: { hsl: string; onPick: (hsl: string)
             </div>
           </div>
           <p className="text-[10px] font-mono" style={{ color: 'hsl(var(--text-muted))' }}>HSL: {hsl}</p>
+          <div className="pt-2 border-t space-y-1" style={{ borderColor: 'hsl(var(--border))' }}>
+            <p className="text-[10px] uppercase tracking-wide" style={{ color: 'hsl(var(--text-muted))' }}>Kontras teks</p>
+            <ContrastRow label="vs Teks Putih" bg={hsl} fg="0 0% 100%" />
+            <ContrastRow label="vs Teks Gelap" bg={hsl} fg="0 0% 12%" />
+          </div>
         </div>
       )}
+    </div>
+  )
+}
+
+/** Baris info rasio kontras WCAG — membantu memilih warna teks yang mudah dibaca. */
+function ContrastRow({ label, bg, fg }: { label: string; bg: string; fg: string }) {
+  const ratio = contrastRatio(bg, fg)
+  const pass = ratio >= 4.5
+  const largePass = ratio >= 3
+  const badgeBg = pass ? '#15803d' : largePass ? '#b45309' : '#b91c1c'
+  return (
+    <div className="flex items-center justify-between text-[10px] font-mono">
+      <span style={{ color: 'hsl(var(--text-muted))' }}>{label}</span>
+      <span className="flex items-center gap-1">
+        <span style={{ color: 'hsl(var(--text-muted))' }}>{ratio.toFixed(2)}:1</span>
+        <span className="px-1 rounded text-white" style={{ background: badgeBg }}>
+          {pass ? 'AA' : largePass ? 'AA·' : '✗'}
+        </span>
+      </span>
     </div>
   )
 }
