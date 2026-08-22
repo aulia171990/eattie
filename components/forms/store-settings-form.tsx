@@ -220,6 +220,95 @@ const COLOR_SECTIONS: { title: string; slots: ColorSlot[] }[] = [
   },
 ]
 
+/**
+ * Kontrol pemilih warna kustom — modern & sederhana.
+ * Tombol swatch membuka popover berisi pemilih warna native + input hex
+ * (bisa diketik/ditempel) dan bacaannya dalam HSL. Mengubah salah satu
+ * langsung memanggil onPick.
+ */
+function CustomColorSwatch({ hsl, onPick }: { hsl: string; onPick: (hsl: string) => void }) {
+  const hex = hslToHex(hsl)
+  const [text, setText] = useState(hex)
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { setText(hslToHex(hsl)) }, [hsl])
+
+  useEffect(() => {
+    if (!open) return
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [open])
+
+  function commitHex(value: string) {
+    const v = value.trim().replace(/^#/, '')
+    if (/^[0-9a-fA-F]{6}$/.test(v)) {
+      const full = `#${v}`
+      onPick(hexToHsl(full))
+      setText(full)
+    } else {
+      setText(hex)
+    }
+  }
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        title="Warna kustom"
+        className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 rounded-full border-2 transition-all text-xs font-medium"
+        style={{ borderColor: 'hsl(var(--border))', background: 'white', color: 'hsl(var(--text-secondary))' }}
+      >
+        <span
+          className="w-5 h-5 rounded-full border shrink-0"
+          style={{ background: `hsl(${hsl})`, borderColor: 'hsl(var(--border))' }}
+        />
+        Kustom
+      </button>
+
+      {open && (
+        <div
+          className="absolute z-20 mt-2 p-3 rounded-xl border bg-white shadow-lg space-y-2 w-56"
+          style={{ borderColor: 'hsl(var(--border))' }}
+        >
+          <div className="flex items-center gap-2">
+            <input
+              type="color"
+              value={hex}
+              onChange={e => { onPick(hexToHsl(e.target.value)); setText(e.target.value) }}
+              className="w-10 h-10 rounded-lg border-0 cursor-pointer p-0 bg-transparent shrink-0"
+              aria-label="Pilih warna"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] uppercase tracking-wide mb-0.5" style={{ color: 'hsl(var(--text-muted))' }}>Hex</p>
+              <input
+                value={text}
+                onChange={e => setText(e.target.value)}
+                onBlur={() => commitHex(text)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter') {
+                    commitHex(text)
+                    ;(e.target as HTMLInputElement).blur()
+                  }
+                }}
+                className="w-full px-2 py-1 text-xs rounded-md border outline-none font-mono"
+                style={{ borderColor: 'hsl(var(--border))' }}
+                placeholder="#c87e1a"
+                spellCheck={false}
+              />
+            </div>
+          </div>
+          <p className="text-[10px] font-mono" style={{ color: 'hsl(var(--text-muted))' }}>HSL: {hsl}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function StoreSettingsForm({ settings }: Props) {
   const [state, formAction, isPending] = useActionState(updateStoreSettings, null)
   const [uploading, setUploading] = useState<'logo' | 'icon' | null>(null)
@@ -227,6 +316,7 @@ export function StoreSettingsForm({ settings }: Props) {
   const [previewIcon, setPreviewIcon] = useState<string | null>(settings?.logo_icon_url ?? null)
   const logoRef = useRef<HTMLInputElement>(null)
   const iconRef = useRef<HTMLInputElement>(null)
+  const savedRef = useRef(false)
 
   const [colors, setColors] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {}
@@ -236,8 +326,7 @@ export function StoreSettingsForm({ settings }: Props) {
     return initial
   })
 
-  const primaryHex = PRIMARY_COLORS.find(c => c.hsl === colors.primary_color)?.hex
-    ?? settings?.primary_color_hex ?? '#c87e1a'
+  const primaryHex = hslToHex(colors.primary_color)
 
   function handlePick(fieldKey: string, hsl: string) {
     setColors(prev => ({ ...prev, [fieldKey]: hsl }))
@@ -245,8 +334,19 @@ export function StoreSettingsForm({ settings }: Props) {
     previewCssVariables({ [cssKey]: hsl })
   }
 
+  const initialColors = useRef<Record<string, string>>(
+    (() => {
+      const init: Record<string, string> = {}
+      for (const key of Object.keys(FIELD_MAP)) {
+        init[key] = (settings?.[key as keyof StoreSettings] as string) || DEFAULT_COLORS[key] || ''
+      }
+      return init
+    })()
+  )
+
   useEffect(() => {
     if (state?.success) {
+      savedRef.current = true
       sessionStorage.removeItem('eattie-branding')
       const applied: Record<string, string> = {}
       for (const [dbKey, cssKey] of Object.entries(FIELD_MAP)) {
@@ -256,6 +356,19 @@ export function StoreSettingsForm({ settings }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state])
+
+  // Restore the originally-loaded colors when leaving the page so a live
+  // preview that was never saved doesn't leak into the rest of the app.
+  useEffect(() => {
+    return () => {
+      if (savedRef.current) return
+      const applied: Record<string, string> = {}
+      for (const [dbKey, cssKey] of Object.entries(FIELD_MAP)) {
+        if (initialColors.current[dbKey]) applied[cssKey] = initialColors.current[dbKey]
+      }
+      previewCssVariables(applied)
+    }
+  }, [])
 
   const handleUpload = async (file: File, type: 'logo' | 'icon') => {
     setUploading(type)
@@ -393,29 +506,10 @@ export function StoreSettingsForm({ settings }: Props) {
                       </button>
                     )
                   })}
-                  <label
-                    title="Warna kustom"
-                    className="flex items-center gap-1.5 pl-1.5 pr-2 py-1.5 rounded-full border-2 cursor-pointer transition-all text-xs font-medium"
-                    style={{
-                      borderColor: 'hsl(var(--border))',
-                      background: 'hsl(var(--surface-raised))',
-                      color: 'hsl(var(--text-secondary))',
-                    }}
-                  >
-                    <span
-                      className="w-5 h-5 rounded-full border overflow-hidden shrink-0"
-                      style={{ borderColor: 'hsl(var(--border))' }}
-                    >
-                      <input
-                        type="color"
-                        value={hslToHex(colors[slot.key])}
-                        onChange={e => handlePick(slot.key, hexToHsl(e.target.value))}
-                        className="w-7 h-7 -m-1 cursor-pointer border-0 p-0 bg-transparent"
-                        aria-label={`Warna kustom ${slot.label}`}
-                      />
-                    </span>
-                    Kustom
-                  </label>
+                  <CustomColorSwatch
+                    hsl={colors[slot.key]}
+                    onPick={(hsl) => handlePick(slot.key, hsl)}
+                  />
                 </div>
               </div>
             ))}

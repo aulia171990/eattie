@@ -146,8 +146,8 @@ export async function uploadStoreLogo(
   file: File,
   type: 'logo' | 'icon'
 ): Promise<{ url?: string; error?: string }> {
-  if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
-    return { error: 'Format logo tidak didukung (png, jpg, webp)' }
+  if (!['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'].includes(file.type)) {
+    return { error: 'Format logo tidak didukung (png, jpg, webp, svg)' }
   }
   if (file.size > 2 * 1024 * 1024) {
     return { error: 'Ukuran maksimal logo adalah 2 MB' }
