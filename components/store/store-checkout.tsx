@@ -1,0 +1,439 @@
+'use client'
+
+import { useState, useRef } from 'react'
+import { useStoreCart } from '@/contexts/store-cart-context'
+import { submitOrder, uploadPaymentProof } from '@/actions/store'
+import { formatCurrency } from '@/lib/utils'
+import Link from 'next/link'
+import { ArrowLeft, Upload, Check, ChevronRight, Loader, ExternalLink, Plus, Minus, Trash2 } from 'lucide-react'
+
+const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? ''
+
+type Step = 'cart' | 'form' | 'payment' | 'success'
+
+export default function StoreCheckout() {
+  const { items, total, clearCart, itemCount, updateQty, removeItem } = useStoreCart()
+  const [step, setStep] = useState<Step>('cart')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [orderNumber, setOrderNumber] = useState('')
+  const [orderTotal, setOrderTotal] = useState(0)
+  const [proofUrl, setProofUrl] = useState('')
+  const [uploadingProof, setUploadingProof] = useState(false)
+  const submittingRef = useRef(false)
+
+  const [form, setForm] = useState({
+    customer_name: '',
+    customer_phone: '',
+    order_type: 'pickup' as 'pickup' | 'delivery' | 'PICKUP' | 'DELIVERY',
+    pickup_date: '',
+    pickup_time: '',
+    delivery_address: '',
+    notes: '',
+  })
+
+  if (itemCount === 0 && step !== 'success') {
+    return (
+      <div className="py-16 text-center space-y-4">
+        <p className="text-4xl">🛒</p>
+        <p className="font-semibold" style={{ color: 'hsl(var(--text-secondary))' }}>Keranjang kosong</p>
+        <Link href="/store" className="inline-block px-5 py-2.5 rounded-xl text-sm font-medium text-white" style={{ background: 'hsl(var(--primary))' }}>
+          Kembali Belanja
+        </Link>
+      </div>
+    )
+  }
+
+  const handleUploadProof = async (file: File) => {
+    setUploadingProof(true)
+    const { url, error } = await uploadPaymentProof(file)
+    setUploadingProof(false)
+    if (error) { setError(error); return }
+    if (url) setProofUrl(url)
+  }
+
+  const handleSubmit = async () => {
+    if (submittingRef.current) return
+    submittingRef.current = true
+    setLoading(true)
+    setError('')
+
+    try {
+      const result = await submitOrder({
+        customer_name: form.customer_name,
+        customer_phone: form.customer_phone,
+        order_type: form.order_type,
+        pickup_date: form.pickup_date || undefined,
+        pickup_time: form.pickup_time || undefined,
+        delivery_address: form.delivery_address || undefined,
+        notes: form.notes || undefined,
+        items: items.map(i => ({
+          product_id: i.product_id,
+          product_name: i.product_name,
+          quantity: i.quantity,
+          unit_price: i.unit_price,
+          subtotal: i.subtotal,
+          variant_id: i.variant.variant_id === 'default' ? undefined : i.variant.variant_id,
+          variant_name: i.variant.variant_name,
+          variant_price: i.variant.variant_price,
+          addons: i.addons.length > 0 ? i.addons.map(a => ({ addon_id: a.addon_id, name: a.name, price: a.price })) : undefined,
+        })),
+        subtotal: total,
+        total_amount: total,
+        payment_proof_url: proofUrl || undefined,
+      })
+
+      if (result.error) { setError(result.error); return }
+      setOrderNumber(result.orderNumber ?? '')
+      setOrderTotal(result.totalAmount ?? total)
+      clearCart()
+      setStep('success')
+    } finally {
+      setLoading(false)
+      submittingRef.current = false
+    }
+  }
+
+  const waMessage = encodeURIComponent(
+    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}${proofUrl ? `\n\nBukti Bayar: ${proofUrl}` : ''}\n\nMohon konfirmasinya. Terima kasih! 🍞`
+  )
+  const waLink = STORE_PHONE ? `https://wa.me/${STORE_PHONE}?text=${waMessage}` : null
+
+  // ── SUCCESS ──────────────────────────────────────────────────────────────
+  if (step === 'success') {
+    return (
+      <div className="py-10 max-w-sm mx-auto text-center space-y-5">
+        <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-3xl"
+          style={{ background: 'hsl(var(--success-bg))' }}>✅</div>
+        <div className="space-y-1">
+          <h1 className="text-xl font-bold" style={{ color: 'hsl(var(--foreground))' }}>Pesanan Diterima!</h1>
+          <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
+            Kami akan segera memproses pesanan Anda.
+          </p>
+        </div>
+
+        <div className="bg-white rounded-2xl border p-4 text-left space-y-2" style={{ borderColor: 'hsl(var(--border))' }}>
+          <div className="flex justify-between items-center">
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Nomor Order</span>
+            <span className="font-bold text-sm" style={{ color: 'hsl(var(--primary))' }}>{orderNumber}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Total</span>
+            <span className="font-semibold text-sm">{formatCurrency(orderTotal)}</span>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {waLink && (
+            <a href={waLink} target="_blank" rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold text-white"
+              style={{ background: 'hsl(var(--success))' }}>
+              <span>💬</span> Konfirmasi via WhatsApp
+              <ExternalLink size={14} />
+            </a>
+          )}
+          <Link href={`/store/track?order=${orderNumber}&phone=${form.customer_phone}`}
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-semibold border"
+            style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
+            Lacak Pesanan
+          </Link>
+          <Link href="/store"
+            className="block w-full py-3 rounded-xl text-sm font-medium text-center"
+            style={{ color: 'hsl(var(--text-muted))' }}>
+            Kembali ke Toko
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // ── CART REVIEW ──────────────────────────────────────────────────────────
+  if (step === 'cart') {
+    if (items.length === 0) {
+      return (
+        <div className="pt-6 max-w-lg mx-auto space-y-4 text-center py-12">
+          <p className="text-4xl">🛒</p>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Keranjang Kosong</h1>
+          <p className="text-sm" style={{ color: 'hsl(var(--text-muted))' }}>
+            Belum ada produk di keranjang Anda.
+          </p>
+          <Link href="/store"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl text-sm font-semibold text-white"
+            style={{ background: 'hsl(var(--primary))' }}>
+            Lihat Katalog
+          </Link>
+        </div>
+      )
+    }
+
+    return (
+      <div className="pt-6 max-w-lg mx-auto space-y-4">
+        <div className="flex items-center gap-3">
+          <Link href="/store" className="p-1.5 rounded-lg hover:bg-white transition-colors">
+            <ArrowLeft size={18} style={{ color: 'hsl(var(--text-secondary))' }} />
+          </Link>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Keranjang</h1>
+        </div>
+
+        <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
+          {items.map((item, idx) => (
+            <div key={item.id} className={`flex items-center gap-3 px-4 py-3 ${idx > 0 ? 'border-t' : ''}`}
+              style={{ borderColor: 'hsl(var(--border))' }}>
+              {/* Product image */}
+              <div className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl shrink-0 overflow-hidden"
+                style={{ background: 'hsl(var(--surface-raised))' }}>
+                {item.product_image ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={item.product_image} alt={item.product_name}
+                    className="w-full h-full object-cover" />
+                ) : '🧁'}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate" style={{ color: 'hsl(var(--foreground))' }}>{item.product_name}</p>
+                <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{item.variant.variant_name} — {formatCurrency(item.unit_price)}</p>
+
+                {/* Quantity controls */}
+                <div className="flex items-center gap-2 mt-1.5">
+                  <button
+                    onClick={() => updateQty(item.id, item.quantity - 1)}
+                    className="w-6 h-6 rounded-full flex items-center justify-center border"
+                    style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}
+                  >
+                    <Minus size={12} />
+                  </button>
+                  <span className="text-sm font-medium w-6 text-center" style={{ color: 'hsl(var(--text-secondary))' }}>
+                    {item.quantity}
+                  </span>
+                  <button
+                    onClick={() => updateQty(item.id, item.quantity + 1)}
+                    className="w-6 h-6 rounded-full flex items-center justify-center"
+                    style={{ background: 'hsl(var(--primary))', color: 'white' }}
+                  >
+                    <Plus size={12} />
+                  </button>
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className="ml-1 p-1 rounded-lg"
+                    style={{ color: 'hsl(var(--danger))' }}
+                  >
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              </div>
+
+              <p className="text-sm font-bold shrink-0" style={{ color: 'hsl(var(--primary))' }}>
+                {formatCurrency(item.subtotal)}
+              </p>
+            </div>
+          ))}
+          <div className="flex justify-between items-center px-4 py-3 border-t" style={{ borderColor: 'hsl(var(--border))', background: 'hsl(var(--surface-raised))' }}>
+            <span className="text-sm font-semibold">Total</span>
+            <span className="text-base font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(total)}</span>
+          </div>
+        </div>
+
+        <button onClick={() => setStep('form')}
+          className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold text-white"
+          style={{ background: 'hsl(var(--primary))' }}>
+          Lanjut ke Data Pemesan <ChevronRight size={16} />
+        </button>
+      </div>
+    )
+  }
+
+  // ── FORM ─────────────────────────────────────────────────────────────────
+  if (step === 'form') {
+    const isValid = form.customer_name.trim() && form.customer_phone.trim() &&
+      (form.order_type === 'delivery' ? form.delivery_address.trim() : true)
+
+    return (
+      <div className="pt-6 max-w-lg mx-auto space-y-4">
+        <div className="flex items-center gap-3">
+          <button onClick={() => setStep('cart')} className="p-1.5 rounded-lg hover:bg-white transition-colors">
+            <ArrowLeft size={18} style={{ color: 'hsl(var(--text-secondary))' }} />
+          </button>
+          <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Data Pemesan</h1>
+        </div>
+
+        <div className="bg-white rounded-2xl border p-4 space-y-3" style={{ borderColor: 'hsl(var(--border))' }}>
+          {[
+            { label: 'Nama Lengkap*', key: 'customer_name', type: 'text', placeholder: 'Masukkan nama Anda' },
+            { label: 'Nomor HP / WhatsApp*', key: 'customer_phone', type: 'tel', placeholder: '08xxxxxxxxxx' },
+          ].map(({ label, key, type, placeholder }) => (
+            <div key={key}>
+              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>{label}</label>
+              <input type={type} placeholder={placeholder} value={form[key as keyof typeof form]}
+                onChange={e => setForm(f => ({ ...f, [key]: e.target.value }))}
+                className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
+                style={{ borderColor: 'hsl(var(--border))' }} />
+            </div>
+          ))}
+
+          <div>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Metode Pengambilan</label>
+            <div className="grid grid-cols-2 gap-2">
+              {(['pickup', 'delivery'] as const).map(type => (
+                <button key={type} type="button"
+                  onClick={() => setForm(f => ({ ...f, order_type: type }))}
+                  className="py-2.5 rounded-xl text-xs font-semibold border-2 transition-all"
+                  style={form.order_type === type
+                    ? { borderColor: 'hsl(var(--primary))', background: 'hsl(var(--primary-subtle))', color: 'hsl(var(--primary))' }
+                    : { borderColor: 'hsl(var(--border))', background: 'white', color: 'hsl(var(--text-muted))' }}>
+                  {type === 'pickup' ? '🏪 Ambil di Toko' : '🛵 Dikirim'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {form.order_type === 'pickup' && (
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Tanggal Ambil</label>
+                <input type="date" value={form.pickup_date}
+                  onChange={e => setForm(f => ({ ...f, pickup_date: e.target.value }))}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
+                  style={{ borderColor: 'hsl(var(--border))' }} />
+              </div>
+              <div>
+                <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Jam Ambil</label>
+                <input type="time" value={form.pickup_time}
+                  onChange={e => setForm(f => ({ ...f, pickup_time: e.target.value }))}
+                  className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none"
+                  style={{ borderColor: 'hsl(var(--border))' }} />
+              </div>
+            </div>
+          )}
+
+          {form.order_type === 'delivery' && (
+            <div>
+              <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Alamat Pengiriman*</label>
+              <textarea rows={2} value={form.delivery_address}
+                onChange={e => setForm(f => ({ ...f, delivery_address: e.target.value }))}
+                placeholder="Jl. Contoh No. 123, RT/RW, Kelurahan, Kota"
+                className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none resize-none"
+                style={{ borderColor: 'hsl(var(--border))' }} />
+            </div>
+          )}
+
+          <div>
+            <label className="text-xs font-medium block mb-1" style={{ color: 'hsl(var(--text-secondary))' }}>Catatan (opsional)</label>
+            <textarea rows={2} value={form.notes}
+              onChange={e => setForm(f => ({ ...f, notes: e.target.value }))}
+              placeholder="Permintaan khusus, dll."
+              className="w-full px-3 py-2.5 rounded-xl border text-sm outline-none resize-none"
+              style={{ borderColor: 'hsl(var(--border))' }} />
+          </div>
+        </div>
+
+        <button onClick={() => setStep('payment')} disabled={!isValid}
+          className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold text-white disabled:opacity-50"
+          style={{ background: 'hsl(var(--primary))' }}>
+          Lanjut ke Pembayaran <ChevronRight size={16} />
+        </button>
+      </div>
+    )
+  }
+
+  // ── PAYMENT ──────────────────────────────────────────────────────────────
+  return (
+    <div className="pt-6 max-w-lg mx-auto space-y-4">
+      <div className="flex items-center gap-3">
+        <button onClick={() => setStep('form')} className="p-1.5 rounded-lg hover:bg-white transition-colors">
+          <ArrowLeft size={18} style={{ color: 'hsl(var(--text-secondary))' }} />
+        </button>
+        <h1 className="text-lg font-bold" style={{ color: 'hsl(var(--foreground))' }}>Pembayaran</h1>
+      </div>
+
+      {/* Order summary */}
+      <div className="bg-white rounded-2xl border p-4" style={{ borderColor: 'hsl(var(--border))' }}>
+        <div className="flex justify-between items-center">
+          <div>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Total Pembayaran</p>
+            <p className="text-2xl font-bold" style={{ color: 'hsl(var(--primary))' }}>{formatCurrency(total)}</p>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>{itemCount} produk</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Nama</p>
+            <p className="text-sm font-medium">{form.customer_name}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* QRIS */}
+      <div className="bg-white rounded-2xl border p-4 flex flex-col items-center gap-3" style={{ borderColor: 'hsl(var(--border))' }}>
+        <p className="text-xs font-semibold" style={{ color: 'hsl(var(--text-muted))' }}>SCAN QRIS UNTUK MEMBAYAR</p>
+        {total > 0 ? (
+          <div className="rounded-2xl p-3 border-2" style={{ borderColor: 'hsl(var(--info-bg))', background: 'hsl(var(--info-bg))' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={`/api/qris?amount=${total}`}
+              alt="QRIS"
+              className="w-48 h-48 object-contain"
+            />
+          </div>
+        ) : (
+          <div className="w-48 h-48 rounded-2xl border-2 border-dashed flex items-center justify-center text-center p-4"
+            style={{ borderColor: 'hsl(var(--info-bg))' }}>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>QR belum dikonfigurasi</p>
+          </div>
+        )}
+        <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
+          Nominal <span className="font-semibold">{formatCurrency(total)}</span> sudah otomatis terisi — tinggal scan &amp; bayar
+        </p>
+        <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
+          GoPay · OVO · Dana · ShopeePay · semua m-banking
+        </p>
+      </div>
+
+      {/* Upload proof */}
+      <div className="bg-white rounded-2xl border p-4 space-y-3" style={{ borderColor: 'hsl(var(--border))' }}>
+        <p className="text-sm font-semibold" style={{ color: 'hsl(var(--foreground))' }}>
+          Upload Bukti Pembayaran
+        </p>
+        <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
+          Opsional — Anda juga bisa konfirmasi via WhatsApp setelah checkout.
+        </p>
+
+        {proofUrl ? (
+          <div className="flex items-center gap-2 p-3 rounded-xl" style={{ background: 'hsl(var(--success-subtle))' }}>
+            <Check size={16} style={{ color: 'hsl(var(--success))' }} />
+            <span className="text-xs font-medium" style={{ color: 'hsl(var(--success))' }}>Bukti berhasil diupload</span>
+          </div>
+        ) : (
+          <label className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed cursor-pointer transition-colors hover:bg-gray-50"
+            style={{ borderColor: 'hsl(var(--border))' }}>
+            <input type="file" accept="image/*" className="hidden"
+              onChange={e => e.target.files?.[0] && handleUploadProof(e.target.files[0])} />
+            {uploadingProof
+              ? <Loader size={15} className="animate-spin" style={{ color: 'hsl(var(--text-muted))' }} />
+              : <Upload size={15} style={{ color: 'hsl(var(--text-muted))' }} />}
+            <span className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>
+              {uploadingProof ? 'Mengupload...' : 'Pilih foto bukti bayar'}
+            </span>
+          </label>
+        )}
+      </div>
+
+      {error && (
+        <div className="p-3 rounded-xl text-xs bg-red-50 text-red-700 border border-red-200">{error}</div>
+      )}
+
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold text-white disabled:opacity-60"
+        style={{ background: 'hsl(var(--success))' }}
+      >
+        {loading
+          ? <><Loader size={16} className="animate-spin" /> Memproses...</>
+          : <><Check size={16} /> Konfirmasi Pesanan</>}
+      </button>
+
+      <p className="text-xs text-center" style={{ color: 'hsl(var(--text-muted))' }}>
+        Dengan menekan konfirmasi, Anda menyetujui bahwa pembayaran telah dilakukan.
+      </p>
+    </div>
+  )
+}

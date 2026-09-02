@@ -1,0 +1,110 @@
+'use client'
+
+import { useRef, useState } from 'react'
+import { ReceiptTemplate } from './receipt-template'
+import { voidSale } from '@/actions/sales'
+import type { CartItem } from '@/contexts/cart-context'
+import { Printer, XCircle } from 'lucide-react'
+
+interface SaleDetailClientProps {
+  saleId: string
+  saleStatus: string
+  sale: {
+    invoiceNumber: string
+    items: CartItem[]
+    subtotal: number
+    discountAmount: number
+    total: number
+    paymentMethod: string
+    paymentAmount: number
+    change: number
+    customerName?: string
+  }
+}
+
+export function SaleDetailClient({ saleId, saleStatus, sale }: SaleDetailClientProps) {
+  const receiptRef = useRef<HTMLDivElement>(null)
+  const [voiding, setVoiding] = useState(false)
+  const [confirmVoid, setConfirmVoid] = useState(false)
+
+  const handlePrint = () => {
+    if (!receiptRef.current) return
+    const content = receiptRef.current.innerHTML
+    const win = window.open('', '_blank', 'width=350,height=600')
+    if (!win) return
+    win.document.write(`
+      <html><head><title>Struk ${sale.invoiceNumber}</title>
+      <style>
+        @page { size: 80mm auto; margin: 0; }
+        * { box-sizing: border-box; }
+        body { font-family: monospace; font-size: 12px; margin: 0; padding: 8px; width: 80mm; }
+        @media print { button { display: none; } body { padding: 4px; } }
+      </style>
+      </head><body>${content}<br/><button onclick="window.print()">Print</button></body></html>
+    `)
+    win.document.close()
+    win.focus()
+    setTimeout(() => win.print(), 300)
+  }
+
+  const handleVoid = async () => {
+    setVoiding(true)
+    const result = await voidSale(saleId)
+    setVoiding(false)
+    setConfirmVoid(false)
+    if (result && 'error' in result && result.error) {
+      alert(`Gagal membatalkan transaksi: ${result.error}`)
+      return
+    }
+    window.location.reload()
+  }
+
+  return (
+    <>
+      <div className="hidden">
+        <ReceiptTemplate
+          ref={receiptRef}
+          invoiceNumber={sale.invoiceNumber}
+          items={sale.items}
+          subtotal={sale.subtotal}
+          discountAmount={sale.discountAmount}
+          total={sale.total}
+          paymentMethod={sale.paymentMethod}
+          paymentAmount={sale.paymentAmount}
+          change={sale.change}
+          customerName={sale.customerName}
+        />
+      </div>
+
+      <button onClick={handlePrint}
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all hover:bg-gray-50"
+        style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-secondary))' }}>
+        <Printer size={14} /> Print Struk
+      </button>
+
+      {saleStatus === 'completed' && (
+        confirmVoid ? (
+          <div className="flex items-center gap-2">
+            <span className="text-xs" style={{ color: 'hsl(var(--danger))' }}>Batalkan transaksi ini?</span>
+            <button onClick={handleVoid} disabled={voiding}
+              className="px-2 py-1 rounded-lg text-xs font-medium text-white disabled:opacity-60"
+              style={{ background: 'hsl(var(--danger))' }}>
+              {voiding ? '...' : 'Ya, Batalkan'}
+            </button>
+            <button onClick={() => setConfirmVoid(false)}
+              className="px-2 py-1 rounded-lg text-xs border"
+              style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
+              Tidak
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setConfirmVoid(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border"
+            style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}>
+            <XCircle size={14} /> Void
+          </button>
+        )
+      )}
+    </>
+  )
+}

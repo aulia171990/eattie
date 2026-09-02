@@ -1,0 +1,27 @@
+# pg_cron unavailable — recovery pattern for auto-cancel order deadline
+
+## Context
+Supabase project ini TIDAK memiliki `pg_cron` extension aktif (`SELECT extname FROM pg_extension WHERE extname = 'pg_cron'` → 0 rows). Beberapa migration yang memakai `cron.schedule` atau `cron.job` akan gagal.
+
+## What worked: Hermes cronjob instead of pg_cron
+
+### Pattern (SUCCESSFUL this session)
+1. Buat fungsi SQL di Supabase: `public.cancel_auto_order() RETURNS jsonb`
+2. Buat cronjob Hermes: `cronjob action=create schedule="every 5m" ...`
+3. Cronjob body: `curl -s -X POST SUPABASE_MANAGEMENT_API -d '{"query":"SELECT public.cancel_auto_order()"}'`
+4. Hasil dienkripsi via auth log / delivery ke channel
+
+### Migration yang dibuat
+- 000053: `ALTER TABLE orders ADD COLUMN IF NOT EXISTS payment_deadline TIMESTAMPTZ`
+- 000054: `CREATE OR REPLACE FUNCTION cancel_auto_order()`
+
+### Edge case yang sudah di-test
+- `pg_cron` extension check via management API berhasil mendeteksi tidak ada
+- Fungsi `cancel_auto_order()` berhasil dijalankan via curl dan mengembalikan `{"cancelled_count": N}`
+- Fungsi ini aman dipanggil berulang (idempotent — nggak cancel ulang order yang sudah cancelled)
+
+### Pembersihan test data
+Test order dengan deadline lalu dibuat lewat managemen API SQL. Setelah test, dihapus manual untuk tidak membanjiri database.
+
+## References
+- SKILL.md utama eattie-audit: workflow verifikasi live DB via Management API.

@@ -1,0 +1,108 @@
+'use client'
+
+import Link from 'next/link'
+import { useBranding } from '@/contexts/branding-context'
+import { CreditCard, Landmark, Store } from 'lucide-react'
+
+export function StoreFooter() {
+  const { logoIconUrl, shortName, companyName } = useBranding()
+  return (
+    <footer style={{ background: 'hsl(var(--footer-bg))', color: 'hsl(var(--footer-text))' }}>
+      <div style={{ maxWidth: '1024px', margin: '0 auto', padding: '2.5rem 1rem 1.5rem' }}>
+
+        {/* Top grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 pb-6 border-b"
+          style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
+
+          {/* Brand */}
+          <div className="col-span-2 lg:col-span-1 space-y-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center text-sm"
+                style={{ background: 'hsl(var(--primary))' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={logoIconUrl || '/branding/logo-icon-white.svg'} alt={shortName} width={28} height={28} style={{ objectFit: 'contain' }} />
+              </div>
+              <span style={{
+                fontFamily: '"Playfair Display", serif',
+                fontWeight: 700,
+                fontSize: '1.05rem',
+                color: 'white',
+              }}>
+                {shortName}
+              </span>
+            </div>
+            <p style={{ fontSize: '0.8rem', lineHeight: 1.7 }}>
+              Roti & kue segar buatan tangan.<br />
+              Dipesan, dibuat, diantar dengan cinta.
+            </p>
+          </div>
+
+          {/* Produk */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-3"
+              style={{ color: 'hsl(var(--border-strong))' }}>Produk</p>
+            {['Semua Katalog', 'Paling Laris', 'Kue Custom', 'Hampers'].map(l => (
+              <Link key={l} href="/store#katalog"
+                className="block text-xs mb-2 hover:opacity-80 transition-opacity"
+                style={{ color: 'hsl(var(--border-strong))', textDecoration: 'none' }}>
+                {l}
+              </Link>
+            ))}
+          </div>
+
+          {/* Layanan */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-3"
+              style={{ color: 'hsl(var(--border-strong))' }}>Layanan</p>
+            {[
+              { label: 'Lacak Pesanan', href: '/store/track' },
+              { label: 'Cara Pesan', href: '/store' },
+              { label: 'Hubungi Kami', href: '/store' },
+            ].map(({ label, href }) => (
+              <Link key={label} href={href}
+                className="block text-xs mb-2 hover:opacity-80 transition-opacity"
+                style={{ color: 'hsl(var(--border-strong))', textDecoration: 'none' }}>
+                {label}
+              </Link>
+            ))}
+          </div>
+
+          {/* Pembayaran */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider mb-3"
+              style={{ color: 'hsl(var(--border-strong))' }}>Metode Bayar</p>
+            <div className="space-y-1.5">
+              {[
+                { icon: CreditCard, label: 'QRIS' },
+                { icon: Landmark, label: 'Transfer Bank' },
+                { icon: Store, label: 'Bayar di Toko' },
+              ].map(({ icon: Icon, label }) => (
+                <div key={label} className="flex items-center gap-2 text-xs"
+                  style={{ color: 'hsl(var(--border-strong))' }}>
+                  <Icon size={14} aria-hidden="true" />
+                  <span>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-4">
+          <p style={{ fontSize: '0.7rem', color: 'hsl(var(--text-muted))' }}>
+            © {new Date().getFullYear()} {companyName}. Semua hak dilindungi.
+          </p>
+          <div className="flex items-center gap-3">
+            {['Instagram', 'WhatsApp'].map(s => (
+              <a key={s} href="#"
+                className="text-xs hover:opacity-80 transition-opacity"
+                style={{ color: 'hsl(var(--text-muted))', textDecoration: 'none' }}>
+                {s}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}

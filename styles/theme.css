@@ -1,0 +1,159 @@
+/**
+ * EATTIE DESIGN SYSTEM — THEME
+ * Central source of truth for all color tokens.
+ *
+ * To rebrand: edit values in :root only.
+ * All components reference these variables — no hardcoded values needed.
+ *
+ * Format: HSL without hsl() wrapper (for Tailwind CSS variable compatibility)
+ * Usage:  color: hsl(var(--primary));
+ *         @apply text-primary;  (via tailwind.config.ts mapping)
+ */
+
+:root {
+
+  /* ===============================
+     BRAND
+  =============================== */
+
+  --primary:            142 60% 38%;
+  --primary-hover:      345 52% 26%;
+  --primary-foreground: 0 0% 100%;
+  --primary-subtle:     345 55% 95%;
+
+  /* Gold Accent */
+  --accent:             38 55% 48%;
+  --accent-foreground:  0 0% 100%;
+  --accent-subtle:      38 60% 95%;
+
+  /* ===============================
+     BACKGROUND
+  =============================== */
+
+  --background:         35 35% 97%;
+  --surface:            0 0% 100%;
+  --surface-raised:     35 30% 99%;
+
+  /* ===============================
+     TEXT
+  =============================== */
+
+  --foreground:         20 18% 14%;
+  --text-secondary:     20 12% 35%;
+  --text-muted:         20 10% 50%;
+  --text-disabled:      20 8% 70%;
+
+  /* ===============================
+     BORDER
+  =============================== */
+
+  --border:             30 15% 88%;
+  --border-strong:      30 18% 78%;
+  --input:              30 15% 88%;
+  --ring:               345 47% 32%;
+
+  /* ===============================
+     SUCCESS
+  =============================== */
+
+  --success:            145 45% 34%;
+  --success-bg:         145 45% 93%;
+  --success-subtle:     145 45% 96%;
+
+  /* ===============================
+     WARNING
+  =============================== */
+
+  --warning:            38 82% 42%;
+  --warning-bg:         38 90% 94%;
+  --warning-subtle:     38 90% 97%;
+
+  /* ===============================
+     DANGER
+  =============================== */
+
+  --danger:             355 68% 46%;
+  --danger-bg:          355 85% 95%;
+  --danger-subtle:      355 90% 97%;
+
+  /* ===============================
+     INFO
+  =============================== */
+
+  --info:               210 60% 42%;
+  --info-bg:            210 70% 95%;
+  --info-subtle:        210 70% 97%;
+
+  /* ===============================
+     CUSTOMER TIER
+  =============================== */
+
+  --tier-bronze:        28 48% 42%;
+  --tier-bronze-bg:     28 40% 95%;
+
+  --tier-silver:        210 8% 45%;
+  --tier-silver-bg:     210 15% 95%;
+
+  --tier-gold:          42 75% 42%;
+  --tier-gold-bg:       45 90% 95%;
+
+  --tier-platinum:      270 28% 48%;
+  --tier-platinum-bg:   270 35% 95%;
+
+  /* ===============================
+     SIDEBAR
+  =============================== */
+
+  --sidebar-bg:         345 32% 18%;
+  --sidebar-text:       35 20% 90%;
+  --sidebar-text-muted: 35 12% 68%;
+  --sidebar-accent:     38 55% 48%;
+  --sidebar-border:     345 22% 24%;
+  --sidebar-hover:      345 25% 24%;
+
+  --footer-bg:          345 32% 18%;
+  --footer-text:        35 20% 90%;
+
+}
+/* ── Dark mode ───────────────────────────────────────────── */
+.dark{
+
+  --primary:            345 52% 48%;
+  --primary-hover:      345 55% 42%;
+  --primary-foreground: 0 0% 100%;
+  --primary-subtle:     345 35% 22%;
+  --accent-subtle:      38 30% 16%;
+
+  --background:         345 18% 9%;
+  --surface:            345 18% 12%;
+  --surface-raised:     345 16% 15%;
+
+  --foreground:         35 25% 94%;
+  --text-secondary:     35 18% 75%;
+  --text-muted:         35 12% 60%;
+  --text-disabled:      35 8% 40%;
+
+  --border:             345 12% 24%;
+  --border-strong:      345 12% 34%;
+  --input:              345 12% 24%;
+  --ring:               345 52% 48%;
+
+  --success:            145 45% 46%;
+  --success-bg:         145 30% 18%;
+
+  --warning:            38 82% 58%;
+  --warning-bg:         38 35% 18%;
+
+  --danger:             355 70% 58%;
+  --danger-bg:          355 35% 18%;
+
+  --info:               210 65% 60%;
+  --info-bg:            210 35% 18%;
+
+  --sidebar-bg:         345 18% 8%;
+  --sidebar-text:       35 22% 90%;
+  --sidebar-text-muted: 35 12% 60%;
+  --sidebar-border:     345 10% 20%;
+  --sidebar-hover:      345 15% 18%;
+
+}

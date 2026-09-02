@@ -1,0 +1,92 @@
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
+import type { SupabaseClient } from '@supabase/supabase-js'
+import { NextResponse, type NextRequest } from 'next/server'
+import type { Database } from '@/types/database'
+
+export async function middleware(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request })
+
+  const supabase = createServerClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            request.cookies.set(name, value)
+          )
+          supabaseResponse = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  ) as unknown as SupabaseClient<Database>
+
+  // IMPORTANT: do not add logic between createServerClient and getUser()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  const { pathname } = request.nextUrl
+
+  // Public page routes that don't need auth.
+  const isPublicPage =
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/sign-up') ||
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/store') ||
+    pathname === '/'
+
+  // API routes that are explicitly public/anonymous (storefront reviews, dynamic QRIS).
+  // These must pass through (or return their own JSON), never a 302 to /login,
+  // otherwise anon fetch clients receive redirect HTML instead of the payload.
+  const isPublicApi =
+    pathname.startsWith('/api/reviews') || pathname.startsWith('/api/qris')
+
+  const isPublic = isPublicPage || isPublicApi
+
+  // Not logged in → redirect to login
+  if (!user && !isPublic) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('next', pathname)
+    return NextResponse.redirect(url)
+  }
+
+  // Check if user account is deactivated by owner
+  if (user && !isPublic) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('is_active')
+      .eq('id', user.id)
+      .single()
+
+    if (profile && profile.is_active === false) {
+      await supabase.auth.signOut()
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      url.searchParams.set('reason', 'deactivated')
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // Logged in → don't show login/signup pages
+  if (user && (pathname === '/login' || pathname === '/sign-up')) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/dashboard'
+    return NextResponse.redirect(url)
+  }
+
+  // IMPORTANT: return supabaseResponse (not NextResponse.next())
+  // so cookies are properly forwarded
+  return supabaseResponse
+}
+
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
+}
