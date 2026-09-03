@@ -103,10 +103,11 @@ Catatan:
 
 ## Open items / blockers
 - Migration 000052, 000059, 000060, 000061: belum bisa di-apply via Management API (403/ JWT verification failed). Apply manual via Supabase SQL Editor.
-- `actions/custom-cakes.ts`: ada perubahan unsaved di working tree (refactor unique request number). Perlu commit atau revert.
+- ~~`actions/custom-cakes.ts`: ada perubahan unsaved di working tree~~ ✅ SUDAH CLEAN — refactor unique request number sudah tersimpan di repo.
 - `create_sale` single RPC untuk menutup race condition createSale() — masih konsep, belum di-code (user bilang tidak perlu diubah untuk saat ini)
 - Production: role/permission check di `updateBatchStatus` dan `deleteBatch` masih minimal (cuma cek authenticated)
 - Custom cake: status update tanpa dedicated RPC/role guard
+- ~~`app/dashboard/inventory/[id]/stock-adjust-modal.tsx` + `adjustStock` action~~ ✅ SUDAH DIHAPUS (dead code, action `adjustStock` sudah dihapus sebelumnya)
 
 ## File references
 - `actions/custom-cakes.ts`
