@@ -20,7 +20,7 @@ export function ProductModal({ product, onClose }: ProductModalProps) {
   const { items, addItem, updateQty } = useStoreCart()
   const [added, setAdded] = useState(false)
 
-  const cartItem = product ? items.find(i => i.product.id === product.id) : null
+  const cartItem = product ? items.find(i => i.product_id === product.id) : null
   const qty = cartItem?.quantity ?? 0
 
   // Close on Escape key
