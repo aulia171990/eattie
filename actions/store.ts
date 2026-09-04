@@ -15,6 +15,8 @@ export interface StoreProduct {
   image_url: string | null
   online_sort_order: number
   has_variants?: boolean
+  rating?: number
+  delivery_time?: string | null
 }
 
 export interface CheckoutItem {

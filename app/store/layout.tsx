@@ -2,10 +2,17 @@ import type { Metadata } from 'next'
 import { StoreNav } from '@/components/store/store-nav'
 import { StoreFooter } from '@/components/store/store-footer'
 import { CartProvider } from '@/contexts/store-cart-context'
+import { getStoreSettings } from '@/actions/store-settings'
 
-export const metadata: Metadata = {
-  title: 'Eattie — Premium Artisanal Cakes & Pastries',
-  description: 'Pesan kue & pastry premium buatan tangan. Diantar ke seluruh Townsite.',
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getStoreSettings()
+  const name = settings?.short_name ?? settings?.company_name ?? 'Bakery'
+  const tagline = settings?.tagline ?? 'Fresh Bread & Cakes, Made to Order'
+
+  return {
+    title: `${name} — ${tagline}`,
+    description: tagline,
+  }
 }
 
 export default function StoreLayout({ children }: { children: React.ReactNode }) {

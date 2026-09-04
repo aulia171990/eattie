@@ -1,11 +1,14 @@
 'use client'
 
 import { BrandingProvider } from './branding-context'
+import { ToastProvider } from './toast-context'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <BrandingProvider>
-      {children}
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     </BrandingProvider>
   )
 }

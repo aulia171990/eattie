@@ -206,7 +206,7 @@ export function ProductForm({ action, product, cancelHref }: ProductFormProps) {
         <div className="flex items-center justify-between p-3 rounded-lg" style={{ background: 'hsl(var(--success-bg))' }}>
           <div>
             <p className="text-sm font-medium" style={{ color: 'hsl(var(--foreground))' }}>Tersedia di Toko Online</p>
-            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Tampil di eattie.vercel.app/store</p>
+            <p className="text-xs" style={{ color: 'hsl(var(--text-muted))' }}>Tampil di toko online</p>
           </div>
           <input type="checkbox" name="is_available_online"
             defaultChecked={(product as (Product & { is_available_online?: boolean }) | undefined)?.is_available_online ?? false}

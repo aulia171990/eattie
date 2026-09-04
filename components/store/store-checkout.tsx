@@ -7,12 +7,15 @@ import { formatCurrency } from '@/lib/utils'
 import Link from 'next/link'
 import { ArrowLeft, Upload, Check, ChevronRight, Loader, ExternalLink, Plus, Minus, Trash2 } from 'lucide-react'
 
+import { useBranding } from '@/contexts/branding-context'
+
 const STORE_PHONE = process.env.NEXT_PUBLIC_STORE_WHATSAPP ?? ''
 
 type Step = 'cart' | 'form' | 'payment' | 'success'
 
 export default function StoreCheckout() {
   const { items, total, clearCart, itemCount, updateQty, removeItem } = useStoreCart()
+  const branding = useBranding()
   const [step, setStep] = useState<Step>('cart')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -95,7 +98,7 @@ export default function StoreCheckout() {
   }
 
   const waMessage = encodeURIComponent(
-    `Halo! Saya sudah melakukan pemesanan di Eattie Bakery.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}${proofUrl ? `\n\nBukti Bayar: ${proofUrl}` : ''}\n\nMohon konfirmasinya. Terima kasih! 🍞`
+    `Halo! Saya sudah melakukan pemesanan di ${branding.companyName}.\n\nNomor Order: ${orderNumber}\nNama: ${form.customer_name}\nTotal: ${formatCurrency(orderTotal)}${proofUrl ? `\n\nBukti Bayar: ${proofUrl}` : ''}\n\nMohon konfirmasinya. Terima kasih! 🍞`
   )
   const waLink = STORE_PHONE ? `https://wa.me/${STORE_PHONE}?text=${waMessage}` : null
 

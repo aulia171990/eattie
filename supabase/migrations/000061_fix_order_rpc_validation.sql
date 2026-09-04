@@ -66,5 +66,5 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION rpc_complete_order(UUID, UUID) TO anon, authenticated, service_role;
-GRANT EXECUTE ON FUNCTION rpc_mark_paid(UUID, UUID) TO anon, authenticated, service_role;
+GRANT EXECUTE ON FUNCTION rpc_complete_order(UUID, UUID) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION rpc_mark_paid(UUID, UUID) TO authenticated, service_role;

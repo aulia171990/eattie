@@ -51,8 +51,21 @@
 }
 
 @keyframes slide-in-right {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes slide-out-right {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(100%); opacity: 0; }
+}
+
+.animate-in {
+  animation: fade-in-up var(--duration-default) var(--ease-out);
+}
+
+.slide-in-from-right {
+  animation: slide-in-right var(--duration-default) var(--ease-out);
 }
 
 @keyframes scale-in {
@@ -95,4 +108,13 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ── Scrollbar Utilities ─────────────────────────────────── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

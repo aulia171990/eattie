@@ -820,9 +820,9 @@ CREATE TABLE public.stock_purchases (
 
 CREATE TABLE public.store_settings (
   id bigint NOT NULL DEFAULT 1,
-  company_name text NOT NULL DEFAULT 'Eattie Bakery'::text,
-  short_name text NOT NULL DEFAULT 'Eattie'::text,
-  tagline text NOT NULL DEFAULT 'Roti & Kue Segar, Dipesan, Dibuat, Diantar'::text,
+  company_name text NOT NULL DEFAULT 'My Bakery'::text,
+  short_name text NOT NULL DEFAULT 'Bakery'::text,
+  tagline text NOT NULL DEFAULT 'Fresh Bread & Cakes, Made to Order'::text,
   logo_url text NULL,
   logo_icon_url text NULL,
   favicon_url text NULL,

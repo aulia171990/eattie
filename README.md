@@ -1,154 +1,185 @@
-# 🍞 Bakery Management System
+# Eattie — Bakery Management System
 
-Sistem manajemen toko roti lengkap dengan Next.js 15 + Supabase.
+> Sistem manajemen toko roti lengkap dengan Next.js + Supabase.
 
-## Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **Database**: Supabase (PostgreSQL + Auth + RLS)
-- **UI**: shadcn/ui + Tailwind CSS
-- **State**: React Context + Server Actions
-- **Print**: react-to-print
-- **Language**: Bilingual ID/EN
-
-## Setup
+## Quick Start
 
 ### 1. Clone & Install
 
 ```bash
-git clone <repo>
-cd bakery-management
+git clone <repo-url>
+cd eattie
 npm install
 ```
 
-### 2. Setup Supabase
+### 2. Setup Environment
 
-1. Buat project baru di [supabase.com](https://supabase.com)
-2. Copy URL dan anon key dari Settings → API
-3. Buat file `.env.local`:
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJxxxxxxx
-SUPABASE_SERVICE_ROLE_KEY=eyJxxxxxxx
+```bash
+cp .env.example .env.local
+# Edit .env.local with your values
 ```
+
+Required variables:
+- `NEXT_PUBLIC_SUPABASE_URL` — Your Supabase project URL
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Your Supabase anon key
+- `SUPABASE_SERVICE_ROLE_KEY` — Your Supabase service role key
+
+Optional:
+- `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` — For push notifications (generate with `npm run generate-vapid`)
+- `NEXT_PUBLIC_STORE_WHATSAPP` — WhatsApp number for order notifications
+- `VAPID_SUBJECT` — VAPID subject email (default: `mailto:admin@yourdomain.com`)
 
 ### 3. Setup Database
 
-1. Buka Supabase Dashboard → SQL Editor
-2. Copy isi file `supabase-schema.sql`
-3. Jalankan SQL tersebut
-4. Schema, RLS policies, dan trigger akan ter-setup otomatis
+1. Create a new project at [supabase.com](https://supabase.com)
+2. Go to SQL Editor
+3. Run the full setup script: `supabase/migrations/000000_full_setup.sql`
+4. This creates all tables, RLS policies, RPC functions, and seeds
 
-### 4. Buat User Pertama (Owner)
+### 4. Generate VAPID Keys (Optional — for push notifications)
+
+```bash
+npm run generate-vapid
+# Copy the keys to .env.local
+```
+
+### 5. Create First User
+
+1. Run `npm run dev` and open http://localhost:3000
+2. Sign up via the app
+3. In Supabase SQL Editor, promote yourself to owner:
 
 ```sql
--- Di Supabase SQL Editor, setelah mendaftar via app:
 UPDATE profiles SET role = 'owner' WHERE id = 'your-user-id';
 ```
 
-Atau daftar melalui aplikasi dan pilih role "Owner".
+### 6. Customize Branding
 
-### 5. Generate TypeScript Types
+1. Login as owner
+2. Go to Settings → Store
+3. Change company name, logo, colors, tagline
+4. All changes apply instantly — no code edits needed
 
-```bash
-# Install Supabase CLI
-npm install -g supabase
-
-# Login
-supabase login
-
-# Generate types (setelah database dibuat)
-supabase gen types typescript --project-id YOUR_PROJECT_ID > types/database.ts
-```
-
-### 6. Jalankan Aplikasi
+### 7. Run Development
 
 ```bash
 npm run dev
 ```
 
-Buka [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000)
 
-## Struktur Project
+---
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Database**: Supabase (PostgreSQL + Auth + RLS + Storage)
+- **UI**: Tailwind CSS + Lucide Icons
+- **State**: React Context + Server Actions
+- **Print**: react-to-print
+- **Push**: web-push
+
+## Project Structure
 
 ```
 ├── app/
-│   ├── auth-pages/          # Login, sign-up pages
-│   ├── auth/callback/       # Supabase OAuth callback
-│   ├── dashboard/           # Dashboard + semua modul
-│   └── pos/                 # POS full-screen
+│   ├── (auth)/              # Login, sign-up
+│   ├── dashboard/           # Dashboard + all modules
+│   ├── pos/                 # POS full-screen
+│   ├── store/               # Customer storefront
+│   └── api/                 # API routes (push)
 ├── components/
 │   ├── layout/              # Sidebar, Header
 │   ├── forms/               # Form components
-│   ├── tables/              # Data tables
-│   └── shared/              # Shared components
-├── lib/
-│   ├── supabase/            # Client & server clients
-│   ├── utils.ts             # Helper functions
-│   └── constants.ts         # App constants
+│   ├── ui/                  # Shared UI components
+│   ├── pos/                 # POS components
+│   ├── store/               # Storefront components
+│   ├── shared/              # Shared components
+│   ├── accounting/          # Accounting components
+│   ├── audit/               # Audit trail
+│   └── charts/              # Chart components
+├── contexts/                # React Context providers
 ├── actions/                 # Server Actions
+├── lib/
+│   ├── supabase/            # Supabase clients
+│   ├── push/                # Push notification
+│   └── utils.ts             # Helper functions
 ├── types/                   # TypeScript types
-├── contexts/                # React Context
-└── supabase-schema.sql      # Database schema
+├── config/                  # Theme & branding config
+├── styles/                  # Global CSS
+├── hooks/                   # Custom hooks
+├── public/
+│   └── branding/            # Logo files
+└── supabase/
+    ├── migrations/          # Database migrations
+    └── seeds/               # Seed data
 ```
 
-## Role Access
+## Features
 
-| Fitur | Owner | Kasir | Baker |
-|-------|-------|-------|-------|
-| Dashboard | ✅ Full | ✅ Sales | ✅ Produksi |
-| Inventory | ✅ | ❌ | ❌ |
-| Produk | ✅ | 👁 Read | ❌ |
-| Resep | ✅ | ❌ | ❌ |
-| Produksi | ✅ | ❌ | ✅ Update |
+### Dashboard & Reports
+- Revenue dashboard with charts
+- Trial balance & journal entries
+- Sales, production, financial reports
+- Audit trail for all data changes
+
+### Inventory
+- Ingredient management with stock tracking
+- Purchase orders with auto-receive
+- Stock opname with variance journal
+- Supplier management
+
+### Products & Recipes
+- Product catalog with variants & addons
+- Recipe management with cost calculation
+- Production batch tracking
+
+### Sales & POS
+- Full POS interface with cart
+- Multiple payment methods (cash, card, transfer, QRIS)
+- Receipt printing
+- Sales history & analytics
+
+### Store Online
+- Customer-facing storefront
+- Product catalog with filters
+- Cart & checkout
+- Payment proof upload
+- WhatsApp order notification
+
+### Custom Cake
+- Request submission from storefront
+- Status tracking (pending → quoted → confirmed → in production → ready → delivered)
+- Price quoting
+- WhatsApp quick reply
+
+### User Management
+- Three roles: Owner, Cashier, Baker
+- Role-based access control (RLS)
+- Module-level permissions
+
+### Accounting
+- Double-entry journal
+- Chart of accounts
+- Accounts Receivable / Payable
+- Fiscal period closing
+- Automatic journal triggers
+
+## Role Permissions
+
+| Feature | Owner | Cashier | Baker |
+|---------|:-----:|:-------:|:-----:|
+| Dashboard | ✅ Full | ✅ Sales | ✅ Production |
+| Inventory | ✅ | ❌ | ✅ Read |
+| Products | ✅ | ✅ Read | ✅ Read |
+| Recipes | ✅ | ❌ | ✅ Read |
+| Production | ✅ | ❌ | ✅ Full |
 | POS/Sales | ✅ | ✅ | ❌ |
-| Laporan | ✅ | ❌ | ❌ |
+| Accounting | ✅ | ❌ | ❌ |
+| Reports | ✅ | ❌ | ❌ |
+| Users | ✅ | ❌ | ❌ |
+| Settings | ✅ | ❌ | ❌ |
 
-## Development Phases
+## License
 
-- **Phase 1** ✅ Foundation (Auth, Layout, Navigation)
-- **Phase 2** 🔜 Core (Inventory, Products, Recipes, Production)
-- **Phase 3** 🔜 Sales & POS
-- **Phase 4** 🔜 Reports & Financial
-- **Phase 5** 🔜 Polish & Optimization
-
-## Phase 2 — Selesai ✅
-
-### Modul yang sudah dibangun:
-
-**📦 Inventory Management**
-- Daftar bahan baku dengan filter, search, kategori
-- CRUD bahan baku lengkap (form + validasi)
-- Manajemen supplier
-- Purchase Order (PO) — buat, detail, terima stok → auto update stok
-- Pergerakan stok — riwayat lengkap semua tipe
-- Stock Opname — buat sesi, input aktual, auto-adjust stok
-
-**🥐 Products**
-- Katalog produk per kategori dengan kartu visual
-- CRUD produk (nama, harga jual, HPP, kategori)
-
-**📖 Recipes**
-- Database resep dengan dynamic ingredient builder
-- Kalkulasi otomatis total biaya bahan
-- Kalkulasi margin keuntungan
-- Update/edit resep
-
-**🏭 Production**
-- Jadwal batch produksi dengan filter status
-- Buat batch baru
-- Update status: planned → in_progress → completed
-- Input hasil produksi dan defect
-- Timeline batch
-
-### Server Actions (tanpa API routes):
-- `actions/ingredients.ts` — CRUD + stock adjustment
-- `actions/suppliers.ts` — CRUD supplier
-- `actions/products.ts` — CRUD produk
-- `actions/recipes.ts` — upsert resep + ingredients
-- `actions/production.ts` — batch management
-- `actions/stock-purchases.ts` — PO + receive stock
-- `actions/stock-opname.ts` — create + submit opname
-
-**Phase 3 berikutnya:** POS & Sales (kasir, cart, payment, struk)
+See [LICENSE](./LICENSE)

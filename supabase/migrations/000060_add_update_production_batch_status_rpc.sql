@@ -70,5 +70,5 @@ BEGIN
 END;
 $$;
 
--- Grant execute to public (atau role yang sesuai)
-GRANT EXECUTE ON FUNCTION update_production_batch_status(UUID, TEXT) TO anon, authenticated, service_role;
+-- Grant execute to authenticated users only
+GRANT EXECUTE ON FUNCTION update_production_batch_status(UUID, TEXT) TO authenticated, service_role;

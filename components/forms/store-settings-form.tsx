@@ -825,7 +825,7 @@ export function StoreSettingsForm({ settings }: Props) {
   useEffect(() => {
     if (state?.success) {
       savedRef.current = true
-      sessionStorage.removeItem('eattie-branding')
+      sessionStorage.removeItem('app-branding')
       const applied: Record<string, string> = {}
       for (const [dbKey, cssKey] of Object.entries(FIELD_MAP)) {
         if (colors[dbKey]) applied[cssKey] = colors[dbKey]

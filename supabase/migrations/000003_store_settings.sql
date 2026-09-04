@@ -1,9 +1,9 @@
 -- Store settings (single-row table for app configuration)
 CREATE TABLE IF NOT EXISTS public.store_settings (
   id BIGINT PRIMARY KEY DEFAULT 1,
-  company_name TEXT NOT NULL DEFAULT 'Eattie Bakery',
-  short_name TEXT NOT NULL DEFAULT 'Eattie',
-  tagline TEXT NOT NULL DEFAULT 'Roti & Kue Segar, Dipesan, Dibuat, Diantar',
+  company_name TEXT NOT NULL DEFAULT 'My Bakery',
+  short_name TEXT NOT NULL DEFAULT 'Bakery',
+  tagline TEXT NOT NULL DEFAULT 'Fresh Bread & Cakes, Made to Order',
   logo_url TEXT,
   logo_icon_url TEXT,
   favicon_url TEXT,

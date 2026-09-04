@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import type { StoreProduct } from '@/actions/store'
 import type { ConfigurableCartItem, CartVariantPick, CartAddonPick } from '@/types/product-config'
+import { useToast } from '@/contexts/toast-context'
 
 export interface StoreCartItem {
   id: string // unique ID for cart item (product_id + variant_id + addon_ids)
@@ -31,6 +32,7 @@ const CartContext = createContext<CartContextType | null>(null)
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<StoreCartItem[]>([])
+  const { addToast } = useToast()
 
   const addConfigurableItem = useCallback((item: ConfigurableCartItem) => {
     const id = `${item.product_id}-${item.variant.variant_id}-${item.addons.map(a => a.addon_id).sort().join(',')}`
@@ -44,12 +46,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             : i
         )
       }
+      addToast(`${item.product_name} ditambahkan ke keranjang`, 'success')
       return [...prev, { ...item, id }]
     })
-  }, [])
+  }, [addToast])
 
   const addItem = useCallback((product: StoreProduct, qty = 1) => {
-    // legacy support
     addConfigurableItem({
       product_id: product.id,
       product_name: product.name,

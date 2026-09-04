@@ -5,6 +5,7 @@ import { updateCustomCakeRequest, getCustomCakeActions } from '@/actions/custom-
 import type { CustomCakeRequest, CustomCakeStatus } from '@/types/custom-cake'
 import { CUSTOM_CAKE_STATUS_LABEL, CUSTOM_CAKE_STATUS_COLOR } from '@/types/custom-cake'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { useBranding } from '@/contexts/branding-context'
 import { ChevronDown, Cake, Phone, Calendar, ImageIcon, CheckCircle, Loader2, StickyNote } from 'lucide-react'
 
 function StatusBadge({ status }: { status: CustomCakeStatus }) {
@@ -24,6 +25,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
   const [error, setError] = useState<string | null>(null)
   const [validStatuses, setValidStatuses] = useState<CustomCakeStatus[]>([])
   const [loadingActions, setLoadingActions] = useState(false)
+  const branding = useBranding()
 
   const handleOpen = async () => {
     const next = !open
@@ -202,7 +204,7 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
             {/* WA Quick Reply */}
             {req.customer_phone && (
               <a href={`https://wa.me/62${req.customer_phone.replace(/^0/, '')}?text=${encodeURIComponent(
-                `Halo ${req.customer_name}, kami dari Eattie ingin konfirmasi permintaan custom cake Anda (${req.req_number}).`
+                `Halo ${req.customer_name}, kami dari ${branding.companyName} ingin konfirmasi permintaan custom cake Anda (${req.req_number}).`
                 + (price ? `\\n\\nHarga penawaran kami: Rp ${parseInt(price).toLocaleString('id-ID')}` : '')
                 + `\\n\\nDetail:\\n• Ukuran: ${req.size}\\n• Rasa: ${req.flavor}`
                 + (req.color_theme ? `\\n• Tema: ${req.color_theme}` : '')

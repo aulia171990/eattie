@@ -9,6 +9,7 @@ import {
 } from 'react'
 import type { Product } from '@/types'
 import type { ConfigurableCartItem } from '@/types/product-config'
+import { useToast } from '@/contexts/toast-context'
 
 export interface CartItem {
   product: Product
@@ -45,6 +46,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([])
   const [discountPercent, setDiscountPercentState] = useState(0)
   const [discountAmount, setDiscountAmountState] = useState(0)
+  const { addToast } = useToast()
 
   const addItem = useCallback((product: Product) => {
     setItems((prev) => {
@@ -60,9 +62,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : i
         )
       }
+      addToast(`${product.name} ditambahkan ke keranjang`, 'success')
       return [...prev, { product, quantity: 1, subtotal: product.selling_price }]
     })
-  }, [])
+  }, [addToast])
 
   const addConfigurableItem = useCallback((item: ConfigurableCartItem) => {
     const cartId = `${item.product_id}-${item.variant.variant_id}-${item.addons.map(a => a.addon_id).sort().join(',')}`

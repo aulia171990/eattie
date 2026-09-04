@@ -129,7 +129,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
   const [branding, setBranding] = useState<BrandingValue>(defaultBranding)
 
   useEffect(() => {
-    const stored = sessionStorage.getItem('eattie-branding')
+    const stored = sessionStorage.getItem('app-branding')
     if (stored) {
       try {
         const parsed = JSON.parse(stored)
@@ -174,7 +174,7 @@ export function BrandingProvider({ children }: { children: React.ReactNode }) {
       }
       setBranding(value)
       applyCssVariables(value)
-      sessionStorage.setItem('eattie-branding', JSON.stringify(value))
+      sessionStorage.setItem('app-branding', JSON.stringify(value))
     })
   }, [])
 

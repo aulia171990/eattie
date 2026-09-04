@@ -107,6 +107,23 @@ function ProductCard({ product, signature = false }: { product: StoreProduct; si
             {qty}
           </div>
         )}
+        {/* Badges: Rating & Delivery Time */}
+        {(product.rating || product.delivery_time) && (
+          <div className="absolute bottom-3 left-3 flex gap-1.5">
+            {product.rating && (
+              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-foreground shadow-sm backdrop-blur">
+                <Star size={10} className="text-accent" fill="currentColor" />
+                {product.rating.toFixed(1)}
+              </div>
+            )}
+            {product.delivery_time && (
+              <div className="flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-foreground shadow-sm backdrop-blur">
+                <Truck size={10} className="text-text-muted" />
+                {product.delivery_time}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
@@ -141,7 +158,7 @@ function ProductCard({ product, signature = false }: { product: StoreProduct; si
               <span className="w-5 text-center text-sm font-bold text-foreground">{qty}</span>
               <button
                 onClick={(e) => { e.stopPropagation(); handleAdd(e) }}
-                className="flex h-7 w-7 items-center justify-center rounded-full font-bold text-primary-foreground transition-colors"
+                className="flex h-7 w-7 items-center justify-center rounded-full font-bold text-primary-foreground transition-colors hover:scale-105"
                 style={{ background: 'hsl(var(--primary))' }}
                 aria-label={`Tambah ${product.name}`}
               >
@@ -151,7 +168,7 @@ function ProductCard({ product, signature = false }: { product: StoreProduct; si
           ) : (
             <button
               onClick={(e) => { e.stopPropagation(); handleAdd(e) }}
-              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-primary-foreground transition-all hover:opacity-90"
+              className="flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-bold text-primary-foreground transition-all hover:scale-105 hover:shadow-lg"
               style={{ background: added ? 'hsl(var(--success))' : 'hsl(var(--primary))' }}
             >
               {added ? <Check size={12} /> : <Plus size={12} />}
@@ -438,7 +455,7 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
           </div>
         </div>
 
-        <div className="mb-8 flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div className="mb-8 flex gap-2 overflow-x-auto pb-1 no-scrollbar" style={{ maskImage: 'linear-gradient(to right, black 85%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to right, black 85%, transparent 100%)' }}>
           {categories.map(cat => (
             <button
               key={cat}
@@ -457,6 +474,29 @@ export function StoreLanding({ bestsellers, allProducts, reviews }: {
         {sorted.length === 0 ? (
           <div className="rounded-[2rem] border border-border bg-surface py-16 text-center">
             <p className="text-sm font-semibold text-text-secondary">Produk tidak ditemukan</p>
+            <p className="mt-1 text-xs text-text-muted">Coba kata kunci lain atau lihat rekomendasi di bawah</p>
+            {allProducts.length > 0 && (
+              <div className="mt-6 px-4">
+                <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-accent">Rekomendasi</p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {allProducts.slice(0, 3).map(product => (
+                    <div
+                      key={product.id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedProduct(product)}
+                      className="cursor-pointer overflow-hidden rounded-xl border border-border bg-surface p-2 text-left transition-all hover:shadow-md"
+                    >
+                      <div className="relative mb-2 aspect-square overflow-hidden rounded-lg bg-surface-raised">
+                        <ProductImage product={product} />
+                      </div>
+                      <p className="line-clamp-1 text-xs font-bold text-foreground">{cleanProductName(product.name)}</p>
+                      <p className="text-xs font-extrabold text-primary">{formatCurrency(product.selling_price)}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-5 lg:grid-cols-4">
