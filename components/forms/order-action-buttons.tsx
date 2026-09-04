@@ -6,20 +6,26 @@ import type { ActionState } from '@/types'
 
 interface OrderActionButtonsProps {
   order: OrderWithItems
+  actions: {
+    found: boolean
+    can_confirm_payment: boolean
+    can_cancel: boolean
+    valid_next_statuses: string[]
+  } | null
   confirmAction: (prev: ActionState, fd: FormData) => Promise<ActionState>
   cancelAction:  (prev: ActionState, fd: FormData) => Promise<ActionState>
   updateStatusAction: (prev: ActionState, fd: FormData) => Promise<ActionState>
 }
 
-const NEXT_STATUS: Record<string, { value: string; label: string; color: string }> = {
-  NEW:             { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(var(--tier-platinum))' },
-  PAID:            { value: 'IN_PRODUCTION',   label: 'Mulai Produksi',      color: 'hsl(var(--tier-platinum))' },
-  IN_PRODUCTION:   { value: 'READY_FOR_PICKUP',label: 'Tandai Siap Diambil', color: 'hsl(var(--success))' },
-  READY_FOR_PICKUP:{ value: 'COMPLETED',       label: 'Selesai / Terambil',  color: 'hsl(var(--success))' },
+const STATUS_LABELS: Record<string, { label: string; color: string }> = {
+  IN_PRODUCTION:    { label: 'Mulai Produksi',      color: 'hsl(var(--tier-platinum))' },
+  READY_FOR_PICKUP: { label: 'Tandai Siap Diambil', color: 'hsl(var(--success))' },
+  COMPLETED:        { label: 'Selesai / Terambil',  color: 'hsl(var(--success))' },
 }
 
 export function OrderActionButtons({
   order,
+  actions,
   confirmAction,
   cancelAction,
   updateStatusAction,
@@ -28,11 +34,15 @@ export function OrderActionButtons({
   const [cancelState,  cancelDispatch,  cancelPending]  = useActionState(cancelAction, null)
   const [updateState,  updateDispatch,  updatePending]  = useActionState(updateStatusAction, null)
 
-  const next = NEXT_STATUS[order.status]
   const anyPending = confirmPending || cancelPending || updatePending
   const error = (confirmState as { error?: string } | null)?.error
     ?? (cancelState as { error?: string } | null)?.error
     ?? (updateState as { error?: string } | null)?.error
+
+  // Derive UI flags from server-provided actions
+  const canConfirmPayment = actions?.can_confirm_payment === true
+  const canCancel = actions?.can_cancel === true
+  const nextStatuses = actions?.valid_next_statuses ?? []
 
   return (
     <div className="space-y-3">
@@ -42,7 +52,7 @@ export function OrderActionButtons({
 
       <div className="flex flex-col gap-2">
         {/* Confirm payment + convert to sale */}
-        {!['PAID','paid'].includes(order.payment_status) && !['CANCELLED','cancelled'].includes(order.status) && (
+        {canConfirmPayment && (
           <form action={confirmDispatch}>
             <button
               type="submit"
@@ -60,75 +70,81 @@ export function OrderActionButtons({
           </form>
         )}
 
-        {/* Advance status */}
-        {next && (
-          <form action={updateDispatch}>
-            <input type="hidden" name="status" value={next.value} />
+        {/* Advance status — rendered from server-provided valid_next_statuses */}
+        {nextStatuses.map(status => {
+          const cfg = STATUS_LABELS[status]
+          if (!cfg) return null
+          return (
+            <form key={status} action={updateDispatch}>
+              <input type="hidden" name="status" value={status} />
+              <button
+                type="submit"
+                disabled={anyPending}
+                className="w-full py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-60"
+                style={{ background: cfg.color }}
+                onClick={e => {
+                  if (!confirm(`${cfg.label}?\nStatus order akan diubah.`)) {
+                    e.preventDefault()
+                  }
+                }}
+              >
+                {updatePending ? 'Menyimpan...' : cfg.label}
+              </button>
+            </form>
+          )
+        })}
+
+        {/* Cancel */}
+        {canCancel && (
+          <form action={cancelDispatch}>
             <button
               type="submit"
               disabled={anyPending}
               className="w-full py-3 rounded-xl text-sm font-semibold text-white disabled:opacity-60"
-              style={{ background: next.color }}
+              style={{ background: 'hsl(var(--danger))' }}
               onClick={e => {
-                if (!confirm(`${next.label}?\nStatus order akan diubah.`)) {
+                if (!confirm('Batalkan order ini?\nAksi ini tidak bisa dibatalkan.')) {
                   e.preventDefault()
                 }
               }}
             >
-              {updatePending ? 'Menyimpan...' : next.label}
+              {cancelPending ? 'Memproses...' : '✕ Batalkan Order'}
             </button>
           </form>
         )}
-
-        {/* Cancel */}
-        <form action={cancelDispatch}>
-          <button
-            type="submit"
-            disabled={anyPending}
-            className="w-full py-2.5 rounded-xl text-sm font-medium border disabled:opacity-60"
-            style={{ borderColor: 'hsl(var(--danger-bg))', color: 'hsl(var(--danger))' }}
-            onClick={e => {
-              if (!confirm('Batalkan pesanan ini?\nTindakan ini tidak dapat dibatalkan.')) e.preventDefault()
-            }}
-          >
-            Batalkan Order
-          </button>
-        </form>
       </div>
     </div>
   )
 }
 
-// ── Mark As Paid Button ──────────────────────────────────────────────
-// Shown for completed orders where payment hasn't been confirmed yet
-// (e.g. order was advanced through production without confirming payment first)
 interface MarkPaidButtonProps {
   markPaidAction: (prev: ActionState, fd: FormData) => Promise<ActionState>
 }
 
 export function MarkPaidButton({ markPaidAction }: MarkPaidButtonProps) {
-  const [state, dispatch, isPending] = useActionState(markPaidAction, null)
+  const [state, dispatch, pending] = useActionState(markPaidAction, null)
+  const error = (state as { error?: string } | null)?.error
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      {error && (
+        <div className="p-3 rounded-xl text-sm bg-red-50 text-red-700 border border-red-200">{error}</div>
+      )}
       <form action={dispatch}>
         <button
           type="submit"
-          disabled={isPending}
+          disabled={pending}
           className="w-full py-3 rounded-xl text-sm font-bold text-white disabled:opacity-60"
           style={{ background: 'hsl(var(--success))' }}
           onClick={e => {
-            if (!confirm('Tandai pesanan ini sebagai sudah dibayar (lunas)?')) {
+            if (!confirm('Tandai order ini sudah dibayar?')) {
               e.preventDefault()
             }
           }}
         >
-          {isPending ? 'Memproses...' : '✓ Tandai Sudah Dibayar / Lunas'}
+          {pending ? 'Memproses...' : '✓ Tandai Sudah Bayar'}
         </button>
       </form>
-      {state && 'error' in state && state.error && (
-        <p className="text-xs text-red-600 text-center">{state.error}</p>
-      )}
     </div>
   )
 }

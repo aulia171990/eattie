@@ -111,6 +111,32 @@ async function callRpc(
 
 // ── READ FUNCTIONS ───────────────────────────────────────────
 
+export async function getOrderActions(orderId: string): Promise<{
+  found: boolean
+  can_confirm_payment: boolean
+  can_cancel: boolean
+  valid_next_statuses: string[]
+} | null> {
+  const supabase = await createClient()
+  try {
+    const { data, error } = await (supabase.rpc as any)('get_order_actions', {
+      p_order_id: orderId,
+    })
+    if (error || !data) return null
+    const result = data as {
+      found: boolean
+      can_confirm_payment: boolean
+      can_cancel: boolean
+      valid_next_statuses: string[]
+    }
+    return result.found ? result : null
+  } catch {
+    return null
+  }
+}
+
+// ── READ FUNCTIONS ───────────────────────────────────────────
+
 export async function getOrders(
   params: GetOrdersParams = {}
 ): Promise<GetOrdersResult> {

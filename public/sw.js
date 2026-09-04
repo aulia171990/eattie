@@ -34,11 +34,18 @@ self.addEventListener('notificationclick', (event) => {
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      // Focus existing tab if it's on our origin, then navigate
       for (const client of windowClients) {
         if (client.url.startsWith(self.location.origin) && 'focus' in client) {
-          return client.focus()
+          client.focus()
+          // Navigate to the target URL
+          if ('navigate' in client) {
+            return client.navigate(absoluteUrl)
+          }
+          return client
         }
       }
+      // No existing tab — open new window
       if (clients.openWindow) {
         return clients.openWindow(absoluteUrl)
       }

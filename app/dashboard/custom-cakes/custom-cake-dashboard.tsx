@@ -1,15 +1,11 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { updateCustomCakeRequest } from '@/actions/custom-cakes'
+import { updateCustomCakeRequest, getCustomCakeActions } from '@/actions/custom-cakes'
 import type { CustomCakeRequest, CustomCakeStatus } from '@/types/custom-cake'
 import { CUSTOM_CAKE_STATUS_LABEL, CUSTOM_CAKE_STATUS_COLOR } from '@/types/custom-cake'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { ChevronDown, Cake, Phone, Calendar, ImageIcon, CheckCircle, Loader2, StickyNote } from 'lucide-react'
-
-const ALL_STATUSES: CustomCakeStatus[] = [
-  'pending', 'quoted', 'confirmed', 'in_production', 'ready', 'delivered', 'cancelled',
-]
 
 function StatusBadge({ status }: { status: CustomCakeStatus }) {
   return (
@@ -25,15 +21,36 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
   const [price, setPrice] = useState<string>(req.quoted_price?.toString() ?? '')
   const [saving, startSave] = useTransition()
   const [saved, setSaved] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [validStatuses, setValidStatuses] = useState<CustomCakeStatus[]>([])
+  const [loadingActions, setLoadingActions] = useState(false)
+
+  const handleOpen = async () => {
+    const next = !open
+    setOpen(next)
+    if (next && validStatuses.length === 0) {
+      setLoadingActions(true)
+      const actions = await getCustomCakeActions(req.id)
+      if (actions) {
+        setValidStatuses(actions.valid_next_statuses as CustomCakeStatus[])
+      }
+      setLoadingActions(false)
+    }
+  }
 
   const handleSave = () => {
+    setError(null)
     startSave(async () => {
-      await updateCustomCakeRequest(req.id, {
+      const result = await updateCustomCakeRequest(req.id, {
         status,
         quoted_price: price ? parseFloat(price) : null,
       })
-      setSaved(true)
-      setTimeout(() => { setSaved(false); onUpdated() }, 1200)
+      if (result.error) {
+        setError(result.error)
+      } else {
+        setSaved(true)
+        setTimeout(() => { setSaved(false); onUpdated() }, 1200)
+      }
     })
   }
 
@@ -41,10 +58,9 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
 
   return (
     <div className="bg-white rounded-2xl border overflow-hidden" style={{ borderColor: 'hsl(var(--border))' }}>
-
       {/* Card Header */}
       <button className="w-full flex items-center justify-between px-5 py-4 hover:bg-orange-50/30 transition-colors text-left"
-        onClick={() => setOpen(o => !o)}>
+        onClick={handleOpen}>
         <div className="flex items-center gap-3 min-w-0">
           <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
             style={{ background: 'hsl(var(--surface-raised))' }}>🎂</div>
@@ -140,18 +156,25 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
 
           {/* Admin Controls */}
           <div className="flex flex-wrap items-end gap-3 pt-4 border-t" style={{ borderColor: 'hsl(var(--border))' }}>
-            {/* Status */}
+            {/* Status — only show valid next statuses from server */}
             <div className="space-y-1.5 flex-1 min-w-[160px]">
               <label className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(var(--text-muted))' }}>
                 Update Status
               </label>
-              <select value={status} onChange={e => setStatus(e.target.value as CustomCakeStatus)}
-                className="w-full px-3 py-2 rounded-xl border text-sm outline-none"
-                style={{ borderColor: 'hsl(var(--border))', background: 'white' }}>
-                {ALL_STATUSES.map(s => (
-                  <option key={s} value={s}>{CUSTOM_CAKE_STATUS_LABEL[s]}</option>
-                ))}
-              </select>
+              {loadingActions ? (
+                <div className="px-3 py-2 rounded-xl border text-sm" style={{ borderColor: 'hsl(var(--border))', color: 'hsl(var(--text-muted))' }}>
+                  Memuat...
+                </div>
+              ) : (
+                <select value={status} onChange={e => setStatus(e.target.value as CustomCakeStatus)}
+                  className="w-full px-3 py-2 rounded-xl border text-sm outline-none"
+                  style={{ borderColor: 'hsl(var(--border))', background: 'white' }}>
+                  <option value={req.status}>{CUSTOM_CAKE_STATUS_LABEL[req.status]} (current)</option>
+                  {validStatuses.map(s => (
+                    <option key={s} value={s}>{CUSTOM_CAKE_STATUS_LABEL[s]}</option>
+                  ))}
+                </select>
+              )}
             </div>
 
             {/* Quoted Price */}
@@ -180,10 +203,10 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
             {req.customer_phone && (
               <a href={`https://wa.me/62${req.customer_phone.replace(/^0/, '')}?text=${encodeURIComponent(
                 `Halo ${req.customer_name}, kami dari Eattie ingin konfirmasi permintaan custom cake Anda (${req.req_number}).`
-                + (price ? `\n\nHarga penawaran kami: Rp ${parseInt(price).toLocaleString('id-ID')}` : '')
-                + `\n\nDetail:\n• Ukuran: ${req.size}\n• Rasa: ${req.flavor}`
-                + (req.color_theme ? `\n• Tema: ${req.color_theme}` : '')
-                + `\n\nMohon konfirmasi jika setuju. Terima kasih! 🎂`
+                + (price ? `\\n\\nHarga penawaran kami: Rp ${parseInt(price).toLocaleString('id-ID')}` : '')
+                + `\\n\\nDetail:\\n• Ukuran: ${req.size}\\n• Rasa: ${req.flavor}`
+                + (req.color_theme ? `\\n• Tema: ${req.color_theme}` : '')
+                + `\\n\\nMohon konfirmasi jika setuju. Terima kasih! 🎂`
               )}`}
                 target="_blank" rel="noopener noreferrer"
                 className="px-5 py-2 rounded-xl text-sm font-semibold border transition-all hover:bg-green-50 flex items-center gap-2"
@@ -192,6 +215,11 @@ function RequestCard({ req, onUpdated }: { req: CustomCakeRequest; onUpdated: ()
               </a>
             )}
           </div>
+
+          {/* Error display */}
+          {error && (
+            <div className="p-3 rounded-xl text-sm bg-red-50 text-red-700 border border-red-200">{error}</div>
+          )}
         </div>
       )}
     </div>
@@ -216,7 +244,6 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
 
   return (
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -257,7 +284,7 @@ export function CustomCakeDashboard({ initialRequests }: { initialRequests: Cust
             : { background: 'white', color: 'hsl(var(--text-muted))', border: '1px solid hsl(var(--border))' }}>
           Semua ({requests.length})
         </button>
-        {ALL_STATUSES.map(s => (
+        {(['pending', 'quoted', 'confirmed', 'in_production', 'ready', 'delivered', 'cancelled'] as CustomCakeStatus[]).map(s => (
           <button key={s} onClick={() => setFilterStatus(s)}
             className="shrink-0 px-4 py-1.5 rounded-full text-xs font-semibold transition-all"
             style={filterStatus === s

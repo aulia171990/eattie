@@ -5,12 +5,6 @@ import { revalidatePath } from 'next/cache'
 import type { CustomCakeRequest, CustomCakeStatus } from '@/types/custom-cake'
 import { CustomCakeSchema } from '@/lib/validations/custom-cake'
 
-const CUSTOM_CAKE_STATUSES: CustomCakeStatus[] = ['pending', 'quoted', 'confirmed', 'in_production', 'ready', 'delivered', 'cancelled']
-
-function isCustomCakeStatus(value: string): value is CustomCakeStatus {
-  return CUSTOM_CAKE_STATUSES.includes(value as CustomCakeStatus)
-}
-
 // Generate request number candidate: CC-YYYYMMDD-XXXX.
 function generateReqNumberCandidate(): string {
   const ymd = new Date().toISOString().slice(0, 10).replace(/-/g, '')
@@ -41,8 +35,6 @@ export async function submitCustomCakeRequest(formData: FormData): Promise<{
   }
 
   const { customer_name: customerName, customer_phone: customerPhone, size, flavor, color_theme: colorTheme, special_notes: specialNotes, reference_image_url: refImageUrl } = parsed.data
-
-  if (!CUSTOM_CAKE_STATUSES.includes('pending')) return { error: 'Status internal tidak valid' }
 
   for (let attempt = 0; attempt < 10; attempt++) {
     const reqNumber = generateReqNumberCandidate().toUpperCase()
@@ -80,7 +72,6 @@ export async function getCustomCakeRequests(status?: CustomCakeStatus): Promise<
     .order('created_at', { ascending: false })
 
   if (status) {
-    if (!isCustomCakeStatus(status)) return []
     q = q.eq('status', status)
   }
 
@@ -89,25 +80,49 @@ export async function getCustomCakeRequests(status?: CustomCakeStatus): Promise<
   return (data ?? []) as CustomCakeRequest[]
 }
 
-// ─── Admin: update status & quoted price ────────────────────────────────────
+// ─── Admin: get valid actions for a request ──────────────────────────────────
+export async function getCustomCakeActions(requestId: string): Promise<{
+  found: boolean
+  current_status: string
+  valid_next_statuses: string[]
+} | null> {
+  const supabase = await createClient()
+  try {
+    const { data, error } = await (supabase.rpc as any)('get_custom_cake_actions', {
+      p_request_id: requestId,
+    })
+    if (error || !data) return null
+    const result = data as {
+      found: boolean
+      current_status: string
+      valid_next_statuses: string[]
+    }
+    return result.found ? result : null
+  } catch {
+    return null
+  }
+}
+
+// ─── Admin: update status & quoted price via RPC ─────────────────────────────
 export async function updateCustomCakeRequest(
   id: string,
   updates: { status?: CustomCakeStatus; quoted_price?: number | null }
 ): Promise<{ error?: string }> {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Tidak terautentikasi' }
 
-  if (!id.trim()) return { error: 'ID tidak valid' }
-  if (updates.status && !isCustomCakeStatus(updates.status)) return { error: 'Status tidak valid' }
-  if (updates.quoted_price != null && (!Number.isFinite(updates.quoted_price) || updates.quoted_price < 0)) {
-    return { error: 'Harga tidak valid' }
-  }
-
-  const { error } = await supabase
-    .from('custom_cake_requests')
-    .update({ ...updates, updated_at: new Date().toISOString() })
-    .eq('id', id)
+  const { data, error } = await (supabase.rpc as any)('update_custom_cake_request_rpc', {
+    p_request_id: id,
+    p_status: updates.status ?? null,
+    p_quoted_price: updates.quoted_price ?? null,
+    p_user_id: user.id,
+  })
 
   if (error) return { error: error.message }
+
+  const result = data as { success?: boolean; error?: string }
+  if (!result?.success) return { error: result?.error ?? 'Gagal update' }
 
   revalidatePath('/dashboard/custom-cakes')
   return {}

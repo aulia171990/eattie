@@ -1,4 +1,4 @@
-import { getOrder } from '@/actions/orders'
+import { getOrder, getOrderActions } from '@/actions/orders'
 import { confirmOrderPayment, cancelOrder, updateOrderStatus, markOrderAsPaid } from '@/actions/orders'
 import { PageHeader } from '@/components/shared/page-header'
 import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
@@ -22,8 +22,10 @@ export default async function OrderDetailPage({
 }) {
   const { id } = await params
   let order
+  let actions = null
   try {
     order = await getOrder(id)
+    actions = await getOrderActions(id)
   } catch {
     notFound()
   }
@@ -133,6 +135,7 @@ export default async function OrderDetailPage({
       {!isDone && (
         <OrderActionButtons
           order={order}
+          actions={actions}
           confirmAction={boundConfirm}
           cancelAction={boundCancel}
           updateStatusAction={boundUpdate}
