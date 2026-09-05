@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 
 export type StoreSettings = {
-  id: number
+  id: string
   company_name: string
   short_name: string
   tagline: string
@@ -83,7 +83,7 @@ export async function getStoreSettings(): Promise<StoreSettings | null> {
   const { data } = await supabase
     .from('store_settings')
     .select('*')
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
     .single()
   return data as StoreSettings | null
 }
@@ -145,7 +145,7 @@ export async function updateStoreSettings(
   const { error } = await supabase
     .from('store_settings')
     .update({ ...parsed.data, updated_by: user.id } as never)
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
 
   if (error) return { error: error.message }
 
@@ -197,7 +197,7 @@ export async function uploadStoreLogo(
   const { error: updateError } = await supabase
     .from('store_settings')
     .update({ [column]: publicUrl, updated_by: user.id } as never)
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
 
   if (updateError) {
     // Cleanup uploaded file if DB update fails
@@ -236,7 +236,7 @@ export async function saveColorPreset(
   const { data: current, error: readErr } = (await supabase
     .from('store_settings')
     .select('color_presets')
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
     .single()) as { data: { color_presets?: ColorPreset[] | null } | null; error: { message: string } | null }
 
   if (readErr) return { error: readErr.message }
@@ -252,7 +252,7 @@ export async function saveColorPreset(
   const { error: writeErr } = await supabase
     .from('store_settings')
     .update({ color_presets: next, updated_by: user.id } as never)
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
 
   if (writeErr) return { error: writeErr.message }
 
@@ -283,7 +283,7 @@ export async function deleteColorPreset(
   const { data: current, error: readErr } = (await supabase
     .from('store_settings')
     .select('color_presets')
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
     .single()) as { data: { color_presets?: ColorPreset[] | null } | null; error: { message: string } | null }
 
   if (readErr) return { error: readErr.message }
@@ -294,7 +294,7 @@ export async function deleteColorPreset(
   const { error: writeErr } = await supabase
     .from('store_settings')
     .update({ color_presets: next, updated_by: user.id } as never)
-    .eq('id', 1)
+    .eq('id', 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11' as any)
 
   if (writeErr) return { error: writeErr.message }
 

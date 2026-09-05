@@ -819,7 +819,7 @@ CREATE TABLE public.stock_purchases (
 );
 
 CREATE TABLE public.store_settings (
-  id bigint NOT NULL DEFAULT 1,
+  id uuid NOT NULL DEFAULT 'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11'::uuid,
   company_name text NOT NULL DEFAULT 'My Bakery'::text,
   short_name text NOT NULL DEFAULT 'Bakery'::text,
   tagline text NOT NULL DEFAULT 'Fresh Bread & Cakes, Made to Order'::text,
