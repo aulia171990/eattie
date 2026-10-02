@@ -7,7 +7,7 @@
 -- Fix: Add assert_role() helper + role checks to all critical RPCs.
 -- ============================================================================
 
--- Helper: assert user has one of the allowed roles
+-- Helper: assert user has one of the allowed roles AND account is active
 CREATE OR REPLACE FUNCTION public.assert_role(p_user_id UUID, p_allowed_roles TEXT[])
 RETURNS BOOLEAN
 LANGUAGE plpgsql
@@ -16,10 +16,14 @@ SET search_path = public
 AS $$
 DECLARE
   v_role TEXT;
+  v_is_active BOOLEAN;
 BEGIN
-  SELECT role INTO v_role FROM profiles WHERE id = p_user_id;
+  SELECT role, is_active INTO v_role, v_is_active FROM profiles WHERE id = p_user_id;
   IF v_role IS NULL OR NOT (v_role = ANY(p_allowed_roles)) THEN
     RAISE EXCEPTION 'Akses ditolak: diperlukan role %', array_to_string(p_allowed_roles, ' atau ');
+  END IF;
+  IF v_is_active IS NOT TRUE THEN
+    RAISE EXCEPTION 'Akun dinonaktifkan';
   END IF;
   RETURN true;
 END;
@@ -28,8 +32,8 @@ $$;
 GRANT EXECUTE ON FUNCTION public.assert_role(UUID, TEXT[]) TO authenticated;
 
 
--- 1. complete_production_batch — owner only
-CREATE OR REPLACE FUNCTION public.complete_production_batch(p_batch_id UUID, p_quantity_produced INTEGER, p_quantity_defect INTEGER DEFAULT 0)
+-- 1. complete_production_batch — owner/baker only
+CREATE OR REPLACE FUNCTION public.complete_production_batch(p_batch_id UUID, p_quantity_produced INTEGER, p_quantity_defect INTEGER DEFAULT 0, p_user_id UUID DEFAULT NULL)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -52,8 +56,14 @@ DECLARE
   v_prod_after NUMERIC;
   v_var_before NUMERIC;
   v_var_after NUMERIC;
-  v_errors TEXT[] := '{}';
+  v_errors TEXT[] := '{}'>
 BEGIN
+  -- Security: assert caller has access (owner or baker)
+  IF p_user_id IS NULL THEN
+    RAISE EXCEPTION 'User ID wajib disediakan';
+  END IF;
+  PERFORM assert_role(p_user_id, ARRAY['owner', 'baker']);
+
   IF p_quantity_produced < 0 THEN RAISE EXCEPTION 'quantity_produced cannot be negative'; END IF;
   IF p_quantity_defect < 0 THEN RAISE EXCEPTION 'quantity_defect cannot be negative'; END IF;
 

@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { requireRole } from '@/lib/auth'
 import type { TablesInsert, TablesUpdate } from '@/types/database'
 import type { Product, ActionState } from '@/types'
 import type { ProductCategory } from '@/types/product-config'
@@ -48,7 +49,9 @@ export async function createProduct(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const raw = Object.fromEntries(formData.entries())
 
   const payload: TablesInsert<'products'> = {
@@ -78,7 +81,9 @@ export async function updateProduct(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const raw = Object.fromEntries(formData.entries())
 
   // Fetch existing values to preserve image_url and is_active if not sent by form
@@ -118,7 +123,9 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(id: string): Promise<void> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) throw new Error(auth.error)
+  const supabase = auth.supabase
   await supabase
     .from('products')
     .update({ is_active: false, updated_at: new Date().toISOString() })
@@ -127,7 +134,9 @@ export async function deleteProduct(id: string): Promise<void> {
 }
 
 export async function toggleProductActive(id: string, isActive: boolean): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { error } = await supabase
     .from('products')
     .update({ is_active: isActive, updated_at: new Date().toISOString() })
@@ -207,7 +216,9 @@ export async function saveOptionGroup(
   productId: string,
   input: { name: string; values: { value: string; sort_order: number }[] }
 ): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { data: group, error: groupErr } = await supabase
     .from('product_option_groups')
     .insert({ product_id: productId, name: input.name })
@@ -222,7 +233,9 @@ export async function saveOptionGroup(
 }
 
 export async function removeOptionGroup(id: string): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { error } = await supabase.from('product_option_groups').delete().eq('id', id)
   return error ? { error: error.message } : {}
 }
@@ -255,7 +268,9 @@ export async function saveVariantWithOptions(
   productId: string,
   input: { name: string; price: number; stock?: number; option_value_ids: string[] }
 ): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { data: variant, error: variantErr } = await supabase
     .from('product_variants')
     .insert({
@@ -280,8 +295,10 @@ export async function updateVariantStockAction(
   variantId: string,
   stock: number
 ): Promise<{ error?: string }> {
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const clamped = Math.max(0, Math.floor(stock))
-  const supabase = await createClient()
   const { error } = await supabase
     .from('product_variants')
     .update({ stock: clamped })
@@ -292,7 +309,9 @@ export async function updateVariantStockAction(
 }
 
 export async function removeVariantAction(id: string): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { error } = await supabase.from('product_variants').delete().eq('id', id)
   return error ? { error: error.message } : {}
 }
@@ -312,7 +331,9 @@ export async function saveProductAddons(
   productId: string,
   addons: { name: string; price: number; sort_order: number }[]
 ): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { error: delErr } = await supabase.from('product_addons').delete().eq('product_id', productId)
   if (delErr) return { error: delErr.message }
 
@@ -353,7 +374,9 @@ export async function addGalleryImage(
   productId: string,
   input: { image_url: string; variant_id?: string | null }
 ): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { data: existing } = await supabase
     .from('product_gallery')
     .select('sort_order')
@@ -372,7 +395,9 @@ export async function addGalleryImage(
 }
 
 export async function removeGalleryImage(id: string): Promise<{ error?: string }> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
   const { error } = await supabase.from('product_gallery').delete().eq('id', id)
   return error ? { error: error.message } : {}
 }

@@ -5,7 +5,7 @@
 -- status transitions. The UI only renders what the server says is valid.
 -- ============================================================================
 
-CREATE OR REPLACE FUNCTION public.get_order_actions(p_order_id UUID)
+CREATE OR REPLACE FUNCTION public.get_order_actions(p_order_id UUID, p_user_id UUID DEFAULT NULL)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -15,8 +15,19 @@ DECLARE
   v_order RECORD;
   v_can_confirm_payment BOOLEAN := false;
   v_can_cancel BOOLEAN := false;
-  v_next_statuses TEXT[] := '{}';
+  v_next_statuses TEXT[] := '{}'>
 BEGIN
+  -- Security: assert caller has access
+  IF p_user_id IS NULL THEN
+    RETURN jsonb_build_object(
+      'found', false,
+      'can_confirm_payment', false,
+      'can_cancel', false,
+      'valid_next_statuses', '{}'::text[]
+    );
+  END IF;
+  PERFORM assert_role(p_user_id, ARRAY['owner', 'cashier', 'baker']);
+
   SELECT id, status, payment_status
   INTO v_order
   FROM orders
@@ -57,4 +68,4 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.get_order_actions(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_order_actions(UUID, UUID) TO authenticated;

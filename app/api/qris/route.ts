@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
 import QRCode from 'qrcode'
 import { convertQRIS } from '@/lib/qris/converter'
+import { createRateLimiter, getClientKey } from '@/lib/rate-limit'
+
+// Rate limit: 30 requests per minute per IP
+const qrisRateLimit = createRateLimiter({ windowMs: 60_000, max: 30 })
 
 /**
  * Generates a dynamic QRIS QR code (as PNG) for a specific payment amount.
@@ -11,6 +15,16 @@ import { convertQRIS } from '@/lib/qris/converter'
  * Usage: GET /api/qris?amount=45000
  */
 export async function GET(req: NextRequest) {
+  // Rate limit check
+  const clientKey = getClientKey(req)
+  const rateResult = qrisRateLimit(clientKey)
+  if (!rateResult.allowed) {
+    return NextResponse.json(
+      { error: 'Terlalu banyak request. Coba lagi nanti.' },
+      { status: 429, headers: { 'Retry-After': String(Math.ceil((rateResult.resetAt - Date.now()) / 1000)) } }
+    )
+  }
+
   const amountParam = req.nextUrl.searchParams.get('amount')
   const amount = Number(amountParam)
 

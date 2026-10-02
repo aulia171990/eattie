@@ -7,7 +7,7 @@
 -- ============================================================================
 
 -- Get valid next statuses for a custom cake request
-CREATE OR REPLACE FUNCTION public.get_custom_cake_actions(p_request_id UUID)
+CREATE OR REPLACE FUNCTION public.get_custom_cake_actions(p_request_id UUID, p_user_id UUID DEFAULT NULL)
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -15,8 +15,18 @@ SET search_path = public
 AS $$
 DECLARE
   v_request RECORD;
-  v_next_statuses TEXT[] := '{}';
+  v_next_statuses TEXT[] := '{}'>
 BEGIN
+  -- Security: assert caller has access
+  IF p_user_id IS NULL THEN
+    RETURN jsonb_build_object(
+      'found', false,
+      'current_status', NULL,
+      'valid_next_statuses', '{}'::text[]
+    );
+  END IF;
+  PERFORM assert_role(p_user_id, ARRAY['owner']);
+
   SELECT id, status
   INTO v_request
   FROM custom_cake_requests
@@ -50,7 +60,7 @@ BEGIN
 END;
 $$;
 
-GRANT EXECUTE ON FUNCTION public.get_custom_cake_actions(UUID) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.get_custom_cake_actions(UUID, UUID) TO authenticated;
 
 
 -- Update custom cake request with server-side validation

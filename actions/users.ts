@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { requireRole } from '@/lib/auth'
 
 type ActionState = { error?: string; success?: boolean } | null
 
@@ -10,21 +11,11 @@ export async function updateUserRole(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const supabase = await createClient()
-
-  // Verify caller is owner
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (caller?.role !== 'owner') {
-    return { error: 'Hanya owner yang dapat mengubah role' }
-  }
 
   // Prevent owner from changing their own role
   if (targetUserId === user.id) {
@@ -52,20 +43,11 @@ export async function toggleUserActive(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (caller?.role !== 'owner') {
-    return { error: 'Hanya owner yang dapat menonaktifkan pengguna' }
-  }
 
   if (targetUserId === user.id) {
     return { error: 'Tidak dapat menonaktifkan akun sendiri' }

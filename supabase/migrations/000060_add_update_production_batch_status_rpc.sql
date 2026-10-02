@@ -4,14 +4,22 @@
 
 CREATE OR REPLACE FUNCTION update_production_batch_status(
   p_batch_id UUID,
-  p_new_status TEXT
+  p_new_status TEXT,
+  p_user_id UUID DEFAULT NULL
 ) RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
+SET search_path = public
 AS $$
 DECLARE
   v_batch RECORD;
 BEGIN
+  -- Security: assert caller is owner
+  IF p_user_id IS NULL THEN
+    RETURN jsonb_build_object('success', false, 'error', 'User ID wajib disediakan');
+  END IF;
+  PERFORM assert_role(p_user_id, ARRAY['owner']);
+
   -- 1. Lookup batch dengan FOR UPDATE (lock prevent race condition)
   SELECT * INTO v_batch FROM production_batches WHERE id = p_batch_id FOR UPDATE;
   IF NOT FOUND THEN
@@ -71,4 +79,4 @@ END;
 $$;
 
 -- Grant execute to authenticated users only
-GRANT EXECUTE ON FUNCTION update_production_batch_status(UUID, TEXT) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION update_production_batch_status(UUID, TEXT, UUID) TO authenticated, service_role;

@@ -196,7 +196,18 @@ function applyCssVariables(b: Partial<BrandingValue>) {
     }
   }
   if (b.accentColor)       root.style.setProperty('--accent', b.accentColor)
-  if (b.sidebarColor)      root.style.setProperty('--sidebar-bg', b.sidebarColor)
+  if (b.sidebarColor) {
+    root.style.setProperty('--sidebar-bg', b.sidebarColor)
+    // Turunkan lightness ~10% untuk teks muted di sidebar biar kontras cukup.
+    const parsed = parseHsl(b.sidebarColor)
+    if (parsed) {
+      const mutedL = clamp(parsed.l + 30, 55, 92)
+      root.style.setProperty('--sidebar-text-muted', `${parsed.h} ${parsed.s}% ${mutedL}%`)
+      const borderL = clamp(parsed.l + 6, 22, 40)
+      root.style.setProperty('--sidebar-border', `${parsed.h} ${clamp(parsed.s - 8, 8, 30)}% ${borderL}%`)
+    }
+  }
+  if (b.sidebarTextColor)  root.style.setProperty('--sidebar-text', b.sidebarTextColor)
   if (b.backgroundColor)   root.style.setProperty('--background', b.backgroundColor)
   if (b.surfaceColor)      root.style.setProperty('--surface', b.surfaceColor)
   if (b.textColor)         root.style.setProperty('--foreground', b.textColor)
@@ -206,9 +217,8 @@ function applyCssVariables(b: Partial<BrandingValue>) {
   if (b.successColor)      root.style.setProperty('--success', b.successColor)
   if (b.dangerColor)       root.style.setProperty('--danger', b.dangerColor)
   if (b.warningColor)      root.style.setProperty('--warning', b.warningColor)
-  if (b.sidebarTextColor)  root.style.setProperty('--sidebar-text', b.sidebarTextColor)
   if (b.footerBgColor)     root.style.setProperty('--footer-bg', b.footerBgColor)
-  if (b.footerTextColor)  root.style.setProperty('--footer-text', b.footerTextColor)
+  if (b.footerTextColor)   root.style.setProperty('--footer-text', b.footerTextColor)
   if (b.textSecondaryColor) root.style.setProperty('--text-secondary', b.textSecondaryColor)
   if (b.accentForegroundColor) root.style.setProperty('--accent-foreground', b.accentForegroundColor)
   if (b.accentSubtleColor) root.style.setProperty('--accent-subtle', b.accentSubtleColor)

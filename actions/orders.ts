@@ -118,9 +118,12 @@ export async function getOrderActions(orderId: string): Promise<{
   valid_next_statuses: string[]
 } | null> {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
   try {
     const { data, error } = await (supabase.rpc as any)('get_order_actions', {
       p_order_id: orderId,
+      p_user_id: user.id,
     })
     if (error || !data) return null
     const result = data as {

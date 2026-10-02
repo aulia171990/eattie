@@ -87,9 +87,12 @@ export async function getCustomCakeActions(requestId: string): Promise<{
   valid_next_statuses: string[]
 } | null> {
   const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return null
   try {
     const { data, error } = await (supabase.rpc as any)('get_custom_cake_actions', {
       p_request_id: requestId,
+      p_user_id: user.id,
     })
     if (error || !data) return null
     const result = data as {

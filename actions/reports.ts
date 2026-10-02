@@ -9,6 +9,30 @@ import {
 } from 'date-fns'
 import { requireRole } from '@/lib/auth'
 
+// ─── Account code constants (single source of truth) ─────────────────────────
+// These are the chart-of-accounts codes used in financial reports.
+// If the CoA changes, update these constants — no need to touch report logic.
+const ACCT_CODES = {
+  COGS: ['5000', '5100'] as const,
+  INVESTING: ['1600', '5600'] as const,
+  FINANCING: '3000',
+  EQUITY_RETAINED: '3200',
+}
+
+// ─── Date range validation ───────────────────────────────────────────────────
+const MAX_REPORT_RANGE_DAYS = 366
+
+function validateDateRange(dateFrom: string, dateTo: string): { valid: boolean; error?: string } {
+  if (!dateFrom || !dateTo) return { valid: false, error: 'Tanggal awal dan akhir wajib diisi' }
+  const from = new Date(dateFrom)
+  const to = new Date(dateTo)
+  if (isNaN(from.getTime()) || isNaN(to.getTime())) return { valid: false, error: 'Format tanggal tidak valid' }
+  if (from > to) return { valid: false, error: 'Tanggal awal tidak boleh setelah tanggal akhir' }
+  const diffDays = Math.ceil((to.getTime() - from.getTime()) / 86400000)
+  if (diffDays > MAX_REPORT_RANGE_DAYS) return { valid: false, error: `Rentang tanggal maksimal ${MAX_REPORT_RANGE_DAYS} hari` }
+  return { valid: true }
+}
+
 // Convert a UTC ISO timestamp to its Asia/Jakarta (WIB) calendar day/month key.
 // created_at is schema-nullable (no NULL rows currently in DB); accept null -> '' to stay safe.
 function wibDayKey(iso: string | null): string {
@@ -128,6 +152,9 @@ export async function getSalesReport(
   if (auth.error) return null
   const { supabase } = auth
 
+  const dateCheck = validateDateRange(dateFrom, dateTo)
+  if (!dateCheck.valid) return null
+
   const startUtc = new Date(`${dateFrom}T00:00:00+07:00`)
   const endUtc = new Date(`${dateTo}T23:59:59+07:00`)
 
@@ -211,6 +238,9 @@ export async function getProductionReport(
   if (auth.error) return null
   const { supabase } = auth
 
+  const dateCheck = validateDateRange(dateFrom, dateTo)
+  if (!dateCheck.valid) return null
+
   const { data: batches } = await supabase
     .from('production_batches')
     .select(
@@ -281,6 +311,9 @@ export async function getFinancialReport(
   const auth = await requireRole(['owner'])
   if (auth.error) return null
   const { supabase } = auth
+
+  const dateCheck = validateDateRange(dateFrom, dateTo)
+  if (!dateCheck.valid) return null
 
   const startUtc = new Date(`${dateFrom}T00:00:00+07:00`).toISOString()
   const endUtc = new Date(`${dateTo}T23:59:59+07:00`).toISOString()
@@ -492,6 +525,9 @@ export async function getPLReport(fromDate: string, toDate: string): Promise<PLR
   if (auth.error) return { period: { from: fromDate, to: toDate }, revenue: [], totalRevenue: 0, cogs: [], totalCogs: 0, grossProfit: 0, opex: [], totalOpex: 0, netProfit: 0 }
   const { supabase } = auth
 
+  const dateCheck = validateDateRange(fromDate, toDate)
+  if (!dateCheck.valid) return { period: { from: fromDate, to: toDate }, revenue: [], totalRevenue: 0, cogs: [], totalCogs: 0, grossProfit: 0, opex: [], totalOpex: 0, netProfit: 0 }
+
   const { data: lines } = await sb(supabase)
     .from('journal_lines')
     .select('debit, credit, chart_of_accounts!inner(code, name, type), journal_entries!inner(entry_date)')
@@ -522,7 +558,7 @@ export async function getPLReport(fromDate: string, toDate: string): Promise<PLR
   for (const a of byAccount.values()) {
     if (a.type === 'revenue') {
       revenue.push({ account_code: a.code, account_name: a.name, total: a.credit - a.debit })
-    } else if (a.code === '5000' || a.code === '5100') {
+    } else if (ACCT_CODES.COGS.includes(a.code as typeof ACCT_CODES.COGS[number])) {
       cogs.push({ account_code: a.code, account_name: a.name, total: a.debit - a.credit })
     } else if (a.type === 'expense') {
       opex.push({ account_code: a.code, account_name: a.name, total: a.debit - a.credit })
@@ -550,6 +586,10 @@ export async function getBalanceSheet(asOfDate: string): Promise<BSReport> {
   const auth = await requireRole(['owner'])
   if (auth.error) return { asOfDate, assets: [], totalAssets: 0, liabilities: [], totalLiabilities: 0, equity: [], totalEquity: 0, isBalanced: true }
   const { supabase } = auth
+
+  if (!asOfDate || isNaN(new Date(asOfDate).getTime())) {
+    return { asOfDate, assets: [], totalAssets: 0, liabilities: [], totalLiabilities: 0, equity: [], totalEquity: 0, isBalanced: true }
+  }
 
   const { data: lines } = await sb(supabase)
     .from('journal_lines')
@@ -596,7 +636,7 @@ export async function getBalanceSheet(asOfDate: string): Promise<BSReport> {
   const netProfit = totalRevenue - totalExpense
 
   if (netProfit !== 0) {
-    equity.push({ account_code: '3200', account_name: 'Laba Bulan Berjalan', balance: Math.abs(netProfit) })
+    equity.push({ account_code: ACCT_CODES.EQUITY_RETAINED, account_name: 'Laba Bulan Berjalan', balance: Math.abs(netProfit) })
   }
 
   const totalAssets = assets.reduce((s, l) => s + l.balance, 0)
@@ -620,6 +660,9 @@ export async function getCashFlowReport(fromDate: string, toDate: string): Promi
   if (auth.error) return { period: { from: fromDate, to: toDate }, operating: [], operatingTotal: 0, investing: [], investingTotal: 0, financing: [], financingTotal: 0, netCashFlow: 0 }
   const { supabase } = auth
 
+  const dateCheck = validateDateRange(fromDate, toDate)
+  if (!dateCheck.valid) return { period: { from: fromDate, to: toDate }, operating: [], operatingTotal: 0, investing: [], investingTotal: 0, financing: [], financingTotal: 0, netCashFlow: 0 }
+
   const pl = await getPLReport(fromDate, toDate)
 
   const operating: CFLine[] = [
@@ -632,7 +675,7 @@ export async function getCashFlowReport(fromDate: string, toDate: string): Promi
     .select('debit, credit, chart_of_accounts!inner(code, type), journal_entries!inner(entry_date)')
     .gte('journal_entries.entry_date', fromDate)
     .lte('journal_entries.entry_date', toDate)
-    .in('chart_of_accounts.code', ['1600', '5600'])
+    .in('chart_of_accounts.code', [...ACCT_CODES.INVESTING])
 
   const investingTotal = (investLines ?? []).reduce((s: number, l: { debit: number; credit: number; chart_of_accounts: { code: string; type: string } }) => {
     const acct = l.chart_of_accounts
@@ -647,7 +690,7 @@ export async function getCashFlowReport(fromDate: string, toDate: string): Promi
     .select('debit, credit, chart_of_accounts!inner(code, type), journal_entries!inner(entry_date)')
     .gte('journal_entries.entry_date', fromDate)
     .lte('journal_entries.entry_date', toDate)
-    .eq('chart_of_accounts.code', '3000')
+    .eq('chart_of_accounts.code', ACCT_CODES.FINANCING)
 
   const financingTotal = (finLines ?? []).reduce((s: number, l: { debit: number; credit: number }) => {
     return s + Number(l.credit) - Number(l.debit)

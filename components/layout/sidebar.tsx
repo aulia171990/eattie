@@ -86,7 +86,7 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
       {lowStockCount > 0 && user.role === 'owner' && (
         <Link href="/dashboard/inventory?filter=low_stock" onClick={onClose}
           className="flex items-center gap-2 mx-3 mt-3 px-3 py-2 rounded-lg text-xs"
-          style={{ background: 'hsl(var(--text-muted))', color: 'hsl(var(--text-muted))' }}>
+          style={{ background: 'hsl(var(--sidebar-accent))', color: 'hsl(var(--sidebar-text))' }}>
           <AlertTriangle size={14} />
           <span className="flex-1">{lowStockCount} bahan stok rendah</span>
           <span className="font-bold">{lowStockCount}</span>
@@ -98,7 +98,8 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
           const active = isActive(item.href)
           return (
             <div key={item.href}>
-              <Link href={item.href} onClick={onClose} className={cn('sidebar-item', active && 'active')}>
+              <Link href={item.href} onClick={onClose}
+                className={cn('sidebar-item', active && 'active')}>
                 <span className="shrink-0">{item.icon}</span>
                 <span className="flex-1 truncate">{item.title}</span>
               </Link>
@@ -106,10 +107,10 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
                 <div className="ml-7 mt-0.5 mb-1 space-y-0.5">
                   {item.children.map(child => (
                     <Link key={child.href} href={child.href} onClick={onClose}
-                      className="block px-3 py-1.5 rounded-md text-xs transition-all"
+                      className="block px-3 py-1.5 rounded-md text-xs transition-all sidebar-child"
                       style={{
-                        color: pathname === child.href ? 'white' : 'hsl(var(--text-muted))',
-                        background: pathname === child.href ? 'hsl(var(--foreground))' : 'transparent',
+                        color: pathname === child.href ? 'hsl(var(--sidebar-text))' : 'hsl(var(--sidebar-text-muted))',
+                        background: pathname === child.href ? 'hsl(var(--sidebar-accent))' : 'transparent',
                       }}>
                       {child.title}
                     </Link>
@@ -124,8 +125,8 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
       {(user.role === 'owner' || user.role === 'cashier') && (
         <div className="px-3 py-2 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
           <Link href="/pos" onClick={onClose}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white transition-all hover:opacity-90"
-            style={{ background: 'hsl(var(--primary))' }}>
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all hover:opacity-90"
+            style={{ background: 'hsl(var(--sidebar-accent))', color: 'hsl(var(--sidebar-text))' }}>
             <ShoppingCart size={18} />
             <span>Buka POS Kasir</span>
           </Link>
@@ -135,12 +136,12 @@ function SidebarContent({ user, lowStockCount = 0, onClose }: SidebarProps) {
       <div className="px-3 pb-4 pt-2 border-t" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3 px-3 py-2">
           <div className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shrink-0"
-            style={{ background: 'hsl(var(--text-muted))', color: 'hsl(var(--text-muted))' }}>
+            style={{ background: 'hsl(var(--sidebar-accent))', color: 'hsl(var(--sidebar-text))' }}>
             {user.full_name.charAt(0).toUpperCase()}
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-white text-xs font-medium truncate">{user.full_name}</div>
-            <div className="text-xs truncate capitalize" style={{ color: 'hsl(var(--text-muted))' }}>
+            <div className="text-xs truncate capitalize" style={{ color: 'hsl(var(--sidebar-text-muted))' }}>
               {user.role === 'owner' ? 'Pemilik' : user.role === 'cashier' ? 'Kasir' : 'Baker'}
             </div>
           </div>

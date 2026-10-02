@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
+import { requireRole } from '@/lib/auth'
 
 export type StoreSettings = {
   id: string
@@ -92,20 +93,11 @@ export async function updateStoreSettings(
   _prev: { error?: string; success?: boolean } | null,
   formData: FormData
 ): Promise<{ error?: string; success?: boolean } | null> {
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (caller?.role !== 'owner') {
-    return { error: 'Hanya owner yang dapat mengubah pengaturan toko' }
-  }
 
   const rawFields: Record<string, unknown> = {
     company_name:       (formData.get('company_name') as string) ?? '',
@@ -164,20 +156,11 @@ export async function uploadStoreLogo(
     return { error: 'Ukuran maksimal logo adalah 2 MB' }
   }
 
-  const supabase = await createClient()
-
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (caller?.role !== 'owner') {
-    return { error: 'Hanya owner yang dapat mengubah logo toko' }
-  }
 
   const ext = file.name.split('.').pop()
   const filename = `logos/${type}-${Date.now()}-${crypto.randomUUID()}.${ext}`
@@ -219,19 +202,11 @@ export async function saveColorPreset(
 ): Promise<{ presets?: ColorPreset[]; error?: string }> {
   if (!preset.name?.trim()) return { error: 'Nama preset wajib diisi' }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (caller?.role !== 'owner') {
-    return { error: 'Hanya owner yang dapat menyimpan preset warna' }
-  }
 
   const { data: current, error: readErr } = (await supabase
     .from('store_settings')
@@ -266,19 +241,11 @@ export async function deleteColorPreset(
 ): Promise<{ presets?: ColorPreset[]; error?: string }> {
   if (!id) return { error: 'ID preset wajib diisi' }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
-
-  const { data: caller } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  if (caller?.role !== 'owner') {
-    return { error: 'Hanya owner yang dapat menghapus preset warna' }
-  }
 
   const { data: current, error: readErr } = (await supabase
     .from('store_settings')

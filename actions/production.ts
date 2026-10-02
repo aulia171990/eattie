@@ -3,6 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { requireRole } from '@/lib/auth'
 import { format } from 'date-fns'
 import type { TablesInsert, TablesUpdate } from '@/types/database'
 import type { ProductionBatchWithRelations, ActionState } from '@/types'
@@ -49,8 +50,10 @@ export async function createProductionBatch(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const auth = await requireRole(['owner', 'baker'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
   if (!user) return { error: 'Tidak terautentikasi' }
 
   const product_id = formData.get('product_id') as string
@@ -126,7 +129,11 @@ export async function updateBatchStatus(
   _prev: ActionState,
   formData: FormData
 ): Promise<ActionState> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner', 'baker'])
+  if (auth.error) return { error: auth.error }
+  const supabase = auth.supabase
+  const user = auth.user
+  if (!user) return { error: 'Tidak terautentikasi' }
 
   const status = formData.get('status') as string
   const notes = (formData.get('notes') as string) || null
@@ -147,6 +154,7 @@ export async function updateBatchStatus(
       p_batch_id: id,
       p_quantity_produced: quantityProduced,
       p_quantity_defect: quantityDefect ?? 0,
+      p_user_id: user.id,
     })
 
     if (rpcErr) return { error: `Gagal menyelesaikan produksi: ${rpcErr.message}` }
@@ -174,6 +182,7 @@ export async function updateBatchStatus(
   const { data: rpcData, error: rpcErr } = await (supabase.rpc as any)('update_production_batch_status', {
     p_batch_id: id,
     p_new_status: status,
+    p_user_id: user.id,
   })
 
   if (rpcErr) return { error: `Gagal mengupdate status: ${rpcErr.message}` }
@@ -197,12 +206,17 @@ export async function updateBatchStatus(
 }
 
 export async function deleteBatch(id: string): Promise<void> {
-  const supabase = await createClient()
+  const auth = await requireRole(['owner', 'baker'])
+  if (auth.error) throw new Error(auth.error)
+  const supabase = auth.supabase
+  const user = auth.user
+  if (!user) throw new Error('Tidak terautentikasi')
 
   // Use RPC for validated cancellation
   const { error } = await (supabase.rpc as any)('update_production_batch_status', {
     p_batch_id: id,
     p_new_status: 'cancelled',
+    p_user_id: user.id,
   })
   if (error) throw new Error(`Gagal membatalkan batch: ${error.message}`)
 

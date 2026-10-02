@@ -67,7 +67,15 @@
 
   .sidebar-item.active {
     background: hsl(var(--sidebar-accent));
-    color: white;
+    color: hsl(var(--sidebar-text));
+  }
+
+  .sidebar-child {
+    border-radius: 0.375rem;
+  }
+
+  .sidebar-child:hover {
+    background: hsl(var(--sidebar-hover));
   }
 
   /* Stat cards */
